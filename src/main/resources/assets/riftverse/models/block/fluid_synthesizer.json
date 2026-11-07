@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "riftverse:block/machine_top",
+    "front": "riftverse:block/fluid_synthesizer_front",
+    "side": "riftverse:block/machine_side"
+  }
+}

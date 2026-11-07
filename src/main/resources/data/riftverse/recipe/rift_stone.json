@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "SQS",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stone"
+    },
+    "Q": {
+      "item": "riftverse:quantum_ingot"
+    }
+  },
+  "result": {
+    "id": "riftverse:rift_stone",
+    "count": 8
+  }
+}

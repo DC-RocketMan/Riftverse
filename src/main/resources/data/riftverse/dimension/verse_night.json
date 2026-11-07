@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:verse_night",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "variant": 1,
+    "biome_source": {
+      "type": "riftverse:universe",
+      "variant": 1,
+      "biomes": [
+        "riftverse:emerald_haze",
+        "riftverse:violet_dusk",
+        "riftverse:amber_sky",
+        "riftverse:azure_deep",
+        "riftverse:crimson_veil",
+        "riftverse:ashen_waste",
+        "riftverse:pink_nebula",
+        "riftverse:teal_mist",
+        "riftverse:toxic_lime",
+        "riftverse:frost_white"
+      ]
+    }
+  }
+}

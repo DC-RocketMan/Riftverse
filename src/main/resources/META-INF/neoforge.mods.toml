@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="riftverse"
+version="1.0.0"
+displayName="Riftverse"
+authors="David Chapman"
+description='''
+Baue eine Rift-Kanone, schiess Portale in zufaellig generierte Universen mit eigener Physik
+und triff auf Bosse, deren Geschichten in Echtzeit erzeugt werden.
+'''
+
+[[dependencies.riftverse]]
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.riftverse]]
+    modId="minecraft"
+    type="required"
+    versionRange="[1.21.1]"
+    ordering="NONE"
+    side="BOTH"
