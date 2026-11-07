@@ -230,6 +230,10 @@ def loot():
 # =============================================================================
 # Tags
 # =============================================================================
+# Einträge aus dem Prototyp, die es nicht mehr gibt (fliegen beim Zusammenführen raus)
+STALE = {f'{NS}:quantum_ore', f'{NS}:quantum_refiner', f'{NS}:fluid_synthesizer', f'{NS}:rift_assembler'}
+
+
 def tag(kind, tag_id, values):
     ns, path = tag_id.split(':')
     p = os.path.join(DATA, ns, 'tags', kind, path + '.json')
@@ -237,7 +241,7 @@ def tag(kind, tag_id, values):
     if os.path.exists(p):
         with open(p, encoding='utf-8') as fh:
             existing = json.load(fh).get('values', [])
-    merged = list(existing)
+    merged = [v for v in existing if v not in STALE]
     for v in values:
         v = v if v.startswith('#') or ':' in v else rl(v)
         if v not in merged:

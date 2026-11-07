@@ -88,7 +88,7 @@ public final class UniverseCleanup {
     }
 
     /** Löscht die 8 × 8 Region-Dateien (Blöcke, Entities, POI) der Zelle. */
-    static int deleteTerrain(Path root, UniverseId id) {
+    public static int deleteTerrain(Path root, UniverseId id) {
         Path dim = DimensionType.getStorageFolder(id.type().dimension(), root);
         int count = 0;
         for (String folder : new String[]{"region", "entities", "poi"}) {
