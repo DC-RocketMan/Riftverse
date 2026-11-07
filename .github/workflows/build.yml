@@ -11,16 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: JDK 21
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '21'
 
       - name: Gradle einrichten
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: Bauen
         run: |
@@ -28,8 +28,31 @@ jobs:
           ./gradlew build --no-daemon --stacktrace
 
       - name: Jar hochladen
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: riftverse-jar
           path: build/libs/*.jar
           if-no-files-found: error
+
+      # Startet einen Server mit dem Mod, prüft Registrierung, Datapack-JSON, Rezepte und das
+      # Stromnetz (Kreativ-Quelle -> Kupferkabel -> Erzmühle, Überspannung) und beendet ihn wieder.
+      - name: Rauchtest
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          timeout 1200 ./gradlew runRauchtest --no-daemon 2>&1 | tee rauchtest.log
+          echo "---- Riftverse-Fehler und -Warnungen im Log ----"
+          grep -E "/(ERROR|WARN)\].*riftverse" rauchtest.log || true
+          grep -q "RIFTVERSE-RAUCHTEST: BESTANDEN" rauchtest.log
+          if grep -E "/ERROR\].*riftverse" rauchtest.log; then
+            echo "Fehler mit riftverse im Server-Log"
+            exit 1
+          fi
+
+      - name: Rauchtest-Log hochladen
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: rauchtest-log
+          path: rauchtest.log
+          if-no-files-found: ignore

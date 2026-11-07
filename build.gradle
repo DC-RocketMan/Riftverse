@@ -30,6 +30,12 @@ neoForge {
             server()
             programArgument '--nogui'
         }
+        // Rauchtest für die CI: Server starten, Rezepte und Stromnetz prüfen, wieder beenden
+        rauchtest {
+            server()
+            programArgument '--nogui'
+            systemProperty 'riftverse.rauchtest', 'true'
+        }
         configureEach {
             systemProperty 'forge.logging.markers', 'REGISTRIES'
             logLevel = org.slf4j.event.Level.INFO

@@ -1,6 +1,7 @@
 package dev.riftverse;
 
 import com.mojang.logging.LogUtils;
+import dev.riftverse.devtest.RauchTest;
 import dev.riftverse.energy.EnergyNet;
 import dev.riftverse.registry.ModBiomeModifiers;
 import dev.riftverse.registry.ModBlockEntities;
@@ -54,6 +55,9 @@ public class Riftverse {
         NeoForge.EVENT_BUS.addListener(EnergyNet::onChunkUnload);
         NeoForge.EVENT_BUS.addListener(EnergyNet::onLevelUnload);
         NeoForge.EVENT_BUS.addListener(EnergyNet::onServerStopped);
+
+        // Nur mit -Driftverse.rauchtest=true (GitHub Actions: ./gradlew runRauchtest)
+        RauchTest.registerIfEnabled();
 
         LOGGER.info("Riftverse geladen – das Multiversum ist offen.");
     }
