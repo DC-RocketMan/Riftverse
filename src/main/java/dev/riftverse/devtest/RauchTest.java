@@ -13,6 +13,8 @@ import dev.riftverse.registry.ModRecipes;
 import dev.riftverse.fluid.Zerfall;
 import dev.riftverse.item.FluidKartuscheItem;
 import dev.riftverse.item.PortalKanoneItem;
+import dev.riftverse.portal.RiftPortalEntity;
+import dev.riftverse.portal.RiftTravel;
 import dev.riftverse.tech.FluidMixerBlockEntity;
 import dev.riftverse.tech.ProcessingBlockEntity;
 import dev.riftverse.tech.XenitZelleBlockEntity;
@@ -27,16 +29,21 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -62,6 +69,7 @@ public final class RauchTest {
     private static int ticks = -1;
     private static BlockPos source, mill, overvoltageMachine;
     private static BlockPos grinder, recycler, mixer, cell, cellConsumer;
+    private static Pig traveler;
 
     public static void registerIfEnabled() {
         if (!Boolean.getBoolean("riftverse.rauchtest")) return;
@@ -199,6 +207,24 @@ public final class RauchTest {
                     + p.terrain.label + ", " + p.modifiers + ")");
             check(!p.modifiers.isEmpty() && p.modifiers.size() <= 3, type.id() + ": 1–3 Modifikatoren");
             check(Multiverse.at(u, new BlockPos(c, 64, c)) != null, type.id() + ": Position liegt in einem Universum");
+            BlockPos land = RiftTravel.findSafe(u, new BlockPos(c + 40, 100, c - 40), 32, false);
+            check(RiftTravel.isSafe(u, land) && new UniverseId(type, 0, 0).equals(Multiverse.at(u, land)),
+                    type.id() + ": sicherer Landeplatz " + land.toShortString());
+        }
+
+        // --- Rift: Ein Schwein läuft durch ein Portal in ein Universum ----------------------------
+        BlockPos portalAt = base.south(48);
+        level.setBlock(portalAt.below(), Blocks.STONE.defaultBlockState(), Block.UPDATE_ALL);
+        traveler = EntityType.PIG.create(level);
+        if (traveler != null) {
+            traveler.setNoAi(true);
+            traveler.moveTo(portalAt.getX() + 0.5, portalAt.getY(), portalAt.getZ() + 0.5, 0f, 0f);
+            level.addFreshEntity(traveler);
+            RiftPortalEntity portal = RiftPortalEntity.create(level, Vec3.atBottomCenterOf(portalAt), 0f, RiftPortalEntity.STYLE_RANDOM, 200);
+            UniverseId target = new UniverseId(UniverseType.KRISTALL, 1, 0);
+            portal.setUniverseTarget(target.type().dimension(), target);
+            portal.setSpawnReturn(false);
+            level.addFreshEntity(portal);
         }
         check(UniverseType.reachableWith(1).size() == 3, "Kanone Mk I erreicht drei Universumstypen");
 
@@ -273,6 +299,8 @@ public final class RauchTest {
 
     private static void meilenstein2Ergebnis(ServerLevel level) {
         kanonenTest(level);
+        check(traveler != null && traveler.isRemoved() && traveler.getRemovalReason() == Entity.RemovalReason.CHANGED_DIMENSION,
+                "Rift bringt ein Schwein in die Kristallwelt" + (traveler != null ? " (" + traveler.getRemovalReason() + ")" : ""));
         if (level.getBlockEntity(grinder) instanceof ProcessingBlockEntity m) {
             ItemStack lens = m.items().getStackInSlot(m.outputSlot());
             ItemStack dust = m.items().getStackInSlot(m.outputSlot() + 1);

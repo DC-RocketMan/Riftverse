@@ -18,6 +18,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -31,6 +32,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -153,16 +155,23 @@ public final class UniverseEffects {
         if (event.getLevel().isClientSide() || !(event.getEntity() instanceof LivingEntity living) || living instanceof Player) return;
         UniverseProfile p = Multiverse.profileAt(event.getLevel(), living.blockPosition());
         if (p == null) return;
-        if (p.has(UniverseModifier.KEINE_TIERE) && living instanceof Animal && !event.loadedFromDisk()) {
-            event.setCanceled(true);
-            return;
-        }
         applyGravity(living, p);
         double scale = p.has(UniverseModifier.RIESEN_MOBS) ? 1.6 : p.has(UniverseModifier.MINI_MOBS) ? 0.5 : 1.0;
         set(living, Attributes.SCALE, SCALE, scale - 1.0);
         if (p.has(UniverseModifier.LEUCHTEN)) {
             living.addEffect(new MobEffectInstance(MobEffects.GLOWING, MobEffectInstance.INFINITE_DURATION, 0, false, false));
         }
+    }
+
+    /** Modifikator „Keine Tiere“: Tiere spawnen nicht von selbst. Mitgebrachte oder gezüchtete bleiben. */
+    @SubscribeEvent
+    public static void onFinalizeSpawn(FinalizeSpawnEvent event) {
+        if (!(event.getEntity() instanceof Animal)) return;
+        MobSpawnType t = event.getSpawnType();
+        if (t != MobSpawnType.NATURAL && t != MobSpawnType.CHUNK_GENERATION && t != MobSpawnType.SPAWNER
+                && t != MobSpawnType.STRUCTURE) return;
+        UniverseProfile p = Multiverse.profileAt(event.getLevel().getLevel(), BlockPos.containing(event.getX(), event.getY(), event.getZ()));
+        if (p != null && p.has(UniverseModifier.KEINE_TIERE)) event.setSpawnCancelled(true);
     }
 
     // ------------------------------------------------------------------ Gravitation
