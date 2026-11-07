@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:ingots/steel"
+    },
+    {
+      "tag": "c:ingots/steel"
+    }
+  ],
+  "result": {
+    "id": "riftverse:stahl_platte"
+  },
+  "hammer": 1
+}

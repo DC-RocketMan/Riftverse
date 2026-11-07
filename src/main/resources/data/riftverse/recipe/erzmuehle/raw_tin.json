@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:raw_materials/tin"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:zinn_staub",
+    "count": 2
+  },
+  "time": 150
+}

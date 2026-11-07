@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/steel"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:stahl_platte"
+  },
+  "time": 40
+}

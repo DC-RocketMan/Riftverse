@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "riftverse:block/tonnenreaktor"
+    },
+    "active=true,facing=north": {
+      "model": "riftverse:block/tonnenreaktor_on"
+    },
+    "active=false,facing=east": {
+      "model": "riftverse:block/tonnenreaktor"
+    },
+    "active=true,facing=east": {
+      "model": "riftverse:block/tonnenreaktor_on"
+    },
+    "active=false,facing=south": {
+      "model": "riftverse:block/tonnenreaktor"
+    },
+    "active=true,facing=south": {
+      "model": "riftverse:block/tonnenreaktor_on"
+    },
+    "active=false,facing=west": {
+      "model": "riftverse:block/tonnenreaktor"
+    },
+    "active=true,facing=west": {
+      "model": "riftverse:block/tonnenreaktor_on"
+    }
+  }
+}

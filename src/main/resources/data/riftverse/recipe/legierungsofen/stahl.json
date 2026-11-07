@@ -1,0 +1,20 @@
+{
+  "type": "riftverse:legierungsofen",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/iron"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/coal"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:steel_ingot"
+  },
+  "time": 200
+}

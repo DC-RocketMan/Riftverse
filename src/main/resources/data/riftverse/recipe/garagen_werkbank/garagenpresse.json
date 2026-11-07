@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "IPI",
+    "GCG",
+    "BBB"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    },
+    "G": {
+      "item": "riftverse:bronze_zahnrad"
+    },
+    "C": {
+      "item": "riftverse:garagen_gehaeuse"
+    },
+    "B": {
+      "tag": "c:plates/bronze"
+    }
+  },
+  "result": {
+    "id": "riftverse:garagenpresse"
+  },
+  "hammer": 2
+}

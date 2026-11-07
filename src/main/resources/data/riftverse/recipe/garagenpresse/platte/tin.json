@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/tin"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:zinn_platte"
+  },
+  "time": 40
+}

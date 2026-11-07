@@ -1,0 +1,21 @@
+{
+  "type": "riftverse:legierungsofen",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:dusts/copper"
+      },
+      "count": 3
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/tin"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:bronze_ingot",
+    "count": 4
+  },
+  "time": 200
+}

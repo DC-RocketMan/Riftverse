@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "riftverse:block/casing_t0_top",
+    "side": "riftverse:block/casing_t0",
+    "front": "riftverse:block/garagenpresse_front_on"
+  }
+}

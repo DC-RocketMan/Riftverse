@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:ingots/xenit"
+    },
+    {
+      "tag": "c:ingots/xenit"
+    }
+  ],
+  "result": {
+    "id": "riftverse:xenit_platte"
+  },
+  "hammer": 1
+}

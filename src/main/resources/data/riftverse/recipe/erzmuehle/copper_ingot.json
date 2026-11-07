@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/copper"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:kupfer_staub"
+  },
+  "time": 100
+}

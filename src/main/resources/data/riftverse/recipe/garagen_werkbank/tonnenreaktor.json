@@ -1,0 +1,33 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "XBX",
+    "ICI",
+    "KFK"
+  ],
+  "key": {
+    "X": {
+      "tag": "c:plates/xenit"
+    },
+    "B": {
+      "item": "minecraft:iron_bars"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    }
+  },
+  "result": {
+    "id": "riftverse:tonnenreaktor"
+  },
+  "hammer": 1,
+  "loetzinn": 1
+}

@@ -6,12 +6,13 @@ sys.path.insert(0, os.path.dirname(__file__))
 from lib import Pack
 import preview
 
-OUT = sys.argv[1] if len(sys.argv) > 1 else '/home/claude/riftverse_textures'
+ARGS = [a for a in sys.argv[1:] if not a.startswith('--')]
+OUT = ARGS[0] if ARGS else os.path.join(os.getcwd(), 'riftverse_textures')
 PRE = os.path.join(os.path.dirname(OUT), 'riftverse_vorschau')
 os.makedirs(PRE, exist_ok=True)
 
 pk = Pack(OUT)
-mods = sys.argv[2].split(',') if len(sys.argv) > 2 else ['materials', 'machines', 'gadgets', 'armor']
+mods = ARGS[1].split(',') if len(ARGS) > 1 else ['materials', 'machines', 'gadgets', 'armor', 'meilenstein1']
 for m in mods:
     __import__(m).build(pk)
 
@@ -24,9 +25,9 @@ for c in cats:
     fn = os.path.join(PRE, c.lower().replace(' ', '_').replace('ü', 'ue') + '.png')
     preview.sheet(ents, f'Riftverse – {c} ({len(ents)})', fn)
     print(fn, len(ents))
-if len(mods) == 4:
+if {'materials', 'machines', 'gadgets', 'armor'} <= set(mods) and '--extras' in sys.argv:
     import extras
-    extras.write(pk)
+    extras.write(pk)   # Starthilfe-Modelle; im Repo erzeugt tools/daten/generate.py die echten
 
 # Gesamtübersicht: alle Bögen untereinander
 from PIL import Image

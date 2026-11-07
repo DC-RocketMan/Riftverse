@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " D ",
+    "RHR",
+    " X "
+  ],
+  "key": {
+    "D": {
+      "tag": "c:wires/copper"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "H": {
+      "item": "riftverse:zinn_huelse"
+    },
+    "X": {
+      "tag": "c:plates/xenit"
+    }
+  },
+  "result": {
+    "id": "riftverse:energiezelle"
+  },
+  "loetzinn": 1
+}

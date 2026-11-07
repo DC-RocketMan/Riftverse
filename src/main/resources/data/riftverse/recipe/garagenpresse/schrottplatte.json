@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:alien_schrott"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:schrottplatte"
+  },
+  "time": 40
+}

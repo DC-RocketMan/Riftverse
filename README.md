@@ -1,111 +1,125 @@
-# Riftverse – Multiversum-Mod für NeoForge 1.21.1
+# Riftverse
 
-Baue eine Rift-Kanone, schieß Portale in zufällig generierte Universen mit eigener
-Physik und triff dort auf Bosse, deren Geschichte in Echtzeit erzeugt wird.
+Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys Portalreisen.
+Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
+Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
-## Was drin ist
+## Stand: Meilenstein 1 – Fundament
 
 | Bereich | Inhalt |
 |---|---|
-| **Erz** | Quantenerz in der Oberwelt (Y −56 bis 40, Eisenspitzhacke) und in Rift-Universen |
-| **Maschinen** | Quanten-Raffinerie, Fluid-Synthesizer, Rift-Assembler (Ofen-Brennstoff, Trichter/Rohre kompatibel) |
-| **Rift-Kanone** | 3 Modi: Zufall, Heimat, Letztes Universum; Mk-II-Upgrade mit 4 Universums-Splittern |
-| **Universen** | ~360.000 zufällige Universen in 4 Dimensionen (Sonne, Ewige Nacht, Inferno, Leere) |
-| **Physik** | Gravitation 0,3–1,8 g, dünne/dichte/giftige Atmosphäre, Hitze/Kälte, Kreaturengröße |
-| **Bosse** | 7 Persönlichkeiten, 6 Fähigkeiten, 5 Plot-Twists, Gnade-Entscheidung, Chronik-Buch |
+| **Metalle** | Zinnerz (Oberwelt, per Config abschaltbar), Rohes Zinn, Zinnbarren und -block; Staub, Platten, Drähte, Hülsen, Stangen; Bronze, Stahl, Mischmetall; Xenit-Erz, -Barren, -Platte, -Staub, -Stange (Krater-Generierung folgt in Meilenstein 2) |
+| **T0 Garage** | Garagen-Werkbank mit Werkzeugslots für Hammer, Lötkolben und Lötzinn; Garagenpresse und Kurbel-Dynamo mit der Handkurbel |
+| **T1 Maschinen** | Erzmühle (1 Erz → 2 Staub), Walzbank (Walzen, Schneiden, Ziehen), Legierungsofen (Bronze, Stahl), Tonnenreaktor (verbrennt jedes Item) |
+| **Energienetz Stufe I** | Eigenes Riftverse-Netz in FE mit IC2-Regeln: Pakete mit Spannungsstufe, Kabelverlust 0,5 FE pro Block, Überspannung (explodieren, durchbrennen oder aus), blanke Kabel geben einen Schlag |
+| **Kabel** | Kupferkabel blank (4 px) und isoliert (6 px), isolierte Kabel mit Farbstoff einfärbbar; unterschiedlich gefärbte Kabel verbinden sich nicht |
+| **Kompatibilität** | Einspeiser (FE von jedem Mod rein) und Ausspeiser (normales FE raus); Maschinen zeigen ihren Füllstand nur lesbar an |
+| **Akku** | Energiezelle (40.000 FE) als reines FE-Item; jede Maschine und jeder Generator hat einen Akku-Slot |
+| **Test** | Kreativ-Quelle (nur Kreativmodus): unendliche Quelle, Rechtsklick wechselt Stufe I–IV, um Überspannung zu testen |
 
-## Starten (Windows)
+Der Prototyp aus dem ersten Entwurf (Quantenerz, Rift-Kanone, Bosse, Story-Generator) ist noch drin
+und wird in Meilenstein 2 durch Xenit, Kanone Mk I und friedliche Universen ersetzt.
 
-1. **JDK 21** installieren, z. B. [Eclipse Temurin 21](https://adoptium.net/).
-2. ZIP entpacken, in den Ordner wechseln und in PowerShell ausführen:
-   ```
-   .\gradlew.bat runClient
-   ```
-   Beim ersten Mal lädt Gradle Minecraft + NeoForge herunter (dauert ein paar Minuten).
-   Danach startet Minecraft direkt mit dem Mod.
-3. **Neue Welt** erstellen (empfohlen), Kreativ- oder Überlebensmodus.
+### So spielt sich Meilenstein 1
 
-Zum Testen im Kreativmodus: Reiter „Riftverse“ im Inventar, oder
-`/give @s riftverse:rift_gun` und `/give @s riftverse:rift_fluid_cell 32`.
+1. **Garagen-Werkbank** in der normalen Werkbank bauen (Eisen, Kupfer, Holzstämme, Werkbank).
+2. In der Garagen-Werkbank **Bronzestaub** von Hand mischen (3 Kupfer + 1 Zinn → 2), im Ofen zu Bronze schmelzen.
+3. **Garagen-Hammer** bauen und in den Werkzeugslot legen: 2 Barren → 1 Platte.
+4. **Garagenpresse**, **Handkurbel** und **Kurbel-Dynamo** bauen. Mit der Handkurbel Rechtsklick gedrückt
+   halten: Die Presse macht 1 Barren → 1 Platte, der Dynamo liefert 8 FE/t.
+5. **Lötkolben** und **Lötzinn** (Zinnbarren + Hammer) in die Werkzeugslots legen – die T1-Maschinen werden gelötet.
+6. T1-Maschinen brauchen das **Xenit-Gehäuse**. Xenit gibt es im Überleben erst ab Meilenstein 2
+   (Meteoritenkrater); bis dahin im Kreativmodus testen.
 
-## Als Teil eines Modpacks
+Rechtsklick mit leerer Hand auf ein Kabel zeigt das Teilnetz: Quellen, Verbraucher, Leitungen und übertragene FE/t.
+
+### Entscheidungen in Meilenstein 1
+
+Wo das Design-Dokument nichts festlegt oder sich widerspricht, gilt bis auf Weiteres:
+
+- **Bronze in T0:** Der Legierungsofen ist T1, Bronze wird aber schon in T0 gebraucht. Deshalb gibt es eine
+  Handmischung in der Garagen-Werkbank mit halber Ausbeute (3 Kupfer + 1 Zinn → 2 Bronzestaub);
+  der Legierungsofen macht 3 + 1 → 4.
+- **Akku-Slot:** Maschinen ziehen Strom aus der Energiezelle, Generatoren laden sie.
+- **Lötzinn:** Zinnbarren + Hammer → 1 Lötzinn, in der Walzbank Zinnplatte → 3 Lötzinn.
+- **Schaltkreise:** Basis-Schaltkreise kommen mit dem Platinen-Ätzer erst in Meilenstein 2. Die T1-Maschinen
+  aus Meilenstein 1 werden deshalb gelötet statt mit Schaltkreis gebaut; Meilenstein 2 kann die Rezepte nachschärfen.
+- **Isolierfolie:** Polymerfetzen kommen eigentlich aus dem Recycler (Meilenstein 2). Bis dahin wirft der
+  Tonnenreaktor gelegentlich welche als Kleinteil aus.
+- **Tonnenreaktor:** jedes Item brennt 50 Ticks, Schrott 100 Ticks, Brennstoffe die Hälfte ihrer Ofen-Brenndauer;
+  Kohle bringt so 32.000 FE.
+- **Garagenpresse:** braucht 40 Kurbel-Ticks pro Platte (2 Sekunden Kurbeln). Create-Rotation folgt in Phase 2.
+- **Kabel verkleiden** (Rechtsklick mit einem Block) ist noch nicht drin.
+
+## Config
+
+`config/riftverse-common.toml`:
+
+| Option | Standard | Wirkung |
+|---|---|---|
+| `energie.overvoltage` | `EXPLODE` | `EXPLODE`, `BURNOUT` oder `OFF` |
+| `energie.cable_shock` | `true` | Schlag an blanken Kabeln unter Strom |
+| `welt.tin_ore` | `true` | Zinnerz generieren (aus, wenn ein anderer Mod Zinn liefert) |
+
+## Bauen und Starten
+
+Voraussetzung: **JDK 21**, z. B. [Eclipse Temurin 21](https://adoptium.net/).
 
 ```
-.\gradlew.bat build
+.\gradlew.bat runClient     # Windows: Testclient starten
+./gradlew build             # Jar unter build/libs/
 ```
-Die fertige Datei liegt unter `build/libs/riftverse-1.0.0.jar`. Diese in den `mods`-Ordner
-einer **NeoForge-1.21.1**-Instanz legen (CurseForge-App, Prism Launcher, Modrinth App).
-Dort kannst du weitere NeoForge-1.21.1-Mods dazupacken.
 
-## Spielablauf (Überleben)
-
-1. **Quantenerz** abbauen → Rohe Quantensplitter.
-2. **Quanten-Raffinerie** bauen (7 Eisen um einen Ofen, Redstone unten in der Mitte).
-   Splitter + Redstone (oder Glowstone-Staub für doppelte Ausbeute) → Quantenbarren.
-3. **Fluid-Synthesizer**: Barren + Glas → 2 Kartuschen, Barren + Schleimball → 4 Kartuschen.
-4. **Rift-Assembler**:
-   * 4 Barren + Enderauge → Rift-Kern (oder 6 Barren + Diamant ohne Nether)
-   * Kanonen-Rahmen (Werkbank) + Rift-Kern → **Rift-Kanone**
-   * Rift-Kanone + 4 Universums-Splitter → **Rift-Kanone Mk II**
-5. Fährst du mit der Maus über den Pfeil in einer Maschine, zeigt sie dir ihre Rezepte.
-
-### Rift-Kanone
-* **Rechtsklick**: Portal öffnen (1 Kartusche). Reinlaufen = Reise. Mobs und Items können mit.
-* **Schleichen + Rechtsklick**: Modus wechseln.
-* Beim Abflug aus der Oberwelt merkt sich die Kanone den Ort als **Heimat**.
-* Am Ziel öffnet sich kurz ein **orangefarbenes Rückportal**.
-
-### Universums-Scanner
-Rechtsklick zeigt Gravitation, Atmosphäre, Temperatur, Gelände, Rohstoffe, Gefahr und den
-Story-Status des aktuellen Universums.
-
-## Physik der Universen
-Bewusst an echte Physik angelehnt:
-* **Gravitation** ändert die Fallbeschleunigung. Weil die Sprungkraft gleich bleibt, springst du
-  bei 0,5 g doppelt so hoch. Fallschaden skaliert mit g, die sichere Fallhöhe mit 1/g.
-* **Kreaturen** sind bei niedriger Schwerkraft größer, bei hoher kleiner (Quadrat-Kubik-Gesetz).
-* **Dichte Luft** bremst Bewegung, **dünne Luft** macht Sprinten anstrengend (Hunger).
-* **Giftige Luft** vergiftet dich ohne Helm.
-* **Kälte** lässt dich erfrieren, außer du trägst Leder. Gewässer frieren zu.
-* **Hitze** erhöht den Hunger; statt Wasser gibt es Lava. In der Inferno-Dimension verdampft Wasser
-  und Betten explodieren.
-* Zwischen Universen liegt ein **Abgrund aus Leere** – das Ende des Universums.
-
-## Story-Generator
-Kein KI-Modell nötig: `story/StoryEngine.java` setzt Handlungen aus Bausteinen zusammen –
-Persönlichkeit × Ereignis × Kontext (Physik, deine Lebenspunkte, wie oft du gestorben bist,
-dein Item, Kampfdauer) × Zufall. Ablauf:
-
-1. Du betrittst ein neues Universum → nach ~6 s kommt ein **Rift-Funkspruch** mit Auftrag.
-2. Ein Lichtstrahl markiert die **Boss-Arena** 40–70 Blöcke entfernt.
-3. Der Boss redet: Begrüßung, Reaktionen, Phasenwechsel, **Plot-Twist** bei 33 %.
-4. Manche Bosse **betteln** bei 20 % um Gnade: Rechtsklick = verschonen, Angriff = beenden.
-5. Epilog, Spitzname bei den Bewohnern und eine **Chronik** als Buch.
-
-Neue Sätze, Titel oder Motive einfach in `StoryEngine.java` bzw. `NameGen.java` ergänzen.
+Bei jedem Push baut GitHub Actions den Mod (`.github/workflows/build.yml`). Ein Meilenstein ist erst fertig,
+wenn dieser Check grün ist; das fertige Jar liegt als Artefakt am Workflow-Lauf.
 
 ## Projektstruktur
 
 ```
 src/main/java/dev/riftverse/
-  Riftverse.java          Einstieg, Registrierung
-  registry/               Blöcke, Items, Entities, Menüs, Weltgenerierung
-  machine/                Maschinen (Block, BlockEntity, Menü, Rezepte)
-  item/                   Rift-Kanone, Scanner
-  portal/                 Portal-Entity, Reise-Logik
-  universe/               Universums-Profile, Chunk-Generator, Biome, Physik
-  boss/                   Boss-Entity, Fähigkeiten
-  story/                  Story-Generator, Regie, Speicherstand
-  client/                 GUI, Portal- und Boss-Renderer
+  energy/       Riftverse-Netz: Graph, Pakete, Spannungsstufen, Überspannung, Ein-/Ausspeiser
+  cable/        Kupferkabel blank und isoliert
+  tech/         Maschinen, Generatoren, Garagen-Werkbank (+ menu/ für die GUIs)
+  recipe/       Rezepttypen der Maschinen und der Garagen-Werkbank
+  worldgen/     per Config abschaltbare Erz-Generierung
+  client/       Screens (ohne Texturdateien gezeichnet), Kabelfarben
+  registry/     Registrierung aller Blöcke, Items, Rezepttypen …
+  machine/, item/, portal/, universe/, boss/, story/   Prototyp aus dem ersten Entwurf
 src/main/resources/
-  data/riftverse/         Dimensionen, Biome, Rezepte, Loot, Erzgenerierung
-  assets/riftverse/       Texturen, Modelle, Sprachen (de/en)
+  assets/riftverse/   Texturen, Modelle, Blockstates, Sprachen
+  data/riftverse/     Rezepte (pro Maschine ein Ordner), Loot, Worldgen, Tags
+tools/
+  texturen/   Texturgenerator (Python, Pillow + NumPy); meilenstein1.py ergänzt die neuen Texturen
+  daten/      generate.py erzeugt Modelle, Blockstates, Loot, Tags, Rezepte und Sprachen für Meilenstein 1
 ```
 
-## Hinweise
-* Der Code wurde ohne Testlauf geschrieben. Falls beim Bauen Fehler kommen: Fehlermeldung
-  kopieren und mitschicken, dann wird's gezielt behoben.
-* Namen, Texturen und Figuren sind eigene Entwürfe, inspiriert vom Multiversum-Genre.
+Rezepte ändern: in `tools/daten/generate.py` eintragen und `python3 tools/daten/generate.py` laufen lassen.
+Rezepte sind JSON im Datapack, jede Maschine hat ihren eigenen Rezepttyp, z. B.
+
+```json
+{
+  "type": "riftverse:legierungsofen",
+  "ingredients": [
+    {"ingredient": {"tag": "c:ingots/copper"}, "count": 3},
+    {"ingredient": {"tag": "c:ingots/tin"}}
+  ],
+  "result": {"id": "riftverse:bronze_ingot", "count": 4},
+  "time": 200
+}
+```
+
+Rezepte der Garagen-Werkbank haben die Typen `riftverse:werkbank_shaped` und `riftverse:werkbank_shapeless`
+mit den Zusatzfeldern `hammer` (Haltbarkeit pro Craft) und `loetzinn` (verbrauchtes Lötzinn).
 
 ## Lizenz
-Dieses Projekt ist unter der [CC BY-NC-SA 4.0](https://creativecommons.org) lizenziert.
+
+Dieses Projekt ist unter der [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) lizenziert.
+
+Sie sind frei und berechtigt:
+- Teilen: Das Material in jedwedem Format oder Medium zu vervielfältigen und weiterzuverbreiten.
+- Bearbeiten: Das Material zu remixen, zu verändern und darauf aufzubauen.
+
+Unter folgenden Bedingungen:
+1. Namensnennung (Attribution): Sie müssen angemessene Urheber- und Rechteangaben machen, einen Link zur Lizenz beifügen und angeben, ob Änderungen vorgenommen wurden.
+2. Nicht-kommerziell (Non-Commercial): Sie dürfen das Material nicht für kommerzielle Zwecke nutzen.
+3. Weitergabe unter gleichen Bedingungen (ShareAlike): Wenn Sie das Material remixen, verändern oder anderweitig direkt darauf aufbauen, müssen Sie Ihre Beiträge unter derselben Lizenz wie das Original veröffentlichen.

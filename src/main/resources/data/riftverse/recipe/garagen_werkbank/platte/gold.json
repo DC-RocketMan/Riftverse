@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:ingots/gold"
+    },
+    {
+      "tag": "c:ingots/gold"
+    }
+  ],
+  "result": {
+    "id": "riftverse:gold_platte"
+  },
+  "hammer": 1
+}

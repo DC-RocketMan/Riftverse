@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:ingots/tin"
+    },
+    {
+      "tag": "c:ingots/tin"
+    }
+  ],
+  "result": {
+    "id": "riftverse:zinn_platte"
+  },
+  "hammer": 1
+}

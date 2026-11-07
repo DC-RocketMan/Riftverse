@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/copper"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:kupfer_platte"
+  },
+  "time": 40
+}

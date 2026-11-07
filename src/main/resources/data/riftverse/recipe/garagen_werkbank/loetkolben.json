@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "  K",
+    " RI",
+    "W  "
+  ],
+  "key": {
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "id": "riftverse:loetkolben"
+  },
+  "hammer": 1
+}

@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "riftverse:block/einspeiser"
+    },
+    "active=true,facing=north": {
+      "model": "riftverse:block/einspeiser_on"
+    },
+    "active=false,facing=east": {
+      "model": "riftverse:block/einspeiser",
+      "y": 90
+    },
+    "active=true,facing=east": {
+      "model": "riftverse:block/einspeiser_on",
+      "y": 90
+    },
+    "active=false,facing=south": {
+      "model": "riftverse:block/einspeiser",
+      "y": 180
+    },
+    "active=true,facing=south": {
+      "model": "riftverse:block/einspeiser_on",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "riftverse:block/einspeiser",
+      "y": 270
+    },
+    "active=true,facing=west": {
+      "model": "riftverse:block/einspeiser_on",
+      "y": 270
+    },
+    "active=false,facing=up": {
+      "model": "riftverse:block/einspeiser",
+      "x": 270
+    },
+    "active=true,facing=up": {
+      "model": "riftverse:block/einspeiser_on",
+      "x": 270
+    },
+    "active=false,facing=down": {
+      "model": "riftverse:block/einspeiser",
+      "x": 90
+    },
+    "active=true,facing=down": {
+      "model": "riftverse:block/einspeiser_on",
+      "x": 90
+    }
+  }
+}

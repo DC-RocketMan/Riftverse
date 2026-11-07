@@ -1,0 +1,21 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:dusts/copper"
+    },
+    {
+      "tag": "c:dusts/copper"
+    },
+    {
+      "tag": "c:dusts/copper"
+    },
+    {
+      "tag": "c:dusts/tin"
+    }
+  ],
+  "result": {
+    "id": "riftverse:bronze_staub",
+    "count": 4
+  }
+}

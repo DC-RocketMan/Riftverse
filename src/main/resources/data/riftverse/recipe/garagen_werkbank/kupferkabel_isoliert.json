@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "item": "riftverse:kupferkabel"
+    },
+    {
+      "item": "riftverse:isolierfolie"
+    }
+  ],
+  "result": {
+    "id": "riftverse:kupferkabel_isoliert"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "riftverse:block/tonnenreaktor_top",
+    "side": "riftverse:block/tonnenreaktor_side"
+  }
+}

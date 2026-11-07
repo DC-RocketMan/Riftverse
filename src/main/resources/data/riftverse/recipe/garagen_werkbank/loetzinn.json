@@ -1,0 +1,12 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "tag": "c:ingots/tin"
+    }
+  ],
+  "result": {
+    "id": "riftverse:loetzinn"
+  },
+  "hammer": 1
+}

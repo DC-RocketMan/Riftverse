@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/bronze"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:bronze_platte"
+  },
+  "time": 40
+}

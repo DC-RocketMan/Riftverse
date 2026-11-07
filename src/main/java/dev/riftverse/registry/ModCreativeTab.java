@@ -15,9 +15,11 @@ public final class ModCreativeTab {
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> MAIN = TABS.register("main",
             () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.riftverse"))
-                    .icon(() -> new ItemStack(ModItems.RIFT_GUN.get()))
-                    .displayItems((params, output) -> ModItems.ITEMS.getEntries()
-                            .forEach(entry -> output.accept(entry.get())))
+                    .icon(() -> new ItemStack(ModItems.GARAGEN_WERKBANK.get()))
+                    .displayItems((params, output) -> {
+                        ModItems.ITEMS.getEntries().forEach(entry -> output.accept(entry.get()));
+                        output.accept(ModItems.ENERGIEZELLE.get().charged());
+                    })
                     .build());
 
     private ModCreativeTab() {}

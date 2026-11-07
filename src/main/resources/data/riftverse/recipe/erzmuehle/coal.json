@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:coal"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:kohle_staub"
+  },
+  "time": 100
+}

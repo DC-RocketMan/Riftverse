@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/tin"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:zinn_staub"
+  },
+  "time": 100
+}

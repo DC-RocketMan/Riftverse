@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "  S",
+    "PPP",
+    "G  "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "P": {
+      "tag": "c:plates/bronze"
+    },
+    "G": {
+      "item": "riftverse:bronze_zahnrad"
+    }
+  },
+  "result": {
+    "id": "riftverse:handkurbel"
+  },
+  "hammer": 1
+}

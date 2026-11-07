@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "tag": "c:wires/copper"
+    }
+  },
+  "result": {
+    "id": "riftverse:kupferkabel",
+    "count": 6
+  }
+}

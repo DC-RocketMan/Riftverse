@@ -1,0 +1,19 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "DDD",
+    " S ",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "tag": "c:wires/copper"
+    },
+    "S": {
+      "tag": "c:rods/xenit"
+    }
+  },
+  "result": {
+    "id": "riftverse:xenit_spule"
+  }
+}

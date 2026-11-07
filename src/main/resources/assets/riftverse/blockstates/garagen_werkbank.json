@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "riftverse:block/garagen_werkbank"
+    },
+    "facing=east": {
+      "model": "riftverse:block/garagen_werkbank",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "riftverse:block/garagen_werkbank",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "riftverse:block/garagen_werkbank",
+      "y": 270
+    }
+  }
+}

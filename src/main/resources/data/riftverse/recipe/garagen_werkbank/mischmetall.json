@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SSS",
+    "BBB",
+    "ZZZ"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "B": {
+      "tag": "c:plates/bronze"
+    },
+    "Z": {
+      "tag": "c:plates/tin"
+    }
+  },
+  "result": {
+    "id": "riftverse:mischmetall",
+    "count": 2
+  },
+  "hammer": 1
+}

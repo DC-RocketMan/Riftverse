@@ -47,6 +47,12 @@ _RAMPS = {
     'leather':  ['#2e1a0e', '#4a2c16', '#6e4424', '#8e5c34', '#ad7a4c'],
     'yellow':   ['#5a4a00', '#9a8000', '#e0c020', '#ffe45a', '#fff4b0'],
     'sky':      ['#0a1c40', '#123070', '#2050b0', '#4a80e0', '#9ac0ff'],
+    # Meilenstein 1: Erdmetalle
+    'tin':      ['#3e464c', '#646e75', '#8f99a0', '#bcc5cb', '#e2e8eb'],
+    'iron':     ['#3c3c3e', '#68686c', '#9c9ca0', '#cbcbcf', '#efeff2'],
+    'gold':     ['#6e4600', '#b07f0c', '#e2b424', '#fbd94e', '#fff3a6'],
+    'bronze':   ['#4e270c', '#83481b', '#bb7432', '#e19c55', '#f5c58a'],
+    'coal':     ['#0c0c0e', '#19191d', '#29292f', '#3e3e46', '#5a5a64'],
 }
 R = {k: [H(c) for c in v] for k, v in _RAMPS.items()}
 BLACK = H('#08080a')

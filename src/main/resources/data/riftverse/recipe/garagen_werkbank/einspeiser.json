@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " S ",
+    "KCK",
+    " R "
+  ],
+  "key": {
+    "S": {
+      "item": "riftverse:xenit_spule"
+    },
+    "K": {
+      "item": "riftverse:kupferkabel"
+    },
+    "C": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "id": "riftverse:einspeiser"
+  },
+  "loetzinn": 2
+}

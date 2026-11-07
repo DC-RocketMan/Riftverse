@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/iron"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:eisen_platte"
+  },
+  "time": 40
+}

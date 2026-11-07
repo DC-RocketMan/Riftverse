@@ -1,0 +1,17 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " P ",
+    "P P",
+    " P "
+  ],
+  "key": {
+    "P": {
+      "tag": "c:plates/bronze"
+    }
+  },
+  "result": {
+    "id": "riftverse:bronze_zahnrad"
+  },
+  "hammer": 1
+}

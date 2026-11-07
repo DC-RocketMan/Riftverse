@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "riftverse:block/casing_t1",
+    "north": "riftverse:block/ausspeiser_front",
+    "south": "riftverse:block/casing_t1",
+    "east": "riftverse:block/casing_t1",
+    "west": "riftverse:block/casing_t1",
+    "up": "riftverse:block/casing_t1_top",
+    "down": "riftverse:block/casing_t1_top"
+  }
+}

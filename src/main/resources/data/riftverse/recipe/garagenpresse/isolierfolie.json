@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:polymerfetzen"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:isolierfolie"
+  },
+  "time": 40
+}

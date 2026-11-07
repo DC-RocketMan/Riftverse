@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "IBI",
+    "W W",
+    "IBI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "B": {
+      "tag": "c:plates/bronze"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "id": "riftverse:garagen_gehaeuse"
+  },
+  "hammer": 1
+}

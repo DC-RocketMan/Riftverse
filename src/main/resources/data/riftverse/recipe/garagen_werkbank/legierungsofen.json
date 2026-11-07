@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "H H",
+    "FCF",
+    "ISI"
+  ],
+  "key": {
+    "H": {
+      "item": "minecraft:hopper"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "C": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "S": {
+      "item": "riftverse:xenit_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:legierungsofen"
+  },
+  "loetzinn": 2
+}

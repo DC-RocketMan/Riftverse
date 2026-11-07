@@ -4,6 +4,23 @@
     "riftverse:rift_stone",
     "riftverse:quantum_refiner",
     "riftverse:fluid_synthesizer",
-    "riftverse:rift_assembler"
+    "riftverse:rift_assembler",
+    "riftverse:tin_ore",
+    "riftverse:deepslate_tin_ore",
+    "riftverse:tin_block",
+    "riftverse:xenit_ore",
+    "riftverse:deepslate_xenit_ore",
+    "riftverse:xenit_block",
+    "riftverse:xenit_gehaeuse",
+    "riftverse:erzmuehle",
+    "riftverse:walzbank",
+    "riftverse:legierungsofen",
+    "riftverse:tonnenreaktor",
+    "riftverse:einspeiser",
+    "riftverse:ausspeiser",
+    "riftverse:kupferkabel",
+    "riftverse:kupferkabel_isoliert",
+    "riftverse:garagenpresse",
+    "riftverse:kurbel_dynamo"
   ]
 }

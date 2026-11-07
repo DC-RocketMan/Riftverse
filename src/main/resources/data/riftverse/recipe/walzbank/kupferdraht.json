@@ -1,0 +1,16 @@
+{
+  "type": "riftverse:walzbank",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:plates/copper"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:kupferdraht",
+    "count": 3
+  },
+  "time": 100,
+  "mode": "walzen"
+}

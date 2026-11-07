@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/gold"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:gold_platte"
+  },
+  "time": 40
+}

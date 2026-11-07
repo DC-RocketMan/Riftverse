@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.3,
+  "ingredient": {
+    "item": "riftverse:zinn_staub"
+  },
+  "result": {
+    "id": "riftverse:tin_ingot"
+  }
+}

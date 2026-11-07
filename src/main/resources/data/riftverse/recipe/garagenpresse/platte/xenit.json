@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/xenit"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:xenit_platte"
+  },
+  "time": 40
+}

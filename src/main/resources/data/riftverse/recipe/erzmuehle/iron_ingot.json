@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ingots/iron"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:eisen_staub"
+  },
+  "time": 100
+}

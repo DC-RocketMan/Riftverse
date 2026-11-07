@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "IZI",
+    "X X",
+    "IZI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "Z": {
+      "tag": "c:plates/tin"
+    },
+    "X": {
+      "tag": "c:plates/xenit"
+    }
+  },
+  "result": {
+    "id": "riftverse:xenit_gehaeuse"
+  },
+  "hammer": 2
+}

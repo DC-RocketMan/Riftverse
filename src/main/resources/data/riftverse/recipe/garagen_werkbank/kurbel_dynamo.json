@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GKG",
+    "KCK",
+    "IRI"
+  ],
+  "key": {
+    "G": {
+      "item": "riftverse:bronze_zahnrad"
+    },
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "C": {
+      "item": "riftverse:garagen_gehaeuse"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "id": "riftverse:kurbel_dynamo"
+  },
+  "hammer": 1
+}

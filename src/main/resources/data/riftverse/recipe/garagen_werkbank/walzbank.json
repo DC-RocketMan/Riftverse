@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GIG",
+    "ICI",
+    "KRK"
+  ],
+  "key": {
+    "G": {
+      "item": "riftverse:bronze_zahnrad"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "C": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    }
+  },
+  "result": {
+    "id": "riftverse:walzbank"
+  },
+  "loetzinn": 2
+}

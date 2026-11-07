@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "riftverse:block/garagen_werkbank_front",
+    "up": "riftverse:block/garagen_werkbank_top",
+    "down": "riftverse:block/casing_t0",
+    "north": "riftverse:block/garagen_werkbank_front",
+    "south": "riftverse:block/garagen_werkbank_front",
+    "east": "riftverse:block/garagen_werkbank_side",
+    "west": "riftverse:block/garagen_werkbank_side"
+  }
+}
