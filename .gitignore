@@ -8,3 +8,7 @@ out/
 
 # lokale javac-Läufe
 javac.*.args
+
+# Python
+__pycache__/
+*.pyc

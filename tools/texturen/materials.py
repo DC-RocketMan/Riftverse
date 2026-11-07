@@ -190,20 +190,21 @@ def fluid_frames(ramp, size=16, flow=False, stars=False, n=16):
 # Item-Vorlagen
 # =============================================================================
 def bar(ramp, accent=None):
-    """Isometrischer Barren: Oberseite (hell), Front (mittel), rechte Seite (dunkel)."""
+    """Barren im IndustrialCraft-Stil: Trapez mit flacher Oberseite, Licht von oben links."""
     t = Tex()
-    for k, y in enumerate((5, 6, 7)):
-        t.rect(6 - k, y, 13 - k, y, ramp[4 if k == 0 else 3])
-    t.p(6, 5, ramp[4]); t.p(5, 6, ramp[4]); t.p(4, 7, ramp[4])
-    for y in (8, 9, 10):
-        t.rect(3, y, 10, y, ramp[2])
-        t.p(3, y, ramp[3])
-    t.rect(11, 7, 12, 7, ramp[1])
-    t.rect(11, 8, 12, 8, ramp[1]); t.rect(11, 9, 11, 9, ramp[1]); t.p(12, 6, ramp[1])
-    t.rect(3, 11, 10, 11, ramp[0])
-    t.p(11, 10, ramp[0])
+    rows = {5: (4, 11), 6: (4, 11), 7: (3, 12), 8: (3, 12), 9: (2, 13), 10: (2, 13), 11: (2, 13)}
+    for y, (x0, x1) in rows.items():
+        if y <= 6:                                        # Oberseite
+            t.rect(x0, y, x1, y, ramp[4] if y == 5 else ramp[3])
+            continue
+        t.rect(x0, y, x1, y, ramp[2] if y < 11 else ramp[1])
+        t.p(x0, y, ramp[3])                               # linke Flanke im Licht
+        t.p(x1, y, ramp[1] if y < 11 else ramp[0])        # rechte Flanke im Schatten
+    t.rect(4, 7, 11, 7, ramp[3])                          # Kante zur Oberseite
+    t.p(4, 5, H('#ffffff', 200)); t.p(5, 5, ramp[4])      # Glanzpunkt
+    t.p(4, 8, ramp[3]); t.p(4, 9, ramp[3]); t.p(3, 10, ramp[3])
     if accent:
-        t.p(6, 9, accent[3]); t.p(7, 9, accent[4]); t.p(8, 10, accent[3])
+        t.p(8, 8, accent[3]); t.p(8, 9, accent[4]); t.p(9, 10, accent[3])
     t.outline()
     return t
 
@@ -241,16 +242,20 @@ def raw_chunk(ramp, accent, seed):
 
 
 def plate(ramp, rivets=True, mark=None):
+    """Platte im IndustrialCraft-Stil: flaches Quadrat mit Fase, oben links hell, unten rechts dunkel."""
     t = Tex()
-    for y in range(5, 11):
-        off = 10 - y
-        t.rect(2 + off // 2, y, 12 + off // 2, y, ramp[3 if y < 7 else 2])
-    t.rect(2, 11, 12, 11, ramp[1])
-    t.rect(2, 12, 12, 12, ramp[0])
-    t.rect(4, 5, 14, 5, ramp[4])
+    t.rect(3, 3, 12, 12, ramp[2])
+    t.rect(3, 2, 12, 2, ramp[4]); t.rect(2, 3, 2, 12, ramp[4])        # Fase oben/links
+    t.rect(3, 3, 12, 3, ramp[3]); t.rect(3, 4, 3, 12, ramp[3])
+    t.rect(3, 13, 12, 13, ramp[0]); t.rect(13, 3, 13, 12, ramp[0])    # Fase unten/rechts
+    t.rect(4, 12, 12, 12, ramp[1]); t.rect(12, 4, 12, 11, ramp[1])
+    for i in range(5):                                                 # diagonaler Glanz
+        t.p(5 + i, 10 - i, ramp[3])
+    t.p(6, 5, ramp[3]); t.p(5, 6, ramp[3])
     if rivets:
-        for x, y in [(5, 6), (12, 6), (3, 10), (10, 10)]:
-            t.p(x, y, ramp[4]); t.p(x, y + 1, ramp[0])
+        for x, y in [(4, 4), (10, 4), (4, 10), (10, 10)]:
+            t.p(x, y, ramp[4])
+            t.p(x + 1, y + 1, ramp[0])
     if mark:
         for x, y, c in mark:
             t.p(x, y, c)
