@@ -4,11 +4,12 @@ import dev.riftverse.Riftverse;
 import dev.riftverse.energy.EnergyItems;
 import dev.riftverse.energy.EnergyPortBlockEntity;
 import dev.riftverse.energy.KreativQuelleBlockEntity;
-import dev.riftverse.machine.MachineBlockEntity;
+import dev.riftverse.tech.FluidMixerBlockEntity;
 import dev.riftverse.tech.KurbelDynamoBlockEntity;
 import dev.riftverse.tech.ProcessingBlockEntity;
 import dev.riftverse.tech.TonnenreaktorBlockEntity;
 import dev.riftverse.tech.WerkbankBlockEntity;
+import dev.riftverse.tech.XenitZelleBlockEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -20,20 +21,25 @@ public final class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Riftverse.MODID);
 
-    /** Eine gemeinsame BlockEntity für alle drei Prototyp-Maschinen; der Maschinentyp kommt vom Block. */
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MachineBlockEntity>> MACHINE =
-            BLOCK_ENTITIES.register("machine", () -> BlockEntityType.Builder.of(MachineBlockEntity::new,
-                    ModBlocks.QUANTUM_REFINER.get(),
-                    ModBlocks.FLUID_SYNTHESIZER.get(),
-                    ModBlocks.RIFT_ASSEMBLER.get()).build(null));
-
-    /** Erzmühle, Walzbank, Legierungsofen, Garagenpresse; was die Maschine kann, steht in MachineKind. */
+    /** Alle verarbeitenden Maschinen; was die Maschine kann, steht in MachineKind. */
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ProcessingBlockEntity>> PROCESSING =
             BLOCK_ENTITIES.register("processing", () -> BlockEntityType.Builder.of(ProcessingBlockEntity::new,
                     ModBlocks.ERZMUEHLE.get(),
                     ModBlocks.WALZBANK.get(),
                     ModBlocks.LEGIERUNGSOFEN.get(),
-                    ModBlocks.GARAGENPRESSE.get()).build(null));
+                    ModBlocks.GARAGENPRESSE.get(),
+                    ModBlocks.XENIT_SCHMELZE.get(),
+                    ModBlocks.PLATINEN_AETZER.get(),
+                    ModBlocks.KRISTALL_SCHLEIFER.get(),
+                    ModBlocks.RECYCLER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidMixerBlockEntity>> FLUID_MIXER =
+            BLOCK_ENTITIES.register("fluid_mixer", () -> BlockEntityType.Builder.of(FluidMixerBlockEntity::new,
+                    ModBlocks.FLUID_MIXER.get()).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<XenitZelleBlockEntity>> XENIT_ZELLE =
+            BLOCK_ENTITIES.register("xenit_zelle", () -> BlockEntityType.Builder.of(XenitZelleBlockEntity::new,
+                    ModBlocks.XENIT_ZELLE.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KurbelDynamoBlockEntity>> KURBEL_DYNAMO =
             BLOCK_ENTITIES.register("kurbel_dynamo", () -> BlockEntityType.Builder.of(KurbelDynamoBlockEntity::new,
@@ -61,9 +67,6 @@ public final class ModBlockEntities {
      * Maschinen und Generatoren zeigen ihren Füllstand nur lesbar an (für Jade, Integrated Dynamics).
      */
     public static void registerCapabilities(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MACHINE.get(),
-                (machine, side) -> machine.getItemHandlerForSide(side));
-
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PROCESSING.get(),
                 (machine, side) -> machine.automationHandler());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, PROCESSING.get(),
@@ -75,6 +78,15 @@ public final class ModBlockEntities {
                 (reactor, side) -> reactor.energy().readOnly());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, KURBEL_DYNAMO.get(),
                 (dynamo, side) -> dynamo.energy().readOnly());
+
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FLUID_MIXER.get(),
+                (mixer, side) -> mixer.automationHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLUID_MIXER.get(),
+                (mixer, side) -> mixer.fluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, FLUID_MIXER.get(),
+                (mixer, side) -> mixer.energy().readOnly());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, XENIT_ZELLE.get(),
+                (cell, side) -> cell.energy().readOnly());
 
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ENERGY_PORT.get(),
                 (port, side) -> port.externalStorage(side));

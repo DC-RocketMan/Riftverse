@@ -3,7 +3,7 @@ package dev.riftverse.boss;
 import dev.riftverse.portal.RiftPortalEntity;
 import dev.riftverse.registry.ModItems;
 import dev.riftverse.story.BossPlot;
-import dev.riftverse.story.MultiverseData;
+import dev.riftverse.universe.MultiverseData;
 import dev.riftverse.story.StoryEngine;
 import dev.riftverse.story.Twist;
 import dev.riftverse.universe.Multiverse;
@@ -412,10 +412,10 @@ public class RiftBossEntity extends Monster {
         String epithet = u != null ? StoryEngine.epithet(outcome, u, random) : "Rift-Wanderer";
         List<String> epilogue = StoryEngine.epilogue(plot, outcome, u, playerName, epithet);
 
-        int cells = outcome == StoryEngine.Outcome.SPARED ? 6 : 3 + random.nextInt(4);
-        spawnAtLocation(new ItemStack(ModItems.RIFT_FLUID_CELL.get(), cells));
-        spawnAtLocation(new ItemStack(ModItems.QUANTUM_INGOT.get(), 2 + random.nextInt(3)));
-        spawnAtLocation(new ItemStack(ModItems.UNIVERSE_SHARD.get()));
+        // Belohnung bis zum Story-Modus: Xenit und Fluxkristalle (Story-Fragmente folgen in Phase 3)
+        int crystals = outcome == StoryEngine.Outcome.SPARED ? 6 : 3 + random.nextInt(4);
+        spawnAtLocation(new ItemStack(ModItems.FLUXKRISTALL.get(), crystals));
+        spawnAtLocation(new ItemStack(ModItems.XENIT_INGOT.get(), 2 + random.nextInt(3)));
         ItemStack book = StoryEngine.chronicle(plot, outcome, u, log, epilogue);
         if (player == null || !player.getInventory().add(book)) spawnAtLocation(book);
 

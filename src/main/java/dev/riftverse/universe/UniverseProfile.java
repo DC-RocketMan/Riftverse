@@ -2,6 +2,8 @@ package dev.riftverse.universe;
 
 import dev.riftverse.registry.ModBlocks;
 import dev.riftverse.story.NameGen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
@@ -17,60 +19,54 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Alle Eigenschaften eines Universums – vollständig deterministisch aus seiner
- * {@link UniverseId} abgeleitet: Gelände, Gesteins-Palette, Flora, Flüssigkeiten
- * und die physikalischen Regeln (Gravitation, Atmosphäre, Temperatur).
- * Die Physik orientiert sich bewusst an unserer: Abweichungen sind plausibel,
- * nicht absurd (0,3 g bis 1,8 g, dünne/dichte/giftige Luft, Hitze/Kälte).
+ * Alle Eigenschaften eines Universums – vollständig deterministisch aus seiner {@link UniverseId} abgeleitet.
+ * Der {@link UniverseType} legt Physik, exklusive Ressource und Gefahr fest; innerhalb des Typs würfelt jedes
+ * Universum Gelände, Gesteins-Palette und 1–3 {@link UniverseModifier Modifikatoren}.
+ * <p>
+ * gespeichert wird davon nichts außer Typ und Zelle: Wird ein Universum beim Aufräumen zurückgesetzt, entsteht
+ * es aus demselben Seed wieder gleich.
  */
 public final class UniverseProfile {
 
     // ------------------------------------------------------------------ Enums
 
     public enum Terrain {
-        ROLLING("Hügelland"), TERRACED("Tafelberge"), CANYON("Schluchtenland"), SPIKES("Steinnadeln"),
-        ARCHIPELAGO("Inselmeer"), CRATERED("Kraterfeld"), FLOATING("Schwebende Inseln");
+        ROLLING("Hügelland"), TERRACED("Tafelberge"), CANYON("Schluchtenland"), SPIKES("Nadelfelsen"),
+        ARCHIPELAGO("Seenplatte"), CRATERED("Kraterfeld"), HALDEN("Müllberge");
         public final String label;
         Terrain(String label) { this.label = label; }
     }
 
     public enum Atmosphere {
-        NORMAL("atembar"), DENSE("dicht – Bewegung zäh, Stürze gedämpft"),
-        THIN("dünn – Sprinten kostet viel Kraft"), TOXIC("giftig – ohne Helm Vergiftung");
+        NORMAL("atembar"), TOXIC("giftig – ohne Helm Vergiftung");
         public final String label;
         Atmosphere(String label) { this.label = label; }
     }
 
     public enum Temperature {
-        TEMPERATE("gemäßigt"), HOT("heiß – höherer Hunger, Lava statt Wasser"),
-        COLD("eisig – ohne Lederrüstung erfrierst du");
+        TEMPERATE("gemäßigt"), HOT("heiß"), COLD("eisig");
         public final String label;
         Temperature(String label) { this.label = label; }
     }
 
-    public enum Flora { NONE, GRASS, TREES, GLOW_TREES, CRYSTALS, MUSHROOMS, DESERT }
+    public record Palette(String name, Block surface, Block under, Block stone, Block seabed) {}
 
-    public record Palette(String name, Block surface, Block under, Block stone, Block seabed,
-                          boolean lush, boolean allowHot, boolean allowCold, boolean dry, boolean banded) {}
-
-    private static final List<Palette> PALETTES = List.of(
-            new Palette("Erdähnlich", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.SAND, true, false, true, false, false),
-            new Palette("Moosteppich", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.CLAY, true, false, false, false, false),
-            new Palette("Myzel-Welt", Blocks.MYCELIUM, Blocks.DIRT, Blocks.STONE, Blocks.GRAVEL, true, false, false, false, false),
-            new Palette("Rote Wüste", Blocks.RED_SAND, Blocks.RED_SANDSTONE, Blocks.TERRACOTTA, Blocks.RED_SAND, false, true, false, true, false),
-            new Palette("Weiße Dünen", Blocks.SAND, Blocks.SANDSTONE, Blocks.STONE, Blocks.SAND, false, true, false, false, false),
-            new Palette("Vulkanisch", Blocks.BLACKSTONE, Blocks.BASALT, Blocks.BLACKSTONE, Blocks.SMOOTH_BASALT, false, true, false, false, false),
-            new Palette("Mondstaub", Blocks.CALCITE, Blocks.TUFF, Blocks.TUFF, Blocks.GRAVEL, false, false, true, true, false),
-            new Palette("Warped-Flora", Blocks.WARPED_NYLIUM, Blocks.NETHERRACK, Blocks.DEEPSLATE, Blocks.GRAVEL, true, true, true, false, false),
-            new Palette("Karmesin-Flora", Blocks.CRIMSON_NYLIUM, Blocks.NETHERRACK, Blocks.BLACKSTONE, Blocks.SOUL_SAND, true, true, false, false, false),
-            new Palette("Eiswüste", Blocks.SNOW_BLOCK, Blocks.PACKED_ICE, Blocks.STONE, Blocks.GRAVEL, false, false, true, false, false),
-            new Palette("Sculk-Land", Blocks.SCULK, Blocks.DEEPSLATE, Blocks.DEEPSLATE, Blocks.SCULK, false, false, true, false, false),
-            new Palette("Endstein-Ebene", Blocks.END_STONE, Blocks.END_STONE, Blocks.END_STONE, Blocks.GRAVEL, false, false, true, true, false),
-            new Palette("Schlammwelt", Blocks.MUD, Blocks.PACKED_MUD, Blocks.STONE, Blocks.MUD, true, false, false, false, false),
-            new Palette("Terrakotta-Mesa", Blocks.ORANGE_TERRACOTTA, Blocks.TERRACOTTA, Blocks.TERRACOTTA, Blocks.RED_SAND, false, true, false, false, true));
-
-    private static final Block[] BANDS = {Blocks.TERRACOTTA, Blocks.ORANGE_TERRACOTTA, Blocks.YELLOW_TERRACOTTA,
-            Blocks.WHITE_TERRACOTTA, Blocks.RED_TERRACOTTA, Blocks.BROWN_TERRACOTTA, Blocks.LIGHT_GRAY_TERRACOTTA};
+    private static final Map<UniverseType, List<Palette>> PALETTES = Map.of(
+            UniverseType.SCHROTT, List.of(
+                    new Palette("Rostige Halde", Blocks.COARSE_DIRT, Blocks.DIRT, Blocks.TUFF, Blocks.GRAVEL),
+                    new Palette("Aschehalde", Blocks.GRAVEL, Blocks.TUFF, Blocks.DEEPSLATE, Blocks.GRAVEL),
+                    new Palette("Ölschlamm", Blocks.MUD, Blocks.PACKED_MUD, Blocks.STONE, Blocks.MUD),
+                    new Palette("Rostwüste", Blocks.RED_SAND, Blocks.RED_SANDSTONE, Blocks.TERRACOTTA, Blocks.RED_SAND)),
+            UniverseType.KRISTALL, List.of(
+                    new Palette("Kalkglanz", Blocks.CALCITE, Blocks.CALCITE, Blocks.DEEPSLATE, Blocks.CALCITE),
+                    new Palette("Tuffglas", Blocks.TUFF, Blocks.TUFF, Blocks.DEEPSLATE, Blocks.GRAVEL),
+                    new Palette("Basaltkristall", Blocks.SMOOTH_BASALT, Blocks.BASALT, Blocks.DEEPSLATE, Blocks.SMOOTH_BASALT),
+                    new Palette("Glassand", Blocks.SAND, Blocks.SANDSTONE, Blocks.DEEPSLATE, Blocks.SAND)),
+            UniverseType.TOXISCH, List.of(
+                    new Palette("Giftsumpf", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.MUD),
+                    new Palette("Moderschlamm", Blocks.MUD, Blocks.PACKED_MUD, Blocks.DEEPSLATE, Blocks.CLAY),
+                    new Palette("Myzelfäule", Blocks.MYCELIUM, Blocks.DIRT, Blocks.STONE, Blocks.MUD),
+                    new Palette("Moosteppich", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.MUD)));
 
     // ------------------------------------------------------------------ Cache
 
@@ -89,11 +85,12 @@ public final class UniverseProfile {
     // ------------------------------------------------------------------ Felder
 
     public final UniverseId id;
+    public final UniverseType type;
     public final long seed;
     public final String name;
+    public final List<UniverseModifier> modifiers;
     public final Terrain terrain;
     public final Palette palette;
-    public final Flora flora;
     public final Atmosphere atmosphere;
     public final Temperature temperature;
     public final double gravity;
@@ -102,87 +99,79 @@ public final class UniverseProfile {
     public final int biomeRoll;
     public final boolean caves;
     public final int fluidLevel;
-    public final float treeDensity;
+    /** Anteil der Oberfläche mit Deko (Kristallnadeln, tote Bäume, Wracks). */
+    public final float featureDensity;
     public final float plantDensity;
-    public final int treeStyle;
 
     private final double base, amplitude, frequency;
-    private final double stepHeight, spikeHeight, canyonDepth, craterDensity;
-    private final SimplexNoise heightNoise, detailNoise, featureNoise;
+    private final double stepHeight, spikeHeight, canyonDepth, craterDensity, haldenHeight;
+    private final SimplexNoise heightNoise, detailNoise, featureNoise, fieldNoise;
     private final ImprovedNoise caveNoise, oreNoise;
 
     private UniverseProfile(UniverseId id) {
         this.id = id;
+        this.type = id.type();
         this.seed = id.seed();
         RandomSource r = RandomSource.create(seed);
-        int v = id.variant();
 
         this.name = NameGen.universeName(r);
+        this.modifiers = UniverseModifier.roll(r);
+        this.gravity = type.gravity();
+        this.atmosphere = type == UniverseType.TOXISCH ? Atmosphere.TOXIC : Atmosphere.NORMAL;
+        this.temperature = Temperature.TEMPERATE;
 
-        // --- Physik ---
-        this.temperature = switch (v) {
-            case 2 -> Temperature.HOT;
-            case 1 -> weighted(r, Temperature.values(), 40, 5, 55);
-            case 3 -> weighted(r, Temperature.values(), 50, 0, 50);
-            default -> weighted(r, Temperature.values(), 60, 20, 20);
+        this.terrain = switch (type) {
+            case SCHROTT -> weighted(r, Terrain.values(), 15, 0, 0, 0, 0, 25, 60);
+            case KRISTALL -> weighted(r, Terrain.values(), 30, 15, 20, 35, 0, 0, 0);
+            case TOXISCH -> weighted(r, Terrain.values(), 35, 0, 15, 0, 35, 15, 0);
         };
-        this.atmosphere = switch (v) {
-            case 2 -> weighted(r, Atmosphere.values(), 40, 25, 0, 35);
-            case 3 -> weighted(r, Atmosphere.values(), 25, 0, 55, 20);
-            default -> weighted(r, Atmosphere.values(), 65, 12, 13, 10);
+        List<Palette> palettes = PALETTES.get(type);
+        this.palette = palettes.get(r.nextInt(palettes.size()));
+        this.featureDensity = switch (type) {
+            case SCHROTT -> 0.15f + r.nextFloat() * 0.2f;
+            case KRISTALL -> 0.006f + r.nextFloat() * 0.012f;
+            case TOXISCH -> 0.004f + r.nextFloat() * 0.012f;
         };
-        double g = switch (v) {
-            case 3 -> 0.3 + r.nextDouble() * 0.5;
-            case 2 -> Mth.clamp(1.15 + r.nextGaussian() * 0.2, 0.6, 1.8);
-            default -> Mth.clamp(1.0 + r.nextGaussian() * 0.22, 0.45, 1.7);
+        this.plantDensity = switch (type) {
+            case SCHROTT -> 0.01f + r.nextFloat() * 0.03f;
+            case KRISTALL -> 0.02f + r.nextFloat() * 0.05f;
+            case TOXISCH -> 0.08f + r.nextFloat() * 0.2f;
         };
-        this.gravity = Math.round(g * 100.0) / 100.0;
 
-        // --- Gelände ---
-        this.terrain = switch (v) {
-            case 1 -> weighted(r, Terrain.values(), 25, 10, 15, 20, 10, 10, 10);
-            case 2 -> weighted(r, Terrain.values(), 20, 15, 25, 25, 0, 15, 0);
-            case 3 -> weighted(r, Terrain.values(), 0, 0, 0, 10, 0, 35, 55);
-            default -> weighted(r, Terrain.values(), 30, 15, 15, 10, 20, 5, 5);
-        };
-        this.palette = pickPalette(r, temperature, v);
-        this.flora = pickFlora(r, palette, temperature, v);
-        this.treeStyle = r.nextInt(9);
-        this.treeDensity = switch (flora) {
-            case TREES, GLOW_TREES -> 0.004f + r.nextFloat() * 0.03f;
-            case MUSHROOMS, CRYSTALS -> 0.003f + r.nextFloat() * 0.012f;
-            case DESERT -> 0.004f + r.nextFloat() * 0.01f;
-            default -> 0f;
-        };
-        this.plantDensity = flora == Flora.NONE ? 0.02f : 0.05f + r.nextFloat() * 0.25f;
-
-        this.oreRichness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
+        double richness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
+        this.oreRichness = modifiers.contains(UniverseModifier.DOPPELTE_ERZE) ? Math.min(2.0, richness * 2.0) : richness;
         this.danger = 1 + r.nextInt(5);
         this.biomeRoll = r.nextInt(1 << 20);
-        this.caves = terrain != Terrain.FLOATING && r.nextFloat() < 0.7f;
+        this.caves = r.nextFloat() < 0.75f;
 
-        boolean hasFluid = !palette.dry() && terrain != Terrain.FLOATING;
-        this.fluidLevel = hasFluid ? (terrain == Terrain.ARCHIPELAGO ? 63 : 48 + r.nextInt(22)) : Integer.MIN_VALUE;
+        boolean dry = palette.surface() == Blocks.RED_SAND;
+        this.fluidLevel = dry ? Integer.MIN_VALUE : (terrain == Terrain.ARCHIPELAGO ? 63 : 50 + r.nextInt(18));
 
         switch (terrain) {
             case ROLLING -> { base = 66 + r.nextInt(20); amplitude = 10 + r.nextInt(30); frequency = 1.0 / (90 + r.nextInt(130)); }
             case TERRACED -> { base = 70 + r.nextInt(20); amplitude = 25 + r.nextInt(35); frequency = 1.0 / (120 + r.nextInt(120)); }
             case CANYON -> { base = 82 + r.nextInt(18); amplitude = 12 + r.nextInt(20); frequency = 1.0 / (140 + r.nextInt(100)); }
             case SPIKES -> { base = 68 + r.nextInt(14); amplitude = 8 + r.nextInt(16); frequency = 1.0 / (100 + r.nextInt(100)); }
-            case ARCHIPELAGO -> { base = 50; amplitude = 22 + r.nextInt(16); frequency = 1.0 / (120 + r.nextInt(100)); }
+            case ARCHIPELAGO -> { base = 52; amplitude = 18 + r.nextInt(14); frequency = 1.0 / (120 + r.nextInt(100)); }
             case CRATERED -> { base = 70 + r.nextInt(16); amplitude = 4 + r.nextInt(9); frequency = 1.0 / (160 + r.nextInt(120)); }
-            default -> { base = 90 + r.nextInt(50); amplitude = 20 + r.nextInt(30); frequency = 1.0 / (70 + r.nextInt(60)); }
+            default -> { base = 66 + r.nextInt(10); amplitude = 6 + r.nextInt(10); frequency = 1.0 / (110 + r.nextInt(90)); }
         }
         this.stepHeight = 5 + r.nextInt(8);
         this.spikeHeight = 30 + r.nextInt(45);
         this.canyonDepth = 25 + r.nextInt(30);
         this.craterDensity = 0.2 + r.nextDouble() * 0.4;
+        this.haldenHeight = 18 + r.nextInt(28);
 
         this.heightNoise = new SimplexNoise(r);
         this.detailNoise = new SimplexNoise(r);
         this.featureNoise = new SimplexNoise(r);
+        this.fieldNoise = new SimplexNoise(r);
         this.caveNoise = new ImprovedNoise(r);
         this.oreNoise = new ImprovedNoise(r);
+    }
+
+    public boolean has(UniverseModifier modifier) {
+        return modifiers.contains(modifier);
     }
 
     // ------------------------------------------------------------------ Auswahl-Helfer
@@ -196,33 +185,6 @@ public final class UniverseProfile {
             if (roll < 0) return values[i];
         }
         return values[0];
-    }
-
-    private static Palette pickPalette(RandomSource r, Temperature t, int variant) {
-        List<Palette> ok = PALETTES.stream().filter(p -> switch (t) {
-            case HOT -> p.allowHot();
-            case COLD -> p.allowCold();
-            default -> !p.name().equals("Eiswüste");
-        }).filter(p -> variant != 3 || !p.lush() || p.surface() == Blocks.WARPED_NYLIUM).toList();
-        if (ok.isEmpty()) return PALETTES.get(0);
-        return ok.get(r.nextInt(ok.size()));
-    }
-
-    private static Flora pickFlora(RandomSource r, Palette p, Temperature t, int variant) {
-        Block s = p.surface();
-        if (s == Blocks.MYCELIUM) return r.nextFloat() < 0.8f ? Flora.MUSHROOMS : Flora.GRASS;
-        if (s == Blocks.SAND || s == Blocks.RED_SAND || s == Blocks.ORANGE_TERRACOTTA)
-            return r.nextFloat() < 0.6f ? Flora.DESERT : (r.nextBoolean() ? Flora.CRYSTALS : Flora.NONE);
-        if (s == Blocks.SNOW_BLOCK || s == Blocks.CALCITE || s == Blocks.END_STONE)
-            return r.nextFloat() < 0.5f ? Flora.CRYSTALS : (variant == 1 ? Flora.GLOW_TREES : Flora.NONE);
-        if (s == Blocks.BLACKSTONE || s == Blocks.SCULK)
-            return r.nextFloat() < 0.5f ? Flora.GLOW_TREES : Flora.NONE;
-        if (variant == 1) return r.nextFloat() < 0.7f ? Flora.GLOW_TREES : Flora.GRASS;
-        float f = r.nextFloat();
-        if (f < 0.5f) return Flora.TREES;
-        if (f < 0.75f) return Flora.GRASS;
-        if (f < 0.9f) return Flora.GLOW_TREES;
-        return Flora.CRYSTALS;
     }
 
     // ------------------------------------------------------------------ Gelände
@@ -247,55 +209,46 @@ public final class UniverseProfile {
         double n = fbm(heightNoise, x * frequency, z * frequency, 4);
         double detail = fbm(detailNoise, x / 24.0, z / 24.0, 2) * 2.0;
         int minY = -64;
-
+        double h;
         switch (terrain) {
-            case FLOATING -> {
-                double m = fbm(featureNoise, x * frequency, z * frequency, 3);
-                if (m < 0.18) return false;
-                double t = m - 0.18;
-                double center = base + amplitude * 0.35 * fbm(heightNoise, x * frequency * 0.5, z * frequency * 0.5, 2);
-                out[1] = (int) Math.round(center + t * amplitude * 0.9 + 1 + detail * 0.5);
-                out[0] = (int) Math.round(center - t * amplitude * 3.0 - 2);
-                if (out[0] > out[1]) out[0] = out[1];
-                out[0] = Math.max(out[0], minY + 1);
-                return true;
-            }
             case TERRACED -> {
-                double h = base + amplitude * n;
+                h = base + amplitude * n;
                 h = Math.floor(h / stepHeight) * stepHeight + Math.max(0, detail * 0.5);
-                out[1] = (int) h;
             }
             case CANYON -> {
-                double h = base + amplitude * n + detail;
+                h = base + amplitude * n + detail;
                 double ridge = Math.abs(featureNoise.getValue(x * frequency * 0.7, z * frequency * 0.7));
                 if (ridge < 0.09) h -= (1.0 - ridge / 0.09) * canyonDepth;
-                out[1] = (int) h;
             }
             case SPIKES -> {
-                double h = base + amplitude * n + detail;
+                h = base + amplitude * n + detail;
                 double s = featureNoise.getValue(x * 0.045, z * 0.045);
                 if (s > 0.55) {
                     double k = (s - 0.55) / 0.45;
                     h += k * k * spikeHeight;
                 }
-                out[1] = (int) h;
             }
-            case ARCHIPELAGO -> {
-                double h = base + amplitude * (n + 0.1) + detail;
-                out[1] = (int) h;
+            case ARCHIPELAGO -> h = base + amplitude * (n + 0.1) + detail;
+            case CRATERED -> h = base + amplitude * n + craters(x, z) + detail * 0.5;
+            case HALDEN -> {
+                double m = Math.max(0, halde(x, z));
+                h = base + amplitude * n + m * m * haldenHeight + detail;
             }
-            case CRATERED -> {
-                double h = base + amplitude * n + craters(x, z) + detail * 0.5;
-                out[1] = (int) h;
-            }
-            default -> {
-                double h = base + amplitude * n + detail;
-                out[1] = (int) h;
-            }
+            default -> h = base + amplitude * n + detail;
         }
         out[0] = minY;
-        out[1] = Mth.clamp(out[1], minY + 6, 300);
+        out[1] = Mth.clamp((int) h, minY + 6, 300);
         return true;
+    }
+
+    /** Müllberge der Schrottwelt: -1..1, über 0 liegt eine Halde. */
+    public double halde(int x, int z) {
+        return fbm(featureNoise, x * frequency * 1.8, z * frequency * 1.8, 3) * 1.4;
+    }
+
+    /** Wrackfelder der Schrottwelt: dort liegen viele Wracks mit Xenit-Erz. */
+    public boolean wreckField(int x, int z) {
+        return fieldNoise.getValue(x / 260.0, z / 260.0) > 0.35;
     }
 
     private double craters(int x, int z) {
@@ -326,19 +279,12 @@ public final class UniverseProfile {
         return fluidLevel != Integer.MIN_VALUE;
     }
 
+    /** Seen: Säure in der toxischen Welt, sonst Wasser. */
     public BlockState fluidBlock() {
-        return temperature == Temperature.HOT ? Blocks.LAVA.defaultBlockState() : Blocks.WATER.defaultBlockState();
-    }
-
-    public boolean iceCap() {
-        return temperature == Temperature.COLD && fluidBlock().is(Blocks.WATER);
+        return type == UniverseType.TOXISCH ? ModBlocks.SAEURE.get().defaultBlockState() : Blocks.WATER.defaultBlockState();
     }
 
     public BlockState stoneAt(int y) {
-        if (palette.banded()) {
-            int band = Math.floorMod(y / 3 + (int) (seed & 7), BANDS.length);
-            return BANDS[band].defaultBlockState();
-        }
         if (palette.stone() == Blocks.STONE && y < 0) return Blocks.DEEPSLATE.defaultBlockState();
         return palette.stone().defaultBlockState();
     }
@@ -350,7 +296,7 @@ public final class UniverseProfile {
     }
 
     public BlockState caveFluid() {
-        return temperature == Temperature.COLD ? Blocks.WATER.defaultBlockState() : Blocks.LAVA.defaultBlockState();
+        return type == UniverseType.TOXISCH ? ModBlocks.SAEURE.get().defaultBlockState() : Blocks.LAVA.defaultBlockState();
     }
 
     /** Erz-Adern über 3D-Rauschen: zusammenhängende Klumpen statt Einzelblöcke. */
@@ -363,41 +309,39 @@ public final class UniverseProfile {
                 ^ ((long) Math.floorDiv(y, 8) * 0xC2B2AE3D27D4EB4FL) ^ ((long) Math.floorDiv(z, 8) * 0x165667B19E3779F9L));
         int roll = (int) Math.floorMod(h, 1000);
         boolean deep = y < 0;
-        int quantum = (int) (120 + oreRichness * 260);
-        if (roll < quantum) return ModBlocks.QUANTUM_ORE.get().defaultBlockState();
-        roll -= quantum;
-        if (roll < 200) return (deep ? Blocks.DEEPSLATE_COAL_ORE : Blocks.COAL_ORE).defaultBlockState();
-        if (roll < 360) return (deep ? Blocks.DEEPSLATE_IRON_ORE : Blocks.IRON_ORE).defaultBlockState();
-        if (roll < 460) return (deep ? Blocks.DEEPSLATE_COPPER_ORE : Blocks.COPPER_ORE).defaultBlockState();
-        if (roll < 520) return (deep ? Blocks.DEEPSLATE_REDSTONE_ORE : Blocks.REDSTONE_ORE).defaultBlockState();
-        if (roll < 560) return (deep ? Blocks.DEEPSLATE_GOLD_ORE : Blocks.GOLD_ORE).defaultBlockState();
-        if (roll < 590) return (deep ? Blocks.DEEPSLATE_LAPIS_ORE : Blocks.LAPIS_ORE).defaultBlockState();
-        if (roll < 610 && deep) return Blocks.DEEPSLATE_DIAMOND_ORE.defaultBlockState();
+        // Typ-Erz zuerst: Fluxkristall in der Kristallwelt, etwas Xenit in der Schrottwelt
+        if (type == UniverseType.KRISTALL && roll < 220) return ModBlocks.FLUXKRISTALL_ORE.get().defaultBlockState();
+        if (type == UniverseType.SCHROTT && roll < 60) {
+            return (deep ? ModBlocks.DEEPSLATE_XENIT_ORE : ModBlocks.XENIT_ORE).get().defaultBlockState();
+        }
+        if (roll < 300) return (deep ? Blocks.DEEPSLATE_COAL_ORE : Blocks.COAL_ORE).defaultBlockState();
+        if (roll < 470) return (deep ? Blocks.DEEPSLATE_IRON_ORE : Blocks.IRON_ORE).defaultBlockState();
+        if (roll < 590) return (deep ? Blocks.DEEPSLATE_COPPER_ORE : Blocks.COPPER_ORE).defaultBlockState();
+        if (roll < 680) return (deep ? ModBlocks.DEEPSLATE_TIN_ORE : ModBlocks.TIN_ORE).get().defaultBlockState();
+        if (roll < 760) return (deep ? Blocks.DEEPSLATE_REDSTONE_ORE : Blocks.REDSTONE_ORE).defaultBlockState();
+        if (roll < 810) return (deep ? Blocks.DEEPSLATE_GOLD_ORE : Blocks.GOLD_ORE).defaultBlockState();
+        if (roll < 840) return (deep ? Blocks.DEEPSLATE_LAPIS_ORE : Blocks.LAPIS_ORE).defaultBlockState();
+        if (roll < 856 && deep) return Blocks.DEEPSLATE_DIAMOND_ORE.defaultBlockState();
         return null;
     }
 
     // ------------------------------------------------------------------ Texte
 
-    public String gravityLabel() {
-        if (gravity < 0.7) return "schwach";
-        if (gravity < 0.92) return "leicht";
-        if (gravity <= 1.08) return "erdähnlich";
-        if (gravity <= 1.35) return "schwer";
-        return "erdrückend";
-    }
-
     public String gravityText() {
-        return String.format(Locale.GERMAN, "%.2f g (%s)", gravity, gravityLabel());
-    }
-
-    public String richnessLabel() {
-        if (oreRichness > 0.75) return "sehr reich";
-        if (oreRichness > 0.5) return "ergiebig";
-        if (oreRichness > 0.3) return "mäßig";
-        return "karg";
+        return String.format(Locale.GERMAN, "%.2f g", gravity);
     }
 
     public String title() {
         return "Universum " + id.code();
+    }
+
+    /** „Riesen-Mobs, Supraleitend“ */
+    public MutableComponent modifierText() {
+        MutableComponent c = Component.empty();
+        for (int i = 0; i < modifiers.size(); i++) {
+            if (i > 0) c.append(", ");
+            c.append(modifiers.get(i).displayName());
+        }
+        return c;
     }
 }

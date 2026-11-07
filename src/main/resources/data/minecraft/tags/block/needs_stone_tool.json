@@ -13,6 +13,13 @@
     "riftverse:legierungsofen",
     "riftverse:tonnenreaktor",
     "riftverse:einspeiser",
-    "riftverse:ausspeiser"
+    "riftverse:ausspeiser",
+    "riftverse:xenit_zelle",
+    "riftverse:rift_anker",
+    "riftverse:xenit_schmelze",
+    "riftverse:platinen_aetzer",
+    "riftverse:kristall_schleifer",
+    "riftverse:recycler",
+    "riftverse:fluid_mixer"
   ]
 }

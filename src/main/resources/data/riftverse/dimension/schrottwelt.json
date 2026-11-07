@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:schrottwelt",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "schrottwelt",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "schrottwelt",
+      "biomes": [
+        "riftverse:schrott_dunst",
+        "riftverse:schrott_rost"
+      ]
+    }
+  }
+}

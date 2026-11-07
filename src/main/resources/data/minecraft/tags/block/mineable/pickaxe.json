@@ -21,6 +21,18 @@
     "riftverse:kupferkabel",
     "riftverse:kupferkabel_isoliert",
     "riftverse:garagenpresse",
-    "riftverse:kurbel_dynamo"
+    "riftverse:kurbel_dynamo",
+    "riftverse:meteoritenkern",
+    "riftverse:fluxkristall_ore",
+    "riftverse:fluxkristall_block",
+    "riftverse:fluxkristall_cluster",
+    "riftverse:knospender_fluxkristall",
+    "riftverse:xenit_zelle",
+    "riftverse:rift_anker",
+    "riftverse:xenit_schmelze",
+    "riftverse:platinen_aetzer",
+    "riftverse:kristall_schleifer",
+    "riftverse:recycler",
+    "riftverse:fluid_mixer"
   ]
 }

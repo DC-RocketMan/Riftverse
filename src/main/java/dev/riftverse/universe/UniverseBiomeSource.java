@@ -1,6 +1,5 @@
 package dev.riftverse.universe;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
@@ -13,21 +12,21 @@ import net.minecraft.world.level.biome.Climate;
 import java.util.stream.Stream;
 
 /**
- * Jedes Universum bekommt genau ein Biom (Himmels-, Nebel-, Wasser- und Grasfarben)
- * aus der Liste der Dimension – passend zum Universums-Seed.
+ * Jedes Universum bekommt genau ein Biom (Himmels-, Nebel-, Wasser- und Grasfarben, Spawns)
+ * aus der Liste seines Typs – passend zum Universums-Seed.
  */
 public class UniverseBiomeSource extends BiomeSource {
     public static final MapCodec<UniverseBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Biome.LIST_CODEC.fieldOf("biomes").forGetter(src -> src.biomes),
-            Codec.INT.fieldOf("variant").forGetter(src -> src.variant)
+            UniverseType.CODEC.fieldOf("universe").forGetter(src -> src.type)
     ).apply(instance, UniverseBiomeSource::new));
 
     private final HolderSet<Biome> biomes;
-    private final int variant;
+    private final UniverseType type;
 
-    public UniverseBiomeSource(HolderSet<Biome> biomes, int variant) {
+    public UniverseBiomeSource(HolderSet<Biome> biomes, UniverseType type) {
         this.biomes = biomes;
-        this.variant = variant;
+        this.type = type;
     }
 
     @Override
@@ -44,7 +43,7 @@ public class UniverseBiomeSource extends BiomeSource {
     public Holder<Biome> getNoiseBiome(int quartX, int quartY, int quartZ, Climate.Sampler sampler) {
         int x = QuartPos.toBlock(quartX);
         int z = QuartPos.toBlock(quartZ);
-        UniverseId id = new UniverseId(variant, Multiverse.cellOf(x), Multiverse.cellOf(z));
+        UniverseId id = new UniverseId(type, Multiverse.cellOf(x), Multiverse.cellOf(z));
         int index = Math.floorMod(UniverseProfile.get(id).biomeRoll, biomes.size());
         return biomes.get(index);
     }

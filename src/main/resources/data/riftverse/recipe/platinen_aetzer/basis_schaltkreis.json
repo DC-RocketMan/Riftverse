@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:platinen_aetzer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:schrottplatte"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/redstone"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:wires/copper"
+      },
+      "count": 3
+    }
+  ],
+  "result": {
+    "id": "riftverse:basis_schaltkreis"
+  },
+  "time": 200
+}

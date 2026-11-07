@@ -1,0 +1,20 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "XXX",
+    "XS ",
+    " S "
+  ],
+  "key": {
+    "X": {
+      "tag": "c:plates/xenit"
+    },
+    "S": {
+      "tag": "c:rods/iron"
+    }
+  },
+  "result": {
+    "id": "riftverse:kanonengehaeuse"
+  },
+  "hammer": 2
+}

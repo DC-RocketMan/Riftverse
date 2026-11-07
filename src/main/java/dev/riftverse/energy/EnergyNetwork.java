@@ -2,6 +2,7 @@ package dev.riftverse.energy;
 
 import dev.riftverse.Config;
 import dev.riftverse.cable.CableBlock;
+import dev.riftverse.universe.Multiverse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -70,13 +71,15 @@ public final class EnergyNetwork {
         sources.sort(order);
         sinks.sort(order);
 
+        // Universums-Modifikatoren: supraleitend (kein Verlust) oder hochohmig (doppelter Verlust)
+        double lossFactor = sources.isEmpty() ? 1.0 : Multiverse.cableLossFactor(level, sources.get(0));
         for (BlockPos source : sources) {
-            paths.put(source, findPaths(source, kinds, states, adjacency, sinkSet));
+            paths.put(source, findPaths(source, kinds, states, adjacency, sinkSet, lossFactor));
         }
     }
 
     private static List<Path> findPaths(BlockPos source, Map<BlockPos, EnergyNet.Kind> kinds, Map<BlockPos, BlockState> states,
-                                        Map<BlockPos, List<BlockPos>> adjacency, Set<BlockPos> sinkSet) {
+                                        Map<BlockPos, List<BlockPos>> adjacency, Set<BlockPos> sinkSet, double lossFactor) {
         Map<BlockPos, Double> dist = new HashMap<>();
         Map<BlockPos, BlockPos> prev = new HashMap<>();
         PriorityQueue<Entry> queue = new PriorityQueue<>(Comparator.comparingDouble(Entry::dist));
@@ -96,7 +99,7 @@ public final class EnergyNetwork {
             }
             for (BlockPos v : adjacency.getOrDefault(u, List.of())) {
                 double cost = kinds.get(v) == EnergyNet.Kind.CABLE
-                        ? ((CableBlock) states.get(v).getBlock()).lossPerBlock() : 0.0;
+                        ? ((CableBlock) states.get(v).getBlock()).lossPerBlock() * lossFactor : 0.0;
                 double nd = e.dist() + cost;
                 if (nd < dist.getOrDefault(v, Double.MAX_VALUE)) {
                     dist.put(v, nd);
@@ -169,6 +172,7 @@ public final class EnergyNetwork {
 
                 BlockEntity sinkBe = level.getBlockEntity(path.sink());
                 if (!(sinkBe instanceof RiftEnergySink sink) || sinkBe.isRemoved()) return false;
+                if (source instanceof RiftEnergyStorage && sink instanceof RiftEnergyStorage) continue;
                 int demand = sink.getDemandedEnergy();
                 if (demand <= 0) continue;
                 int amount = (int) Math.min(demand, Math.floor(remaining - path.loss()));

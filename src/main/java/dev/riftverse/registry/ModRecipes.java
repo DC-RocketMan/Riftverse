@@ -1,6 +1,7 @@
 package dev.riftverse.registry;
 
 import dev.riftverse.Riftverse;
+import dev.riftverse.recipe.FluidMixerRecipe;
 import dev.riftverse.recipe.MachineRecipe;
 import dev.riftverse.recipe.MachineRecipeSerializer;
 import dev.riftverse.recipe.WerkbankRecipe;
@@ -21,6 +22,11 @@ public final class ModRecipes {
     public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> LEGIERUNGSOFEN_TYPE = type("legierungsofen");
     public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> GARAGENPRESSE_TYPE = type("garagenpresse");
     public static final DeferredHolder<RecipeType<?>, RecipeType<WerkbankRecipe>> WERKBANK_TYPE = type("garagen_werkbank");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> XENIT_SCHMELZE_TYPE = type("xenit_schmelze");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> PLATINEN_AETZER_TYPE = type("platinen_aetzer");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> KRISTALL_SCHLEIFER_TYPE = type("kristall_schleifer");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> RECYCLER_TYPE = type("recycler");
+    public static final DeferredHolder<RecipeType<?>, RecipeType<FluidMixerRecipe>> FLUID_MIXER_TYPE = type("fluid_mixer");
 
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> ERZMUEHLE =
             SERIALIZERS.register("erzmuehle", () -> new MachineRecipeSerializer(MachineKind.ERZMUEHLE));
@@ -30,6 +36,16 @@ public final class ModRecipes {
             SERIALIZERS.register("legierungsofen", () -> new MachineRecipeSerializer(MachineKind.LEGIERUNGSOFEN));
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> GARAGENPRESSE =
             SERIALIZERS.register("garagenpresse", () -> new MachineRecipeSerializer(MachineKind.GARAGENPRESSE));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> XENIT_SCHMELZE =
+            SERIALIZERS.register("xenit_schmelze", () -> new MachineRecipeSerializer(MachineKind.XENIT_SCHMELZE));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> PLATINEN_AETZER =
+            SERIALIZERS.register("platinen_aetzer", () -> new MachineRecipeSerializer(MachineKind.PLATINEN_AETZER));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> KRISTALL_SCHLEIFER =
+            SERIALIZERS.register("kristall_schleifer", () -> new MachineRecipeSerializer(MachineKind.KRISTALL_SCHLEIFER));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> RECYCLER =
+            SERIALIZERS.register("recycler", () -> new MachineRecipeSerializer(MachineKind.RECYCLER));
+    public static final DeferredHolder<RecipeSerializer<?>, FluidMixerRecipe.Serializer> FLUID_MIXER =
+            SERIALIZERS.register("fluid_mixer", FluidMixerRecipe.Serializer::new);
     public static final DeferredHolder<RecipeSerializer<?>, WerkbankRecipe.ShapedSerializer> WERKBANK_SHAPED =
             SERIALIZERS.register("werkbank_shaped", WerkbankRecipe.ShapedSerializer::new);
     public static final DeferredHolder<RecipeSerializer<?>, WerkbankRecipe.ShapelessSerializer> WERKBANK_SHAPELESS =

@@ -2,11 +2,15 @@ package dev.riftverse.registry;
 
 import dev.riftverse.Riftverse;
 import dev.riftverse.boss.RiftBossEntity;
+import dev.riftverse.entity.SchrottGolem;
 import dev.riftverse.portal.RiftPortalEntity;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -28,8 +32,21 @@ public final class ModEntities {
                     .clientTrackingRange(12)
                     .build("rift_boss"));
 
+    /** Gefahr der Schrottwelt: Schrott-Golems in den Halden. */
+    public static final DeferredHolder<EntityType<?>, EntityType<SchrottGolem>> SCHROTT_GOLEM =
+            ENTITIES.register("schrott_golem", () -> EntityType.Builder.<SchrottGolem>of(SchrottGolem::new, MobCategory.MONSTER)
+                    .sized(1.4f, 2.7f)
+                    .clientTrackingRange(10)
+                    .build("schrott_golem"));
+
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(RIFT_BOSS.get(), RiftBossEntity.createAttributes().build());
+        event.put(SCHROTT_GOLEM.get(), SchrottGolem.createAttributes().build());
+    }
+
+    public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        event.register(SCHROTT_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                SchrottGolem::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     private ModEntities() {}

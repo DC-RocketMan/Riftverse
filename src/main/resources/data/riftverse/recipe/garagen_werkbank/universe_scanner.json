@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " L ",
+    "XCX",
+    " B "
+  ],
+  "key": {
+    "L": {
+      "item": "riftverse:fluxlinse"
+    },
+    "X": {
+      "tag": "c:plates/xenit"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    }
+  },
+  "result": {
+    "id": "riftverse:universe_scanner"
+  },
+  "loetzinn": 1
+}

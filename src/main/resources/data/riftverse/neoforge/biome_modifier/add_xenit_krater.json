@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "riftverse:ore_xenit_krater",
+  "step": "underground_ores"
+}

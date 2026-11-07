@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ores/fluxkristall"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:fluxkristall",
+    "count": 2
+  },
+  "time": 150
+}

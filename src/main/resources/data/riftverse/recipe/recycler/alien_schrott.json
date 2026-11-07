@@ -1,0 +1,41 @@
+{
+  "type": "riftverse:recycler",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:alien_schrott"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:polymerfetzen"
+  },
+  "time": 100,
+  "byproducts": [
+    {
+      "result": {
+        "id": "riftverse:kupferdraht"
+      },
+      "chance": 0.4
+    },
+    {
+      "result": {
+        "id": "riftverse:feder"
+      },
+      "chance": 0.25
+    },
+    {
+      "result": {
+        "id": "riftverse:mini_motor"
+      },
+      "chance": 0.1
+    },
+    {
+      "result": {
+        "id": "minecraft:iron_nugget",
+        "count": 2
+      },
+      "chance": 0.3
+    }
+  ]
+}

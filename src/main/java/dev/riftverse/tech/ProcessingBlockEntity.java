@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Gemeinsame Block-Entity der verarbeitenden Maschinen. Was die Maschine kann, steht in {@link MachineKind}.
  * <p>
- * Slots: Eingänge 0..n-1, Ausgang n, Akku-Slot n+1 (nur elektrische Maschinen).
+ * Slots: Eingänge 0..n-1, Ausgänge n..n+o-1, Akku-Slot n+o (nur elektrische Maschinen).
  */
 public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         implements MenuProvider, RiftEnergySink, Crankable, ServerTickable, DropsContents {
@@ -59,7 +59,8 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         super(ModBlockEntities.PROCESSING.get(), pos, state, kindOf(state).capacity());
         this.kind = kindOf(state);
         final int inputs = kind.inputs();
-        this.items = new ItemStackHandler(inputs + 2) {
+        final int outputs = kind.outputs();
+        this.items = new ItemStackHandler(inputs + outputs + 1) {
             @Override
             protected void onContentsChanged(int slot) {
                 setChanged();
@@ -68,8 +69,8 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
 
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
-                if (slot == inputs) return false;
-                if (slot == inputs + 1) return ItemEnergy.of(stack) != null;
+                if (slot >= inputs && slot < inputs + outputs) return false;
+                if (slot == inputs + outputs) return ItemEnergy.of(stack) != null;
                 return true;
             }
         };
@@ -118,12 +119,17 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         return automation;
     }
 
+    /** Erster (Haupt-)Ausgang. */
     public int outputSlot() {
         return kind.inputs();
     }
 
+    public boolean isOutputSlot(int slot) {
+        return slot >= kind.inputs() && slot < kind.inputs() + kind.outputs();
+    }
+
     public int batterySlot() {
-        return kind.inputs() + 1;
+        return kind.inputs() + kind.outputs();
     }
 
     @Override
@@ -140,7 +146,7 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
 
         RecipeHolder<MachineRecipe> holder = currentRecipe();
         boolean working = false;
-        if (holder != null && canOutput(holder.value().result())) {
+        if (holder != null && canOutput(holder.value().allOutputs())) {
             MachineRecipe recipe = holder.value();
             maxProgress = recipe.time();
             if (kind.electric()) {
@@ -182,10 +188,33 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         return cached;
     }
 
-    private boolean canOutput(ItemStack result) {
-        ItemStack out = items.getStackInSlot(outputSlot());
-        if (out.isEmpty()) return true;
-        return ItemStack.isSameItemSameComponents(out, result) && out.getCount() + result.getCount() <= out.getMaxStackSize();
+    /** Passen alle möglichen Produkte gleichzeitig in die Ausgänge? */
+    private boolean canOutput(List<ItemStack> products) {
+        List<ItemStack> outs = new ArrayList<>();
+        for (int i = 0; i < kind.outputs(); i++) outs.add(items.getStackInSlot(outputSlot() + i).copy());
+        for (ItemStack product : products) {
+            if (!insertInto(outs, product.copy())) return false;
+        }
+        return true;
+    }
+
+    /** Legt {@code stack} in die Liste (erst zusammenführen, dann freier Platz). */
+    private static boolean insertInto(List<ItemStack> outs, ItemStack stack) {
+        for (ItemStack o : outs) {
+            if (!o.isEmpty() && ItemStack.isSameItemSameComponents(o, stack)) {
+                int move = Math.min(stack.getCount(), o.getMaxStackSize() - o.getCount());
+                o.grow(move);
+                stack.shrink(move);
+                if (stack.isEmpty()) return true;
+            }
+        }
+        for (int i = 0; i < outs.size(); i++) {
+            if (outs.get(i).isEmpty()) {
+                outs.set(i, stack);
+                return true;
+            }
+        }
+        return false;
     }
 
     private void craft(MachineRecipe recipe) {
@@ -198,14 +227,11 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         for (int i = 0; i < slots.length; i++) {
             items.extractItem(slots[i], recipe.ingredients().get(i).count(), false);
         }
-        ItemStack result = recipe.result().copy();
-        ItemStack out = items.getStackInSlot(outputSlot());
-        if (out.isEmpty()) {
-            items.setStackInSlot(outputSlot(), result);
-        } else {
-            ItemStack grown = out.copy();
-            grown.grow(result.getCount());
-            items.setStackInSlot(outputSlot(), grown);
+        List<ItemStack> outs = new ArrayList<>();
+        for (int i = 0; i < kind.outputs(); i++) outs.add(items.getStackInSlot(outputSlot() + i).copy());
+        for (ItemStack product : recipe.roll(level.random)) insertInto(outs, product);
+        for (int i = 0; i < kind.outputs(); i++) {
+            if (!ItemStack.matches(outs.get(i), items.getStackInSlot(outputSlot() + i))) items.setStackInSlot(outputSlot() + i, outs.get(i));
         }
     }
 
@@ -284,7 +310,7 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
 
         @Override
         public ItemStack extractItem(int slot, int amount, boolean simulate) {
-            return slot == outputSlot() ? items.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
+            return isOutputSlot(slot) ? items.extractItem(slot, amount, simulate) : ItemStack.EMPTY;
         }
 
         @Override

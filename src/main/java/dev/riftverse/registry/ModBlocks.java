@@ -6,14 +6,17 @@ import dev.riftverse.cable.InsulatedCableBlock;
 import dev.riftverse.energy.EnergyPortBlock;
 import dev.riftverse.energy.KreativQuelleBlock;
 import dev.riftverse.energy.VoltageTier;
-import dev.riftverse.machine.MachineBlock;
-import dev.riftverse.machine.MachineType;
+import dev.riftverse.block.KnospenderFluxkristallBlock;
+import dev.riftverse.block.MeteoritenkernBlock;
+import dev.riftverse.block.RiftAnkerBlock;
+import dev.riftverse.block.SaeureBlock;
 import dev.riftverse.tech.MachineKind;
 import dev.riftverse.tech.ProcessingBlock;
 import dev.riftverse.tech.TechBlock;
 import dev.riftverse.tech.WerkbankBlock;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DropExperienceBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -29,20 +32,7 @@ import java.util.function.ToIntFunction;
 public final class ModBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Riftverse.MODID);
 
-    // =====================================================================
-    // Vorhandener Prototyp (Quanten-Kette) – wird in Meilenstein 2 durch Xenit und Kanone Mk I ersetzt
-    // =====================================================================
-
-    /** Erz für Quanten-Splitter. Kommt in der Oberwelt tief im Stein und in Rift-Universen vor. */
-    public static final DeferredBlock<Block> QUANTUM_ORE = BLOCKS.register("quantum_ore",
-            () -> new DropExperienceBlock(UniformInt.of(2, 5), BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.STONE)
-                    .strength(3.0f, 3.0f)
-                    .requiresCorrectToolForDrops()
-                    .lightLevel(state -> 5)
-                    .sound(SoundType.STONE)));
-
-    /** Leuchtender Baustein – wird auch für Notfall-Plattformen und Boss-Arenen verwendet. */
+    /** Leuchtender Baustein für Notfall-Plattformen beim Sprung (und später Boss-Arenen). */
     public static final DeferredBlock<Block> RIFT_STONE = BLOCKS.register("rift_stone",
             () -> new Block(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_LIGHT_GREEN)
@@ -50,13 +40,6 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops()
                     .lightLevel(state -> 11)
                     .sound(SoundType.AMETHYST)));
-
-    public static final DeferredBlock<MachineBlock> QUANTUM_REFINER = BLOCKS.register("quantum_refiner",
-            () -> new MachineBlock(machineProps(), MachineType.REFINER));
-    public static final DeferredBlock<MachineBlock> FLUID_SYNTHESIZER = BLOCKS.register("fluid_synthesizer",
-            () -> new MachineBlock(machineProps(), MachineType.SYNTHESIZER));
-    public static final DeferredBlock<MachineBlock> RIFT_ASSEMBLER = BLOCKS.register("rift_assembler",
-            () -> new MachineBlock(machineProps(), MachineType.ASSEMBLER));
 
     // =====================================================================
     // Meilenstein 1 – Fundament
@@ -71,7 +54,7 @@ public final class ModBlocks {
             () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(5.0f, 6.0f)
                     .requiresCorrectToolForDrops().sound(SoundType.METAL)));
 
-    /** Xenit-Erz ist schon registriert; die Krater-Generierung folgt in Meilenstein 2. */
+    /** Xenit-Erz: rund um Meteoritenkrater im Eisen-Band, in der Schrottwelt in Wrackfeldern. */
     public static final DeferredBlock<Block> XENIT_ORE = BLOCKS.register("xenit_ore",
             () -> new DropExperienceBlock(UniformInt.of(1, 3), oreProps(MapColor.COLOR_CYAN, 3.0f, SoundType.STONE)
                     .lightLevel(state -> 2)));
@@ -120,16 +103,57 @@ public final class ModBlocks {
             () -> new KreativQuelleBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
                     .strength(-1.0f, 3600000.0f).noLootTable().sound(SoundType.AMETHYST)));
 
-    // ---------------------------------------------------------------------
+    // =====================================================================
+    // Meilenstein 2 – Spielbarer Prototyp
+    // =====================================================================
 
-    private static BlockBehaviour.Properties machineProps() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.METAL)
-                .strength(3.5f, 6.0f)
-                .requiresCorrectToolForDrops()
-                .sound(SoundType.METAL)
-                .lightLevel(state -> state.getValue(MachineBlock.LIT) ? 12 : 0);
-    }
+    // --- Krater, Wracks, Kristalle ---
+    public static final DeferredBlock<MeteoritenkernBlock> METEORITENKERN = BLOCKS.register("meteoritenkern",
+            () -> new MeteoritenkernBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(8.0f, 9.0f)
+                    .requiresCorrectToolForDrops().sound(SoundType.ANCIENT_DEBRIS).lightLevel(state -> 5)));
+    public static final DeferredBlock<Block> SCHROTT_HAUFEN = BLOCKS.register("schrott_haufen",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BROWN).strength(0.8f)
+                    .sound(SoundType.NETHERITE_BLOCK)));
+    public static final DeferredBlock<Block> FLUXKRISTALL_ORE = BLOCKS.register("fluxkristall_ore",
+            () -> new DropExperienceBlock(UniformInt.of(2, 5), oreProps(MapColor.DEEPSLATE, 4.5f, SoundType.DEEPSLATE)
+                    .lightLevel(state -> 4)));
+    public static final DeferredBlock<Block> FLUXKRISTALL_BLOCK = BLOCKS.register("fluxkristall_block",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN).strength(1.5f)
+                    .requiresCorrectToolForDrops().sound(SoundType.AMETHYST).lightLevel(state -> 12)));
+    public static final DeferredBlock<AmethystClusterBlock> FLUXKRISTALL_CLUSTER = BLOCKS.register("fluxkristall_cluster",
+            () -> new AmethystClusterBlock(7.0f, 3.0f, BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN)
+                    .forceSolidOn().noOcclusion().strength(1.5f).sound(SoundType.AMETHYST_CLUSTER).lightLevel(state -> 6)
+                    .pushReaction(PushReaction.DESTROY)));
+    public static final DeferredBlock<KnospenderFluxkristallBlock> KNOSPENDER_FLUXKRISTALL = BLOCKS.register("knospender_fluxkristall",
+            () -> new KnospenderFluxkristallBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN)
+                    .randomTicks().strength(1.5f).requiresCorrectToolForDrops().sound(SoundType.AMETHYST).lightLevel(state -> 8)
+                    .pushReaction(PushReaction.DESTROY)));
+
+    // --- Säure (toxische Welt) ---
+    public static final DeferredBlock<SaeureBlock> SAEURE = BLOCKS.register("saeure",
+            () -> new SaeureBlock(ModFluids.SAEURE.get(), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_LIGHT_GREEN)
+                    .replaceable().noCollission().strength(100.0f).pushReaction(PushReaction.DESTROY).noLootTable()
+                    .liquid().sound(SoundType.EMPTY).lightLevel(state -> 3)));
+
+    // --- Restliche T1-Maschinen ---
+    public static final DeferredBlock<ProcessingBlock> XENIT_SCHMELZE = BLOCKS.register("xenit_schmelze",
+            () -> new ProcessingBlock(techProps().lightLevel(activeLight(12)), MachineKind.XENIT_SCHMELZE));
+    public static final DeferredBlock<ProcessingBlock> PLATINEN_AETZER = BLOCKS.register("platinen_aetzer",
+            () -> new ProcessingBlock(techProps().lightLevel(activeLight(8)), MachineKind.PLATINEN_AETZER));
+    public static final DeferredBlock<ProcessingBlock> KRISTALL_SCHLEIFER = BLOCKS.register("kristall_schleifer",
+            () -> new ProcessingBlock(techProps().lightLevel(activeLight(6)), MachineKind.KRISTALL_SCHLEIFER));
+    public static final DeferredBlock<ProcessingBlock> RECYCLER = BLOCKS.register("recycler",
+            () -> new ProcessingBlock(techProps().lightLevel(activeLight(4)), MachineKind.RECYCLER));
+    public static final DeferredBlock<TechBlock> FLUID_MIXER = BLOCKS.register("fluid_mixer",
+            () -> new TechBlock(techProps().lightLevel(activeLight(9)), ModBlockEntities.FLUID_MIXER, true));
+    public static final DeferredBlock<TechBlock> XENIT_ZELLE = BLOCKS.register("xenit_zelle",
+            () -> new TechBlock(techProps(), ModBlockEntities.XENIT_ZELLE, true));
+    public static final DeferredBlock<RiftAnkerBlock> RIFT_ANKER = BLOCKS.register("rift_anker",
+            () -> new RiftAnkerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).strength(3.0f, 6.0f)
+                    .requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion().lightLevel(state -> 7)
+                    .pushReaction(PushReaction.BLOCK)));
+
+    // ---------------------------------------------------------------------
 
     private static BlockBehaviour.Properties oreProps(MapColor color, float hardness, SoundType sound) {
         return BlockBehaviour.Properties.of().mapColor(color).strength(hardness, 3.0f)

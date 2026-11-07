@@ -11,6 +11,8 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
+import java.util.List;
+
 /** Ein Serializer pro Maschine; das JSON-Format ist überall gleich. */
 public class MachineRecipeSerializer implements RecipeSerializer<MachineRecipe> {
     private final MapCodec<MachineRecipe> codec;
@@ -21,15 +23,17 @@ public class MachineRecipeSerializer implements RecipeSerializer<MachineRecipe> 
                 CountedIngredient.CODEC.listOf().fieldOf("ingredients").forGetter(MachineRecipe::ingredients),
                 ItemStack.CODEC.fieldOf("result").forGetter(MachineRecipe::result),
                 ExtraCodecs.POSITIVE_INT.optionalFieldOf("time", 200).forGetter(MachineRecipe::time),
-                Codec.STRING.optionalFieldOf("mode", "").forGetter(MachineRecipe::mode)
-        ).apply(i, (ingredients, result, time, mode) -> new MachineRecipe(kind, ingredients, result, time, mode)));
+                Codec.STRING.optionalFieldOf("mode", "").forGetter(MachineRecipe::mode),
+                MachineRecipe.Byproduct.CODEC.listOf().optionalFieldOf("byproducts", List.of()).forGetter(MachineRecipe::byproducts)
+        ).apply(i, (ingredients, result, time, mode, byproducts) -> new MachineRecipe(kind, ingredients, result, time, mode, byproducts)));
 
         this.streamCodec = StreamCodec.composite(
                 CountedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()), MachineRecipe::ingredients,
                 ItemStack.STREAM_CODEC, MachineRecipe::result,
                 ByteBufCodecs.VAR_INT, MachineRecipe::time,
                 ByteBufCodecs.STRING_UTF8, MachineRecipe::mode,
-                (ingredients, result, time, mode) -> new MachineRecipe(kind, ingredients, result, time, mode));
+                MachineRecipe.Byproduct.STREAM_CODEC.apply(ByteBufCodecs.list()), MachineRecipe::byproducts,
+                (ingredients, result, time, mode, byproducts) -> new MachineRecipe(kind, ingredients, result, time, mode, byproducts));
     }
 
     @Override
