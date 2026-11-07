@@ -190,21 +190,32 @@ def fluid_frames(ramp, size=16, flow=False, stars=False, n=16):
 # Item-Vorlagen
 # =============================================================================
 def bar(ramp, accent=None):
-    """Barren im IndustrialCraft-Stil: Trapez mit flacher Oberseite, Licht von oben links."""
+    """Barren im Stil klassischer Tech-Mods: dicke, schräg liegende Stange, steigt nach rechts an.
+    Helle Oberseite und dunklere Front, klar getrennt durch eine Treppenkante; Stirnseite links im Licht."""
     t = Tex()
-    rows = {5: (4, 11), 6: (4, 11), 7: (3, 12), 8: (3, 12), 9: (2, 13), 10: (2, 13), 11: (2, 13)}
-    for y, (x0, x1) in rows.items():
-        if y <= 6:                                        # Oberseite
-            t.rect(x0, y, x1, y, ramp[4] if y == 5 else ramp[3])
-            continue
-        t.rect(x0, y, x1, y, ramp[2] if y < 11 else ramp[1])
-        t.p(x0, y, ramp[3])                               # linke Flanke im Licht
-        t.p(x1, y, ramp[1] if y < 11 else ramp[0])        # rechte Flanke im Schatten
-    t.rect(4, 7, 11, 7, ramp[3])                          # Kante zur Oberseite
-    t.p(4, 5, H('#ffffff', 200)); t.p(5, 5, ramp[4])      # Glanzpunkt
-    t.p(4, 8, ramp[3]); t.p(4, 9, ramp[3]); t.p(3, 10, ramp[3])
+    white = H('#ffffff')
+    #        x:  1   2   3   4   5   6   7   8   9  10  11  12  13  14
+    tops = [7, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 4, 5]
+    bots = [11, 12, 12, 12, 11, 11, 11, 10, 10, 10, 9, 9, 9, 8]
+    for i, x in enumerate(range(1, 15)):
+        edge = 9 - i // 3                       # erste Reihe der Front (Treppe parallel zur Stange)
+        for y in range(tops[i], bots[i] + 1):
+            if x == 1:
+                c = ramp[4] if y < bots[i] else ramp[3]          # Stirnseite
+            elif x == 14:
+                c = ramp[1] if y < bots[i] else ramp[0]          # rechtes Ende im Schatten
+            elif y < edge:
+                c = ramp[4] if y < min(tops[i] + 2, edge - 1) else ramp[3]   # Oberseite
+            elif y == bots[i]:
+                c = ramp[0]                                      # Unterkante
+            else:
+                c = ramp[2] if y - edge < 2 else ramp[1]         # Front
+            t.p(x, y, c)
+    for x, y in [(2, 7), (3, 7), (4, 6), (6, 6), (7, 5)]:        # Glanzlinie
+        t.p(x, y, white)
+    t.p(2, 9, ramp[3]); t.p(2, 10, ramp[3])                      # Front wird zur Stirnseite hin heller
     if accent:
-        t.p(8, 8, accent[3]); t.p(8, 9, accent[4]); t.p(9, 10, accent[3])
+        t.p(7, 9, accent[3]); t.p(8, 8, accent[4]); t.p(9, 8, accent[3])
     t.outline()
     return t
 
@@ -242,20 +253,33 @@ def raw_chunk(ramp, accent, seed):
 
 
 def plate(ramp, rivets=True, mark=None):
-    """Platte im IndustrialCraft-Stil: flaches Quadrat mit Fase, oben links hell, unten rechts dunkel."""
+    """Platte im Stil klassischer Tech-Mods: gedrehtes Blech mit hellen Kanten oben links
+    und sichtbarer Blechdicke unten rechts."""
     t = Tex()
-    t.rect(3, 3, 12, 12, ramp[2])
-    t.rect(3, 2, 12, 2, ramp[4]); t.rect(2, 3, 2, 12, ramp[4])        # Fase oben/links
-    t.rect(3, 3, 12, 3, ramp[3]); t.rect(3, 4, 3, 12, ramp[3])
-    t.rect(3, 13, 12, 13, ramp[0]); t.rect(13, 3, 13, 12, ramp[0])    # Fase unten/rechts
-    t.rect(4, 12, 12, 12, ramp[1]); t.rect(12, 4, 12, 11, ramp[1])
-    for i in range(5):                                                 # diagonaler Glanz
-        t.p(5 + i, 10 - i, ramp[3])
-    t.p(6, 5, ramp[3]); t.p(5, 6, ramp[3])
+    top = [(5.0, 3.0), (13.0, 5.0), (11.0, 13.0), (3.0, 11.0)]
+    poly_fill(t, top, ramp[3])
+    # Blechdicke: unter der unteren und rechts neben der rechten Kante eine dunkle Reihe
+    edge = []
+    for y in range(16):
+        for x in range(16):
+            if t.get(x, y)[3] and (not t.get(x, y + 1)[3] or not t.get(x + 1, y)[3]):
+                edge.append((x, y))
+    for x, y in edge:
+        if not t.get(x, y + 1)[3]:
+            t.p(x, y + 1, ramp[1])
+    for x, y in edge:
+        t.p(x, y, ramp[2])
+    # helle Kanten oben und links
+    for y in range(16):
+        for x in range(16):
+            c = t.get(x, y)
+            if c == tuple(ramp[3]) and (not t.get(x, y - 1)[3] or not t.get(x - 1, y)[3]):
+                t.p(x, y, ramp[4])
+    t.p(5, 4, H('#ffffff')); t.p(6, 4, H('#ffffff')); t.p(4, 6, H('#ffffff'))
     if rivets:
-        for x, y in [(4, 4), (10, 4), (4, 10), (10, 10)]:
+        for x, y in [(6, 6), (10, 7), (5, 10), (9, 11)]:
             t.p(x, y, ramp[4])
-            t.p(x + 1, y + 1, ramp[0])
+            t.p(x + 1, y + 1, ramp[1])
     if mark:
         for x, y, c in mark:
             t.p(x, y, c)
@@ -524,7 +548,7 @@ def build(pk):
         ('aetzloesung', vial(R['cyan'], level=9), 'Ätzlösung'),
         ('toxinrest', dust(AC, 'toxinrest', R['flesh'][2]), 'Toxinrest'),
         ('schwebstein_brocken', raw_chunk(W, R['sky'], 'schwebstein_brocken'), 'Schwebstein-Brocken'),
-        ('antigrav_platte', plate(W, rivets=False, mark=[(6, 7, R['sky'][3]), (9, 7, R['sky'][3]), (7, 8, R['sky'][4]), (8, 8, R['sky'][4])]), 'Antigrav-Platte'),
+        ('antigrav_platte', plate(W, rivets=False, mark=[(6, 10, R['sky'][2]), (7, 9, R['sky'][3]), (8, 8, R['sky'][4]), (9, 7, R['sky'][3]), (10, 6, R['sky'][2])]), 'Antigrav-Platte'),
         ('chronoglas_scheibe', None, 'Chronoglas-Scheibe'),
         ('biomasse_pulpe', None, 'Biomasse-Pulpe'),
         ('naehrserum', vial(FL, cork=R['steel'], level=8), 'Nährserum'),
