@@ -523,6 +523,7 @@ def build(pk):
         ('raw_xenit', raw_chunk(P, G, 'raw_xenit'), 'Rohes Xenit'),
         ('xenit_ingot', bar(P, G), 'Xenit-Barren'),
         ('xenit_platte', plate(P), 'Xenit-Platte'),
+        ('quantum_ingot', bar(R['quantum']), 'Quanten-Barren'),
         ('alien_schrott', None, 'Alien-Schrott'),
         ('schrottplatte', plate(R['rust'], mark=[(8, 7, R['steel'][3]), (9, 7, R['steel'][3])]), 'Schrottplatte'),
         ('fluxkristall', crystal(G), 'Fluxkristall'),

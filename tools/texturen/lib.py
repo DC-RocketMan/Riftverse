@@ -53,6 +53,8 @@ _RAMPS = {
     'gold':     ['#6e4600', '#b07f0c', '#e2b424', '#fbd94e', '#fff3a6'],
     'bronze':   ['#4e270c', '#83481b', '#bb7432', '#e19c55', '#f5c58a'],
     'coal':     ['#0c0c0e', '#19191d', '#29292f', '#3e3e46', '#5a5a64'],
+    # Prototyp: Quantenmetall (Farben des alten Quanten-Barrens)
+    'quantum':  ['#0e3c2e', '#145a46', '#28a078', '#46dca0', '#c8ffe6'],
 }
 R = {k: [H(c) for c in v] for k, v in _RAMPS.items()}
 BLACK = H('#08080a')
