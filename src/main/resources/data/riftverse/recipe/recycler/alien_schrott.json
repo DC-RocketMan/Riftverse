@@ -29,13 +29,6 @@
         "id": "riftverse:mini_motor"
       },
       "chance": 0.1
-    },
-    {
-      "result": {
-        "id": "minecraft:iron_nugget",
-        "count": 2
-      },
-      "chance": 0.3
     }
   ]
 }

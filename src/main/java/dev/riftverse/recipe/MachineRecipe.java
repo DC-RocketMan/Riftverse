@@ -54,6 +54,10 @@ public class MachineRecipe implements Recipe<MachineRecipeInput> {
         this.time = time;
         this.mode = mode;
         this.byproducts = List.copyOf(byproducts);
+        if (1 + byproducts.size() > kind.outputs()) {
+            throw new IllegalArgumentException("Rezept für " + kind.id() + " hat " + (1 + byproducts.size())
+                    + " Produkte, die Maschine aber nur " + kind.outputs() + " Ausgänge");
+        }
     }
 
     /** Nebenprodukt mit Wahrscheinlichkeit (0..1). */

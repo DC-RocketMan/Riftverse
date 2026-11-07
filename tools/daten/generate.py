@@ -855,7 +855,7 @@ def m2_recipes():
     machine_recipe2('kristall_schleifer', 'fluxlinse', [('#c:gems/fluxkristall', 1)], 'fluxlinse', 1, time=160,
                     byproducts=[('fluxstaub', 2, 1.0)])
     machine_recipe2('recycler', 'alien_schrott', [('alien_schrott', 1)], 'polymerfetzen', 1, time=100,
-                    byproducts=[('kupferdraht', 1, 0.4), ('feder', 1, 0.25), ('mini_motor', 1, 0.1), ('minecraft:iron_nugget', 2, 0.3)])
+                    byproducts=[('kupferdraht', 1, 0.4), ('feder', 1, 0.25), ('mini_motor', 1, 0.1)])
     recipe('fluid_mixer/roh_portalfluid', {
         'type': f'{NS}:fluid_mixer',
         'ingredients': [{'ingredient': ing('#c:dusts/fluxkristall')}],
