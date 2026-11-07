@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:meteoritenkern"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:xenit_staub",
+    "count": 6
+  },
+  "time": 300
+}

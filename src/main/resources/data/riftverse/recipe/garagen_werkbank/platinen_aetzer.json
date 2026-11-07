@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "RLR",
+    "ICI",
+    "KSK"
+  ],
+  "key": {
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "L": {
+      "item": "minecraft:redstone_lamp"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "C": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "S": {
+      "item": "riftverse:xenit_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:platinen_aetzer"
+  },
+  "loetzinn": 2
+}

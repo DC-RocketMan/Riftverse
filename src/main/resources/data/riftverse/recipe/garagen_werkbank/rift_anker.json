@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "ILI",
+    " X ",
+    "I I"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "L": {
+      "item": "riftverse:fluxlinse"
+    },
+    "X": {
+      "tag": "c:rods/xenit"
+    }
+  },
+  "result": {
+    "id": "riftverse:rift_anker"
+  },
+  "hammer": 1
+}

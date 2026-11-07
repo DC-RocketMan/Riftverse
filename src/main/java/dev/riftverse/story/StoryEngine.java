@@ -405,8 +405,6 @@ public final class StoryEngine {
         }
         switch (u.atmosphere) {
             case TOXIC -> options.add("Atme ruhig tief ein. Ach nein, lieber nicht.");
-            case THIN -> options.add("Außer Atem? Die Luft hier ist dünn – wie deine Argumente.");
-            case DENSE -> options.add("Diese Luft ist wie Sirup. Und du bist die Fliege.");
             default -> { }
         }
         if (options.isEmpty()) {
@@ -456,7 +454,6 @@ public final class StoryEngine {
         if (u.gravity < 0.75) options.add("Bei nur {g} hält uns ohnehin kaum etwas am Boden – noch ein Stoß, und alles fliegt davon.");
         if (u.gravity > 1.3) options.add("Bei {g} können wir nicht mal fliehen. Wir kriechen nur.");
         if (u.atmosphere == UniverseProfile.Atmosphere.TOXIC) options.add("Unsere Atemfilter halten nicht mehr lange.");
-        if (u.atmosphere == UniverseProfile.Atmosphere.THIN) options.add("Die Luft wird jeden Tag dünner, seit {b} hier ist.");
         if (u.temperature == UniverseProfile.Temperature.COLD) options.add("Die Kälte frisst sich in unsere Häuser.");
         if (u.temperature == UniverseProfile.Temperature.HOT) options.add("Die Lavaseen steigen. Jeden Tag ein Stück.");
         options.add("Uns läuft die Zeit davon.");

@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "XFX",
+    "SCS",
+    "IBI"
+  ],
+  "key": {
+    "X": {
+      "tag": "c:plates/xenit"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "S": {
+      "item": "riftverse:xenit_spule"
+    },
+    "C": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    }
+  },
+  "result": {
+    "id": "riftverse:xenit_schmelze"
+  },
+  "loetzinn": 2
+}

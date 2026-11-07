@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "FGF",
+    "ICI",
+    "BSB"
+  ],
+  "key": {
+    "F": {
+      "item": "minecraft:flint"
+    },
+    "G": {
+      "item": "minecraft:grindstone"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "C": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "S": {
+      "item": "riftverse:xenit_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:kristall_schleifer"
+  },
+  "loetzinn": 2
+}

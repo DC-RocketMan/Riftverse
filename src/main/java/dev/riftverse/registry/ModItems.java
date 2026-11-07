@@ -3,11 +3,16 @@ package dev.riftverse.registry;
 import dev.riftverse.Riftverse;
 import dev.riftverse.item.EnergiezelleItem;
 import dev.riftverse.item.HandkurbelItem;
+import dev.riftverse.item.FluidKartuscheItem;
 import dev.riftverse.item.LoreItem;
-import dev.riftverse.item.RiftGunItem;
+import dev.riftverse.item.MeteoritenpeilerItem;
+import dev.riftverse.item.PortalKanoneItem;
 import dev.riftverse.item.UniverseScannerItem;
+import dev.riftverse.item.XenitZelleItem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
@@ -103,41 +108,54 @@ public final class ModItems {
     public static final DeferredItem<Item> MINI_MOTOR = simple("mini_motor");
 
     // =====================================================================
-    // Vorhandener Prototyp (Quanten-Kette) – wird in Meilenstein 2 ersetzt
+    // Meilenstein 2 – Spielbarer Prototyp
     // =====================================================================
 
-    // --- Rohstoffe & Zwischenprodukte ---
-    public static final DeferredItem<Item> RAW_QUANTUM = ITEMS.register("raw_quantum",
-            () -> new LoreItem(new Item.Properties(), "item.riftverse.raw_quantum.lore"));
-    public static final DeferredItem<Item> QUANTUM_INGOT = ITEMS.register("quantum_ingot",
-            () -> new LoreItem(new Item.Properties(), "item.riftverse.quantum_ingot.lore"));
-    public static final DeferredItem<Item> RIFT_FLUID_CELL = ITEMS.register("rift_fluid_cell",
-            () -> new LoreItem(new Item.Properties().stacksTo(32), "item.riftverse.rift_fluid_cell.lore"));
-    public static final DeferredItem<Item> RIFT_CORE = ITEMS.register("rift_core",
-            () -> new LoreItem(new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON), "item.riftverse.rift_core.lore"));
-    public static final DeferredItem<Item> GUN_FRAME = ITEMS.register("gun_frame",
-            () -> new LoreItem(new Item.Properties().stacksTo(1), "item.riftverse.gun_frame.lore"));
-    public static final DeferredItem<Item> UNIVERSE_SHARD = ITEMS.register("universe_shard",
-            () -> new LoreItem(new Item.Properties().rarity(Rarity.RARE), "item.riftverse.universe_shard.lore"));
+    // --- Maschinen, Speicher, Anker ---
+    public static final DeferredItem<BlockItem> XENIT_SCHMELZE = blockItem("xenit_schmelze", ModBlocks.XENIT_SCHMELZE);
+    public static final DeferredItem<BlockItem> PLATINEN_AETZER = blockItem("platinen_aetzer", ModBlocks.PLATINEN_AETZER);
+    public static final DeferredItem<BlockItem> KRISTALL_SCHLEIFER = blockItem("kristall_schleifer", ModBlocks.KRISTALL_SCHLEIFER);
+    public static final DeferredItem<BlockItem> RECYCLER = blockItem("recycler", ModBlocks.RECYCLER);
+    public static final DeferredItem<BlockItem> FLUID_MIXER = blockItem("fluid_mixer", ModBlocks.FLUID_MIXER);
+    public static final DeferredItem<XenitZelleItem> XENIT_ZELLE = ITEMS.register("xenit_zelle",
+            () -> new XenitZelleItem(ModBlocks.XENIT_ZELLE.get(), new Item.Properties().stacksTo(1)));
+    public static final DeferredItem<BlockItem> RIFT_ANKER = blockItem("rift_anker", ModBlocks.RIFT_ANKER);
 
-    // --- Werkzeuge ---
-    public static final DeferredItem<RiftGunItem> RIFT_GUN = ITEMS.register("rift_gun",
-            () -> new RiftGunItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), 1));
-    public static final DeferredItem<RiftGunItem> RIFT_GUN_MK2 = ITEMS.register("rift_gun_mk2",
-            () -> new RiftGunItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), 2));
+    // --- Kanone, Werkzeuge ---
+    public static final DeferredItem<PortalKanoneItem> PORTAL_KANONE_MK1 = ITEMS.register("portal_kanone_mk1",
+            () -> new PortalKanoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON), 1));
+    public static final DeferredItem<Item> FLUID_KARTUSCHE = ITEMS.register("fluid_kartusche",
+            () -> new Item(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<FluidKartuscheItem> FLUID_KARTUSCHE_VOLL = ITEMS.register("fluid_kartusche_voll",
+            () -> new FluidKartuscheItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<MeteoritenpeilerItem> METEORITENPEILER = ITEMS.register("meteoritenpeiler",
+            () -> new MeteoritenpeilerItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<UniverseScannerItem> UNIVERSE_SCANNER = ITEMS.register("universe_scanner",
             () -> new UniverseScannerItem(new Item.Properties().stacksTo(1)));
 
-    // --- Block-Items ---
-    public static final DeferredItem<BlockItem> QUANTUM_ORE = blockItem("quantum_ore", ModBlocks.QUANTUM_ORE);
-    public static final DeferredItem<BlockItem> RIFT_STONE = blockItem("rift_stone", ModBlocks.RIFT_STONE);
-    public static final DeferredItem<BlockItem> QUANTUM_REFINER = blockItem("quantum_refiner", ModBlocks.QUANTUM_REFINER);
-    public static final DeferredItem<BlockItem> FLUID_SYNTHESIZER = blockItem("fluid_synthesizer", ModBlocks.FLUID_SYNTHESIZER);
-    public static final DeferredItem<BlockItem> RIFT_ASSEMBLER = blockItem("rift_assembler", ModBlocks.RIFT_ASSEMBLER);
+    // --- Bauteile und Materialien ---
+    public static final DeferredItem<Item> KANONENGEHAEUSE = simple("kanonengehaeuse");
+    public static final DeferredItem<Item> BASIS_SCHALTKREIS = simple("basis_schaltkreis");
+    public static final DeferredItem<Item> FLUXKRISTALL = simple("fluxkristall");
+    public static final DeferredItem<Item> FLUXSTAUB = simple("fluxstaub");
+    public static final DeferredItem<Item> FLUXLINSE = simple("fluxlinse");
+    public static final DeferredItem<Item> SAEUREGEL = ITEMS.register("saeuregel",
+            () -> new LoreItem(new Item.Properties(), "item.riftverse.saeuregel.lore"));
+    public static final DeferredItem<BucketItem> SAEURE_EIMER = ITEMS.register("saeure_eimer",
+            () -> new BucketItem(ModFluids.SAEURE.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
-    // --- Test-/Debug-Hilfe: Boss direkt beschwören ---
-    public static final DeferredItem<DeferredSpawnEggItem> RIFT_BOSS_SPAWN_EGG = ITEMS.register("rift_boss_spawn_egg",
-            () -> new DeferredSpawnEggItem(ModEntities.RIFT_BOSS, 0x2B0F45, 0x39FF14, new Item.Properties()));
+    // --- Blöcke aus der Welt ---
+    public static final DeferredItem<BlockItem> METEORITENKERN = blockItem("meteoritenkern", ModBlocks.METEORITENKERN);
+    public static final DeferredItem<BlockItem> SCHROTT_HAUFEN = blockItem("schrott_haufen", ModBlocks.SCHROTT_HAUFEN);
+    public static final DeferredItem<BlockItem> FLUXKRISTALL_ORE = blockItem("fluxkristall_ore", ModBlocks.FLUXKRISTALL_ORE);
+    public static final DeferredItem<BlockItem> FLUXKRISTALL_BLOCK = blockItem("fluxkristall_block", ModBlocks.FLUXKRISTALL_BLOCK);
+    public static final DeferredItem<BlockItem> FLUXKRISTALL_CLUSTER = blockItem("fluxkristall_cluster", ModBlocks.FLUXKRISTALL_CLUSTER);
+    public static final DeferredItem<BlockItem> KNOSPENDER_FLUXKRISTALL = blockItem("knospender_fluxkristall", ModBlocks.KNOSPENDER_FLUXKRISTALL);
+    public static final DeferredItem<BlockItem> RIFT_STONE = blockItem("rift_stone", ModBlocks.RIFT_STONE);
+
+    // --- Kreaturen ---
+    public static final DeferredItem<DeferredSpawnEggItem> SCHROTT_GOLEM_SPAWN_EGG = ITEMS.register("schrott_golem_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.SCHROTT_GOLEM, 0x5C2F1A, 0x39FF6A, new Item.Properties()));
 
     private static DeferredItem<Item> simple(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

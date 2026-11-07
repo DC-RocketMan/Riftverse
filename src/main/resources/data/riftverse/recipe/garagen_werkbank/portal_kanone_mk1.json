@@ -1,0 +1,31 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " L ",
+    "SGS",
+    " K "
+  ],
+  "key": {
+    "L": {
+      "item": "riftverse:fluxlinse"
+    },
+    "S": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "G": {
+      "item": "riftverse:kanonengehaeuse"
+    },
+    "K": [
+      {
+        "item": "riftverse:fluid_kartusche"
+      },
+      {
+        "item": "riftverse:fluid_kartusche_voll"
+      }
+    ]
+  },
+  "result": {
+    "id": "riftverse:portal_kanone_mk1"
+  },
+  "loetzinn": 2
+}

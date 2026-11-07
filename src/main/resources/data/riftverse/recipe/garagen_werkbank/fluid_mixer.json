@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GEG",
+    "TCT",
+    "BSB"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass"
+    },
+    "E": {
+      "item": "minecraft:bucket"
+    },
+    "T": {
+      "item": "riftverse:zinn_huelse"
+    },
+    "C": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "S": {
+      "item": "riftverse:xenit_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:fluid_mixer"
+  },
+  "loetzinn": 2
+}

@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "K K",
+    "RCR",
+    "K K"
+  ],
+  "key": {
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "C": {
+      "item": "minecraft:compass"
+    }
+  },
+  "result": {
+    "id": "riftverse:meteoritenpeiler"
+  },
+  "hammer": 1
+}

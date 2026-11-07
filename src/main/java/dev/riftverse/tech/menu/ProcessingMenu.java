@@ -18,7 +18,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.Nullable;
 
-/** GUI der Erzmühle, Walzbank, des Legierungsofens und der Garagenpresse. */
+/** GUI der verarbeitenden Maschinen (Erzmühle, Walzbank, Legierungsofen, Garagenpresse, Xenit-Schmelze …). */
 public class ProcessingMenu extends AbstractContainerMenu {
     public static final int IN_Y = 35, OUT_X = 122, OUT_Y = 35, ARROW_X = 88, ARROW_Y = 35;
     public static final int BATTERY_X = 9, BATTERY_Y = 62;
@@ -45,12 +45,12 @@ public class ProcessingMenu extends AbstractContainerMenu {
         this.machine = machine;
         this.data = data;
         this.kind = machine != null ? machine.kind() : MachineKind.ERZMUEHLE;
-        IItemHandler handler = machine != null ? machine.items() : new ItemStackHandler(kind.inputs() + 2);
+        int n = kind.inputs(), o = kind.outputs();
+        IItemHandler handler = machine != null ? machine.items() : new ItemStackHandler(n + o + 1);
 
-        int n = kind.inputs();
         for (int i = 0; i < n; i++) addSlot(new SlotItemHandler(handler, i, inputX(n, i), IN_Y));
-        addSlot(new SlotItemHandler(handler, n, OUT_X, OUT_Y));
-        if (kind.electric()) addSlot(new SlotItemHandler(handler, n + 1, BATTERY_X, BATTERY_Y));
+        for (int i = 0; i < o; i++) addSlot(new SlotItemHandler(handler, n + i, outputX(o, i), outputY(o, i)));
+        if (kind.electric()) addSlot(new SlotItemHandler(handler, n + o, BATTERY_X, BATTERY_Y));
         machineSlots = slots.size();
 
         MenuHelper.addPlayerInventory(inventory, this::addSlot);
@@ -64,6 +64,24 @@ public class ProcessingMenu extends AbstractContainerMenu {
             case 2 -> 38 + i * 18;
             default -> 30 + i * 18;
         };
+    }
+
+    /** Ausgänge: einer groß, zwei nebeneinander, vier im Quadrat. */
+    public static int outputX(int o, int i) {
+        return switch (o) {
+            case 1 -> OUT_X;
+            case 2 -> i == 0 ? OUT_X : OUT_X + 28;
+            default -> 116 + (i % 2) * 18;
+        };
+    }
+
+    public static int outputY(int o, int i) {
+        return o <= 2 ? OUT_Y : 26 + (i / 2) * 18;
+    }
+
+    /** Der erste Ausgang wird bei einem oder zwei Ausgängen groß gezeichnet. */
+    public static boolean bigOutput(int o, int i) {
+        return o <= 2 && i == 0;
     }
 
     public MachineKind kind() {
@@ -115,14 +133,14 @@ public class ProcessingMenu extends AbstractContainerMenu {
         if (!slot.hasItem()) return ItemStack.EMPTY;
         ItemStack stack = slot.getItem();
         ItemStack original = stack.copy();
-        int n = kind.inputs();
+        int n = kind.inputs(), o = kind.outputs();
 
         if (index < machineSlots) {
             if (!moveItemStackTo(stack, machineSlots, machineSlots + 36, true)) return ItemStack.EMPTY;
             slot.onQuickCraft(stack, original);
         } else {
             boolean moved = false;
-            if (kind.electric() && ItemEnergy.of(stack) != null) moved = moveItemStackTo(stack, n + 1, n + 2, false);
+            if (kind.electric() && ItemEnergy.of(stack) != null) moved = moveItemStackTo(stack, n + o, n + o + 1, false);
             if (!moved) moved = moveItemStackTo(stack, 0, n, false);
             if (!moved && !MenuHelper.moveWithinPlayer(this, index, machineSlots, (s, e, r) -> moveItemStackTo(stack, s, e, r))) {
                 return ItemStack.EMPTY;

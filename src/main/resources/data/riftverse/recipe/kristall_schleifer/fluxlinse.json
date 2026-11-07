@@ -1,0 +1,22 @@
+{
+  "type": "riftverse:kristall_schleifer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:gems/fluxkristall"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:fluxlinse"
+  },
+  "time": 160,
+  "byproducts": [
+    {
+      "result": {
+        "id": "riftverse:fluxstaub",
+        "count": 2
+      }
+    }
+  ]
+}

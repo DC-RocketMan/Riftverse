@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:kristallwelt",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "kristallwelt",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "kristallwelt",
+      "biomes": [
+        "riftverse:kristall_glanz",
+        "riftverse:kristall_aurora"
+      ]
+    }
+  }
+}

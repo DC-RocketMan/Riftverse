@@ -1,9 +1,10 @@
 package dev.riftverse.universe;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.riftverse.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ChunkPos;
@@ -12,9 +13,10 @@ import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.BiomeSource;
+import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
@@ -28,25 +30,25 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Generiert alle Universen einer Rift-Dimension. Jede 4096×4096-Zelle wird mit
- * ihrem eigenen {@link UniverseProfile} gebaut; Zellgrenzen fallen immer auf
- * Chunkgrenzen, daher gehört jeder Chunk genau einem Universum.
+ * Generiert alle Universen eines {@link UniverseType Typs}. Jede 4096×4096-Zelle wird mit ihrem eigenen
+ * {@link UniverseProfile} gebaut; Zellgrenzen fallen immer auf Chunkgrenzen, daher gehört jeder Chunk genau
+ * einem Universum.
  */
 public class MultiverseChunkGenerator extends ChunkGenerator {
     public static final MapCodec<MultiverseChunkGenerator> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             BiomeSource.CODEC.fieldOf("biome_source").forGetter(ChunkGenerator::getBiomeSource),
-            Codec.INT.fieldOf("variant").forGetter(gen -> gen.variant)
+            UniverseType.CODEC.fieldOf("universe").forGetter(gen -> gen.type)
     ).apply(instance, MultiverseChunkGenerator::new));
 
     private static final int MIN_Y = -64;
     private static final int HEIGHT = 384;
     private static final int NO_LAND = Integer.MIN_VALUE;
 
-    private final int variant;
+    private final UniverseType type;
 
-    public MultiverseChunkGenerator(BiomeSource biomeSource, int variant) {
+    public MultiverseChunkGenerator(BiomeSource biomeSource, UniverseType type) {
         super(biomeSource);
-        this.variant = variant;
+        this.type = type;
     }
 
     @Override
@@ -54,8 +56,12 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         return CODEC;
     }
 
+    public UniverseType type() {
+        return type;
+    }
+
     private UniverseProfile profileAt(int x, int z) {
-        return UniverseProfile.get(new UniverseId(variant, Multiverse.cellOf(x), Multiverse.cellOf(z)));
+        return UniverseProfile.get(new UniverseId(type, Multiverse.cellOf(x), Multiverse.cellOf(z)));
     }
 
     /** Oberster fester Block oder NO_LAND. */
@@ -85,7 +91,9 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         BlockState under = p.palette.under().defaultBlockState();
         BlockState seabed = p.palette.seabed().defaultBlockState();
         BlockState fluid = p.hasFluid() ? p.fluidBlock() : null;
-        BlockState ice = Blocks.ICE.defaultBlockState();
+        BlockState scrap = ModBlocks.SCHROTT_HAUFEN.get().defaultBlockState();
+        BlockState gravel = Blocks.GRAVEL.defaultBlockState();
+        RandomSource rnd = RandomSource.create(UniverseId.mix(p.seed ^ cp.toLong() ^ 0x5EEDL));
 
         for (int lx = 0; lx < 16; lx++) {
             for (int lz = 0; lz < 16; lz++) {
@@ -96,15 +104,21 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
 
                 int bottom = Math.max(col[0], minY);
                 boolean underwater = fluid != null && top < p.fluidLevel;
+                // Schrottwelt: Die Müllberge tragen eine Kruste aus Schrott und Geröll
+                double halde = p.type == UniverseType.SCHROTT && !underwater ? p.halde(x, z) : -1;
 
                 for (int y = bottom; y <= top; y++) {
                     BlockState state;
                     if (y == minY) {
                         state = bedrock;
                     } else if (y == top) {
-                        state = underwater ? seabed : surface;
+                        if (underwater) state = seabed;
+                        else if (halde > 0.15) state = rnd.nextFloat() < 0.35f ? scrap : gravel;
+                        else state = surface;
                     } else if (y >= top - 3) {
-                        state = underwater ? seabed : under;
+                        if (underwater) state = seabed;
+                        else if (halde > 0.3 && rnd.nextFloat() < 0.2f) state = scrap;
+                        else state = under;
                     } else {
                         if (y < top - 6 && y > minY + 2 && p.isCave(x, y, z)) {
                             if (y < minY + 10) chunk.setBlockState(pos.set(x, y, z), p.caveFluid(), false);
@@ -118,176 +132,216 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
 
                 if (underwater) {
                     for (int y = top + 1; y <= p.fluidLevel; y++) {
-                        BlockState s = (p.iceCap() && y == p.fluidLevel) ? ice : fluid;
-                        chunk.setBlockState(pos.set(x, y, z), s, false);
+                        chunk.setBlockState(pos.set(x, y, z), fluid, false);
                     }
                 }
             }
         }
 
-        decorate(chunk, p, tops, pos);
+        switch (p.type) {
+            case SCHROTT -> decorateScrap(chunk, p, tops, pos);
+            case KRISTALL -> decorateCrystal(chunk, p, tops, pos);
+            case TOXISCH -> decorateToxic(chunk, p, tops, pos);
+        }
         return CompletableFuture.completedFuture(chunk);
     }
 
-    // ------------------------------------------------------------------ Flora & Deko
+    private static RandomSource decoRandom(UniverseProfile p, ChunkAccess chunk) {
+        return RandomSource.create(UniverseId.mix(p.seed ^ chunk.getPos().toLong()));
+    }
 
-    private record TreeKind(Block log, Block crown) {}
+    private static boolean dryLand(UniverseProfile p, int top) {
+        return top != NO_LAND && !(p.hasFluid() && top < p.fluidLevel);
+    }
 
-    private static final List<TreeKind> TREES = List.of(
-            new TreeKind(Blocks.OAK_LOG, Blocks.OAK_LEAVES),
-            new TreeKind(Blocks.BIRCH_LOG, Blocks.BIRCH_LEAVES),
-            new TreeKind(Blocks.CHERRY_LOG, Blocks.CHERRY_LEAVES),
-            new TreeKind(Blocks.DARK_OAK_LOG, Blocks.AZALEA_LEAVES),
-            new TreeKind(Blocks.MANGROVE_LOG, Blocks.FLOWERING_AZALEA_LEAVES),
-            new TreeKind(Blocks.JUNGLE_LOG, Blocks.JUNGLE_LEAVES),
-            new TreeKind(Blocks.WARPED_STEM, Blocks.WARPED_WART_BLOCK),
-            new TreeKind(Blocks.CRIMSON_STEM, Blocks.NETHER_WART_BLOCK),
-            new TreeKind(Blocks.SPRUCE_LOG, Blocks.SPRUCE_LEAVES));
+    // ------------------------------------------------------------------ Schrottwelt
 
-    private static final List<TreeKind> GLOW_TREES = List.of(
-            new TreeKind(Blocks.WARPED_STEM, Blocks.SHROOMLIGHT),
-            new TreeKind(Blocks.CRIMSON_STEM, Blocks.OCHRE_FROGLIGHT),
-            new TreeKind(Blocks.BONE_BLOCK, Blocks.VERDANT_FROGLIGHT),
-            new TreeKind(Blocks.MUSHROOM_STEM, Blocks.PEARLESCENT_FROGLIGHT),
-            new TreeKind(Blocks.STRIPPED_WARPED_STEM, Blocks.SEA_LANTERN),
-            new TreeKind(Blocks.BLACKSTONE_WALL, Blocks.GLOWSTONE),
-            new TreeKind(Blocks.QUARTZ_PILLAR, Blocks.SHROOMLIGHT),
-            new TreeKind(Blocks.DARK_OAK_LOG, Blocks.VERDANT_FROGLIGHT),
-            new TreeKind(Blocks.BAMBOO_BLOCK, Blocks.OCHRE_FROGLIGHT));
+    private static final Block[] HULL = {Blocks.IRON_BLOCK, Blocks.IRON_BLOCK, Blocks.OXIDIZED_CUT_COPPER,
+            Blocks.WEATHERED_CUT_COPPER, Blocks.EXPOSED_CUT_COPPER, Blocks.POLISHED_DEEPSLATE};
 
-    private void decorate(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
+    private void decorateScrap(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
+        RandomSource rnd = decoRandom(p, chunk);
         ChunkPos cp = chunk.getPos();
-        RandomSource rnd = RandomSource.create(UniverseId.mix(p.seed ^ cp.toLong()));
-        BlockState snow = Blocks.SNOW.defaultBlockState();
-        boolean cold = p.temperature == UniverseProfile.Temperature.COLD;
+        int cx = cp.getMinBlockX() + 8, cz = cp.getMinBlockZ() + 8;
+        boolean field = p.wreckField(cx, cz);
+        // Wracks: im Wrackfeld fast in jedem Chunk, sonst selten
+        float chance = field ? 0.55f : p.featureDensity * 0.25f;
+        if (rnd.nextFloat() < chance) wreck(chunk, p, tops, pos, rnd, field);
 
         for (int lx = 0; lx < 16; lx++) {
             for (int lz = 0; lz < 16; lz++) {
                 int top = tops[lx][lz];
-                if (top == NO_LAND) continue;
-                if (p.hasFluid() && top < p.fluidLevel) continue;
+                if (!dryLand(p, top)) continue;
                 int x = cp.getMinBlockX() + lx, z = cp.getMinBlockZ() + lz;
-                BlockState ground = chunk.getBlockState(pos.set(x, top, z));
-                if (!ground.is(p.palette.surface())) continue;
-
-                boolean inner = lx >= 2 && lx <= 13 && lz >= 2 && lz <= 13;
-                if (inner && rnd.nextFloat() < p.treeDensity) {
-                    placeBig(chunk, p, rnd, pos, x, top + 1, z);
-                    continue;
-                }
-                if (rnd.nextFloat() < p.plantDensity) {
-                    BlockState plant = smallPlant(ground.getBlock(), p, rnd);
-                    if (plant != null && chunk.getBlockState(pos.set(x, top + 1, z)).isAir()) {
-                        chunk.setBlockState(pos, plant, false);
-                        continue;
+                if (!chunk.getBlockState(pos.set(x, top + 1, z)).isAir()) continue;
+                float roll = rnd.nextFloat();
+                if (roll < p.plantDensity) {
+                    BlockState ground = chunk.getBlockState(pos.set(x, top, z));
+                    if (ground.is(Blocks.COARSE_DIRT) || ground.is(Blocks.RED_SAND) || ground.is(Blocks.MUD)) {
+                        chunk.setBlockState(pos.set(x, top + 1, z), Blocks.DEAD_BUSH.defaultBlockState(), false);
                     }
-                }
-                if (cold && chunk.getBlockState(pos.set(x, top + 1, z)).isAir() && !ground.is(Blocks.SNOW_BLOCK)) {
-                    chunk.setBlockState(pos, snow, false);
+                } else if (roll < p.plantDensity + 0.006f) {
+                    chunk.setBlockState(pos.set(x, top + 1, z), ModBlocks.SCHROTT_HAUFEN.get().defaultBlockState(), false);
                 }
             }
         }
     }
 
-    private static BlockState persistent(Block block) {
-        BlockState s = block.defaultBlockState();
-        if (s.hasProperty(LeavesBlock.PERSISTENT)) s = s.setValue(LeavesBlock.PERSISTENT, true);
-        return s;
-    }
+    /** Ein halb vergrabenes Alien-Wrack, darunter Xenit-Erz. */
+    private void wreck(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos, RandomSource rnd, boolean field) {
+        int length = 5 + rnd.nextInt(5);
+        boolean alongX = rnd.nextBoolean();
+        int sx = 3 + rnd.nextInt(Math.max(1, 11 - (alongX ? length : 2)));
+        int sz = 3 + rnd.nextInt(Math.max(1, 11 - (alongX ? 2 : length)));
+        int top = tops[sx][sz];
+        if (!dryLand(p, top)) return;
+        int baseY = top - 1;
+        ChunkPos cp = chunk.getPos();
+        int ox = cp.getMinBlockX(), oz = cp.getMinBlockZ();
+        BlockState air = Blocks.AIR.defaultBlockState();
 
-    private void placeBig(ChunkAccess chunk, UniverseProfile p, RandomSource rnd, BlockPos.MutableBlockPos pos, int x, int y, int z) {
-        switch (p.flora) {
-            case TREES -> tree(chunk, TREES.get(p.treeStyle % TREES.size()), rnd, pos, x, y, z, false);
-            case GLOW_TREES -> tree(chunk, GLOW_TREES.get(p.treeStyle % GLOW_TREES.size()), rnd, pos, x, y, z, true);
-            case MUSHROOMS -> mushroom(chunk, rnd, pos, x, y, z);
-            case CRYSTALS -> crystal(chunk, p, rnd, pos, x, y, z);
-            case DESERT -> cactus(chunk, rnd, pos, x, y, z);
-            default -> { }
-        }
-    }
-
-    private void tree(ChunkAccess chunk, TreeKind kind, RandomSource rnd, BlockPos.MutableBlockPos pos,
-                      int x, int y, int z, boolean glow) {
-        int height = 4 + rnd.nextInt(glow ? 6 : 4);
-        BlockState log = kind.log().defaultBlockState();
-        for (int i = 0; i < height; i++) chunk.setBlockState(pos.set(x, y + i, z), log, false);
-        BlockState crown = persistent(kind.crown());
-        int cy = y + height;
-        if (glow) {
-            // Schirmform mit Leuchtkern
-            for (int dx = -2; dx <= 2; dx++)
-                for (int dz = -2; dz <= 2; dz++)
-                    if (Math.abs(dx) + Math.abs(dz) <= 3) setIfAir(chunk, pos.set(x + dx, cy, z + dz), crown);
-            setIfAir(chunk, pos.set(x, cy + 1, z), crown);
-        } else {
-            int radius = 2;
-            for (int dy = -1; dy <= 2; dy++)
-                for (int dx = -radius; dx <= radius; dx++)
-                    for (int dz = -radius; dz <= radius; dz++) {
-                        double d = dx * dx + dz * dz + (dy - 0.5) * (dy - 0.5) * 1.6;
-                        if (d <= radius * radius + 1.2 && rnd.nextFloat() > 0.08f)
-                            setIfAir(chunk, pos.set(x + dx, cy + dy, z + dz), crown);
+        for (int i = 0; i < length; i++) {
+            int rise = i * 2 / length;   // Bug steckt im Boden, Heck ragt heraus
+            for (int w = -1; w <= 1; w++) {
+                for (int h = 0; h <= 2; h++) {
+                    int lx = alongX ? sx + i : sx + w;
+                    int lz = alongX ? sz + w : sz + i;
+                    if (lx < 0 || lx > 15 || lz < 0 || lz > 15) continue;
+                    boolean shell = w != 0 || h != 1 || i == 0 || i == length - 1;
+                    pos.set(ox + lx, baseY + h + rise, oz + lz);
+                    if (!shell) {
+                        chunk.setBlockState(pos, rnd.nextFloat() < 0.3f ? ModBlocks.SCHROTT_HAUFEN.get().defaultBlockState() : air, false);
+                    } else if (rnd.nextFloat() < 0.78f) {
+                        Block b = rnd.nextFloat() < 0.18f ? ModBlocks.SCHROTT_HAUFEN.get() : HULL[rnd.nextInt(HULL.length)];
+                        chunk.setBlockState(pos, b.defaultBlockState(), false);
                     }
+                }
+            }
+        }
+        // Xenit im Einschlagsboden unter dem Wrack
+        int ores = field ? 3 + rnd.nextInt(4) : 1 + rnd.nextInt(2);
+        for (int k = 0; k < ores; k++) {
+            int lx = Math.min(15, Math.max(0, sx + rnd.nextInt(alongX ? length : 3) - (alongX ? 0 : 1)));
+            int lz = Math.min(15, Math.max(0, sz + rnd.nextInt(alongX ? 3 : length) - (alongX ? 1 : 0)));
+            int y = baseY - 1 - rnd.nextInt(4);
+            Block ore = y < 0 ? ModBlocks.DEEPSLATE_XENIT_ORE.get() : ModBlocks.XENIT_ORE.get();
+            chunk.setBlockState(pos.set(ox + lx, y, oz + lz), ore.defaultBlockState(), false);
+        }
+        // Trümmer rundherum
+        for (int k = 0; k < 6; k++) {
+            int lx = rnd.nextInt(16), lz = rnd.nextInt(16);
+            int t = tops[lx][lz];
+            if (!dryLand(p, t)) continue;
+            pos.set(ox + lx, t + 1, oz + lz);
+            if (chunk.getBlockState(pos).isAir()) chunk.setBlockState(pos, ModBlocks.SCHROTT_HAUFEN.get().defaultBlockState(), false);
         }
     }
 
-    private void mushroom(ChunkAccess chunk, RandomSource rnd, BlockPos.MutableBlockPos pos, int x, int y, int z) {
-        int height = 4 + rnd.nextInt(4);
-        BlockState stem = Blocks.MUSHROOM_STEM.defaultBlockState();
-        BlockState cap = (rnd.nextBoolean() ? Blocks.RED_MUSHROOM_BLOCK : Blocks.BROWN_MUSHROOM_BLOCK).defaultBlockState();
-        for (int i = 0; i < height; i++) chunk.setBlockState(pos.set(x, y + i, z), stem, false);
-        for (int dx = -2; dx <= 2; dx++)
-            for (int dz = -2; dz <= 2; dz++)
-                if (dx * dx + dz * dz <= 5) setIfAir(chunk, pos.set(x + dx, y + height, z + dz), cap);
+    // ------------------------------------------------------------------ Kristallwelt
+
+    private void decorateCrystal(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
+        RandomSource rnd = decoRandom(p, chunk);
+        ChunkPos cp = chunk.getPos();
+        BlockState cluster = ModBlocks.FLUXKRISTALL_CLUSTER.get().defaultBlockState();
+        for (int lx = 0; lx < 16; lx++) {
+            for (int lz = 0; lz < 16; lz++) {
+                int top = tops[lx][lz];
+                if (!dryLand(p, top)) continue;
+                int x = cp.getMinBlockX() + lx, z = cp.getMinBlockZ() + lz;
+                boolean inner = lx >= 2 && lx <= 13 && lz >= 2 && lz <= 13;
+                if (inner && rnd.nextFloat() < p.featureDensity) {
+                    crystalSpire(chunk, rnd, pos, x, top + 1, z);
+                    continue;
+                }
+                if (rnd.nextFloat() < p.plantDensity && chunk.getBlockState(pos.set(x, top + 1, z)).isAir()) {
+                    chunk.setBlockState(pos, cluster.setValue(AmethystClusterBlock.FACING, Direction.UP), false);
+                }
+            }
+        }
     }
 
-    private void crystal(ChunkAccess chunk, UniverseProfile p, RandomSource rnd, BlockPos.MutableBlockPos pos, int x, int y, int z) {
-        boolean ice = p.temperature == UniverseProfile.Temperature.COLD && rnd.nextBoolean();
-        BlockState body = (ice ? Blocks.PACKED_ICE : Blocks.AMETHYST_BLOCK).defaultBlockState();
-        int height = 3 + rnd.nextInt(7);
+    /** Kristallnadel: Amethyst mit knospenden Fluxkristallen, an denen Cluster wachsen. */
+    private void crystalSpire(ChunkAccess chunk, RandomSource rnd, BlockPos.MutableBlockPos pos, int x, int y, int z) {
+        BlockState body = Blocks.AMETHYST_BLOCK.defaultBlockState();
+        BlockState bud = ModBlocks.KNOSPENDER_FLUXKRISTALL.get().defaultBlockState();
+        BlockState glow = ModBlocks.FLUXKRISTALL_BLOCK.get().defaultBlockState();
+        BlockState cluster = ModBlocks.FLUXKRISTALL_CLUSTER.get().defaultBlockState();
+        int height = 4 + rnd.nextInt(8);
         for (int i = 0; i < height; i++) {
-            chunk.setBlockState(pos.set(x, y + i, z), body, false);
+            boolean budHere = i > 0 && i < height - 1 && rnd.nextFloat() < 0.35f;
+            chunk.setBlockState(pos.set(x, y + i, z), budHere ? bud : body, false);
             if (i < height / 2) {
                 if (rnd.nextBoolean()) setIfAir(chunk, pos.set(x + 1, y + i, z), body);
                 if (rnd.nextBoolean()) setIfAir(chunk, pos.set(x, y + i, z + 1), body);
             }
+            if (budHere) {
+                for (Direction d : Direction.Plane.HORIZONTAL) {
+                    if (rnd.nextFloat() < 0.5f) {
+                        setIfAir(chunk, pos.set(x + d.getStepX(), y + i, z + d.getStepZ()),
+                                cluster.setValue(AmethystClusterBlock.FACING, d));
+                    }
+                }
+            }
         }
-        if (!ice) setIfAir(chunk, pos.set(x, y + height, z), Blocks.AMETHYST_CLUSTER.defaultBlockState());
+        chunk.setBlockState(pos.set(x, y + height, z), glow, false);
+        setIfAir(chunk, pos.set(x, y + height + 1, z), cluster.setValue(AmethystClusterBlock.FACING, Direction.UP));
     }
 
-    private void cactus(ChunkAccess chunk, RandomSource rnd, BlockPos.MutableBlockPos pos, int x, int y, int z) {
-        BlockState below = chunk.getBlockState(pos.set(x, y - 1, z));
-        if (!below.is(Blocks.SAND) && !below.is(Blocks.RED_SAND)) {
-            setIfAir(chunk, pos.set(x, y, z), Blocks.DEAD_BUSH.defaultBlockState());
-            return;
+    // ------------------------------------------------------------------ Toxische Welt
+
+    private void decorateToxic(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
+        RandomSource rnd = decoRandom(p, chunk);
+        ChunkPos cp = chunk.getPos();
+        for (int lx = 0; lx < 16; lx++) {
+            for (int lz = 0; lz < 16; lz++) {
+                int top = tops[lx][lz];
+                if (!dryLand(p, top)) continue;
+                int x = cp.getMinBlockX() + lx, z = cp.getMinBlockZ() + lz;
+                if (!chunk.getBlockState(pos.set(x, top + 1, z)).isAir()) continue;
+                boolean inner = lx >= 2 && lx <= 13 && lz >= 2 && lz <= 13;
+                if (inner && rnd.nextFloat() < p.featureDensity) {
+                    deadTree(chunk, rnd, pos, x, top + 1, z);
+                    continue;
+                }
+                if (rnd.nextFloat() < p.plantDensity) {
+                    BlockState ground = chunk.getBlockState(pos.set(x, top, z));
+                    BlockState plant = toxicPlant(ground, rnd);
+                    if (plant != null) chunk.setBlockState(pos.set(x, top + 1, z), plant, false);
+                }
+            }
         }
-        int height = 1 + rnd.nextInt(3);
-        for (int i = 0; i < height; i++) setIfAir(chunk, pos.set(x, y + i, z), Blocks.CACTUS.defaultBlockState());
+    }
+
+    private static BlockState toxicPlant(BlockState ground, RandomSource rnd) {
+        if (ground.is(Blocks.GRASS_BLOCK) || ground.is(Blocks.MOSS_BLOCK)) {
+            int r = rnd.nextInt(10);
+            if (r < 6) return Blocks.SHORT_GRASS.defaultBlockState();
+            if (r < 8) return Blocks.FERN.defaultBlockState();
+            return Blocks.BROWN_MUSHROOM.defaultBlockState();
+        }
+        if (ground.is(Blocks.MYCELIUM)) return (rnd.nextBoolean() ? Blocks.RED_MUSHROOM : Blocks.BROWN_MUSHROOM).defaultBlockState();
+        if (ground.is(Blocks.MUD)) return rnd.nextBoolean() ? Blocks.DEAD_BUSH.defaultBlockState() : Blocks.BROWN_MUSHROOM.defaultBlockState();
+        return null;
+    }
+
+    /** Abgestorbener Baum ohne Laub, mit ein, zwei kahlen Ästen. */
+    private void deadTree(ChunkAccess chunk, RandomSource rnd, BlockPos.MutableBlockPos pos, int x, int y, int z) {
+        Block log = rnd.nextBoolean() ? Blocks.STRIPPED_DARK_OAK_LOG : Blocks.MANGROVE_LOG;
+        int height = 3 + rnd.nextInt(5);
+        for (int i = 0; i < height; i++) chunk.setBlockState(pos.set(x, y + i, z), log.defaultBlockState(), false);
+        int branches = 1 + rnd.nextInt(2);
+        for (int b = 0; b < branches; b++) {
+            Direction d = Direction.Plane.HORIZONTAL.getRandomDirection(rnd);
+            int by = y + height - 1 - rnd.nextInt(2);
+            BlockState branch = log.defaultBlockState().setValue(RotatedPillarBlock.AXIS, d.getAxis());
+            for (int k = 1; k <= 1 + rnd.nextInt(2); k++) {
+                setIfAir(chunk, pos.set(x + d.getStepX() * k, by + (k == 2 ? 1 : 0), z + d.getStepZ() * k), branch);
+            }
+        }
     }
 
     private static void setIfAir(ChunkAccess chunk, BlockPos pos, BlockState state) {
         if (chunk.getBlockState(pos).isAir()) chunk.setBlockState(pos, state, false);
-    }
-
-    private static BlockState smallPlant(Block ground, UniverseProfile p, RandomSource rnd) {
-        if (ground == Blocks.GRASS_BLOCK || ground == Blocks.MOSS_BLOCK || ground == Blocks.MUD) {
-            if (p.temperature == UniverseProfile.Temperature.COLD) return null;
-            int r = rnd.nextInt(10);
-            if (r < 6) return Blocks.SHORT_GRASS.defaultBlockState();
-            if (r < 8) return Blocks.FERN.defaultBlockState();
-            Block[] flowers = {Blocks.POPPY, Blocks.CORNFLOWER, Blocks.ALLIUM, Blocks.BLUE_ORCHID, Blocks.OXEYE_DAISY};
-            return flowers[rnd.nextInt(flowers.length)].defaultBlockState();
-        }
-        if (ground == Blocks.MYCELIUM) return (rnd.nextBoolean() ? Blocks.RED_MUSHROOM : Blocks.BROWN_MUSHROOM).defaultBlockState();
-        if (ground == Blocks.SAND || ground == Blocks.RED_SAND || ground == Blocks.ORANGE_TERRACOTTA)
-            return rnd.nextInt(4) == 0 ? Blocks.DEAD_BUSH.defaultBlockState() : null;
-        if (ground == Blocks.WARPED_NYLIUM) {
-            int r = rnd.nextInt(6);
-            return (r < 3 ? Blocks.WARPED_ROOTS : r < 5 ? Blocks.NETHER_SPROUTS : Blocks.WARPED_FUNGUS).defaultBlockState();
-        }
-        if (ground == Blocks.CRIMSON_NYLIUM)
-            return (rnd.nextInt(4) < 3 ? Blocks.CRIMSON_ROOTS : Blocks.CRIMSON_FUNGUS).defaultBlockState();
-        return null;
     }
 
     // ------------------------------------------------------------------ Pflicht-Overrides
@@ -353,6 +407,7 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
     @Override
     public void addDebugScreenInfo(List<String> info, RandomState random, BlockPos pos) {
         UniverseProfile p = profileAt(pos.getX(), pos.getZ());
-        info.add("Riftverse: " + p.title() + " \"" + p.name + "\" | " + p.terrain.label + " | " + p.gravityText());
+        info.add("Riftverse: " + p.title() + " \"" + p.name + "\" | " + type.getSerializedName() + " | "
+                + p.terrain.label + " | " + p.modifiers);
     }
 }

@@ -1,7 +1,7 @@
 {
   "values": [
-    "riftverse:quantum_ore",
     "#c:ores/tin",
-    "#c:ores/xenit"
+    "#c:ores/xenit",
+    "#c:ores/fluxkristall"
   ]
 }

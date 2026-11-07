@@ -1,10 +1,12 @@
 package dev.riftverse.story;
 
+import dev.riftverse.Config;
 import dev.riftverse.Riftverse;
 import dev.riftverse.boss.RiftBossEntity;
 import dev.riftverse.registry.ModBlocks;
 import dev.riftverse.registry.ModEntities;
 import dev.riftverse.universe.Multiverse;
+import dev.riftverse.universe.MultiverseData;
 import dev.riftverse.universe.UniverseId;
 import dev.riftverse.universe.UniverseProfile;
 import net.minecraft.ChatFormatting;
@@ -33,14 +35,14 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Regie: erkennt, wann ein Spieler ein Universum betritt, und startet dort
- * kurz darauf eine frisch generierte Handlung mit Boss und Arena.
+ * Regie: erkennt, wann ein Spieler ein Universum betritt, und zeigt Typ, Name und Modifikatoren.
+ * Die Boss-Handlung aus dem ersten Entwurf ist bis zum Story-Modus (Phase 3) abgeschaltet und lässt sich
+ * zum Testen über {@code story.boss_bei_ankunft} wieder einschalten.
  */
 @EventBusSubscriber(modid = Riftverse.MODID)
 public final class StoryDirector {
@@ -68,10 +70,11 @@ public final class StoryDirector {
     private static void onArrive(ServerPlayer player, UniverseId id) {
         UniverseProfile u = UniverseProfile.get(id);
         player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
-        player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(u.title()).withStyle(ChatFormatting.GREEN)));
-        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("„" + u.name + "“").withStyle(ChatFormatting.WHITE)));
-        player.sendSystemMessage(Component.literal(String.format(Locale.GERMAN, "⌁ %s · Gravitation %s · Luft %s · %s",
-                u.terrain.label, u.gravityText(), u.atmosphere.label.split(" ")[0], u.temperature.label.split(" ")[0]))
+        player.connection.send(new ClientboundSetTitleTextPacket(u.type.displayName().copy().withStyle(ChatFormatting.GREEN)));
+        player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(u.title() + " „" + u.name + "“")
+                .withStyle(ChatFormatting.WHITE)));
+        player.sendSystemMessage(Component.literal("⌁ ").withStyle(ChatFormatting.DARK_AQUA)
+                .append(Component.translatable("message.riftverse.arrival", u.type.displayName(), u.modifierText()))
                 .withStyle(ChatFormatting.DARK_AQUA));
 
         MultiverseData data = MultiverseData.get(player.server);
@@ -79,6 +82,9 @@ public final class StoryDirector {
         rec.visits++;
         data.setDirty();
 
+        // Universen sind beim Betreten friedlich. Der Boss-Start aus dem ersten Entwurf bleibt bis zum
+        // Story-Modus abgeschaltet (Config story.boss_bei_ankunft).
+        if (!Config.BOSS_ON_ARRIVAL.get()) return;
         switch (rec.state) {
             case MultiverseData.STATE_NONE -> {
                 PENDING.put(player.getUUID(), new Pending(id, player.server.getTickCount() + 120));

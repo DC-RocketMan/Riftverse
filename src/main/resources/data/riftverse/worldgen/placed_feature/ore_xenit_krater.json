@@ -1,0 +1,34 @@
+{
+  "feature": "riftverse:ore_xenit_krater",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 1,
+        "max_inclusive": 2
+      }
+    },
+    {
+      "type": "riftverse:krater_zone"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:trapezoid",
+        "min_inclusive": {
+          "absolute": -24
+        },
+        "max_inclusive": {
+          "absolute": 56
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

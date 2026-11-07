@@ -29,8 +29,9 @@ public class TonnenreaktorBlockEntity extends GeneratorBlockEntity {
     /** Chance auf ein Kleinteil pro verbranntem Item (1 zu n). */
     public static final int PART_CHANCE = 12;
 
+    /** Polymerfetzen kommen seit Meilenstein 2 aus dem Recycler, nicht mehr aus der Tonne. */
     private static final List<Supplier<? extends ItemLike>> PARTS = List.of(
-            ModItems.KUPFERDRAHT, ModItems.FEDER, ModItems.MINI_MOTOR, ModItems.POLYMERFETZEN,
+            ModItems.KUPFERDRAHT, ModItems.FEDER, ModItems.MINI_MOTOR,
             () -> Items.IRON_NUGGET, () -> Items.REDSTONE);
 
     private int burnTime;

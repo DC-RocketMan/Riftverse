@@ -1,0 +1,19 @@
+{
+  "type": "riftverse:fluid_mixer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:dusts/fluxkristall"
+      }
+    }
+  ],
+  "fluid": {
+    "fluid": "minecraft:water",
+    "amount": 1000
+  },
+  "result": {
+    "id": "riftverse:roh_portalfluid",
+    "amount": 1000
+  },
+  "time": 200
+}

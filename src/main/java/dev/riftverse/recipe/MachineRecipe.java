@@ -1,6 +1,12 @@
 package dev.riftverse.recipe;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.riftverse.tech.MachineKind;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.RandomSource;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
@@ -10,6 +16,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +35,8 @@ import java.util.List;
  * }
  * }</pre>
  * Die Walzbank liest zusätzlich {@code "mode": "walzen" | "schneiden" | "ziehen"}.
+ * Maschinen mit mehreren Ausgängen (Kristall-Schleifer, Recycler) lesen
+ * {@code "byproducts": [{"result": {...}, "chance": 0.4}]}; ohne {@code chance} kommt das Nebenprodukt immer.
  */
 public class MachineRecipe implements Recipe<MachineRecipeInput> {
     private final MachineKind kind;
@@ -35,13 +44,54 @@ public class MachineRecipe implements Recipe<MachineRecipeInput> {
     private final ItemStack result;
     private final int time;
     private final String mode;
+    private final List<Byproduct> byproducts;
 
-    public MachineRecipe(MachineKind kind, List<CountedIngredient> ingredients, ItemStack result, int time, String mode) {
+    public MachineRecipe(MachineKind kind, List<CountedIngredient> ingredients, ItemStack result, int time, String mode,
+                         List<Byproduct> byproducts) {
         this.kind = kind;
         this.ingredients = List.copyOf(ingredients);
         this.result = result;
         this.time = time;
         this.mode = mode;
+        this.byproducts = List.copyOf(byproducts);
+        if (1 + byproducts.size() > kind.outputs()) {
+            throw new IllegalArgumentException("Rezept für " + kind.id() + " hat " + (1 + byproducts.size())
+                    + " Produkte, die Maschine aber nur " + kind.outputs() + " Ausgänge");
+        }
+    }
+
+    /** Nebenprodukt mit Wahrscheinlichkeit (0..1). */
+    public record Byproduct(ItemStack result, float chance) {
+        public static final Codec<Byproduct> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ItemStack.CODEC.fieldOf("result").forGetter(Byproduct::result),
+                Codec.floatRange(0.0f, 1.0f).optionalFieldOf("chance", 1.0f).forGetter(Byproduct::chance)
+        ).apply(i, Byproduct::new));
+        public static final StreamCodec<RegistryFriendlyByteBuf, Byproduct> STREAM_CODEC = StreamCodec.composite(
+                ItemStack.STREAM_CODEC, Byproduct::result,
+                ByteBufCodecs.FLOAT, Byproduct::chance,
+                Byproduct::new);
+    }
+
+    public List<Byproduct> byproducts() {
+        return byproducts;
+    }
+
+    /** Alles, was bei diesem Durchlauf herauskommt: Hauptprodukt plus gewürfelte Nebenprodukte. */
+    public List<ItemStack> roll(RandomSource random) {
+        List<ItemStack> out = new ArrayList<>();
+        out.add(result.copy());
+        for (Byproduct b : byproducts) {
+            if (b.chance() >= 1.0f || random.nextFloat() < b.chance()) out.add(b.result().copy());
+        }
+        return out;
+    }
+
+    /** Alle möglichen Produkte (für die Platzprüfung im Ausgang). */
+    public List<ItemStack> allOutputs() {
+        List<ItemStack> out = new ArrayList<>();
+        out.add(result);
+        byproducts.forEach(b -> out.add(b.result()));
+        return out;
     }
 
     public MachineKind kind() {

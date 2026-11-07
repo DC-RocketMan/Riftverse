@@ -1,35 +1,85 @@
 package dev.riftverse.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import dev.riftverse.Riftverse;
 import dev.riftverse.cable.InsulatedCableBlock;
+import dev.riftverse.client.screen.FluidMixerScreen;
 import dev.riftverse.client.screen.GeneratorScreen;
 import dev.riftverse.client.screen.ProcessingScreen;
+import dev.riftverse.client.screen.SpeicherScreen;
 import dev.riftverse.client.screen.WerkbankScreen;
 import dev.riftverse.registry.ModBlocks;
+import dev.riftverse.registry.ModDataComponents;
+import dev.riftverse.registry.ModDataComponents.PeilerZiel;
 import dev.riftverse.registry.ModEntities;
+import dev.riftverse.registry.ModFluids;
+import dev.riftverse.registry.ModItems;
 import dev.riftverse.registry.ModMenus;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.settings.KeyConflictContext;
+import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(modid = Riftverse.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ClientSetup {
+    /** Rückkehr-Taste der Portal-Kanone (Standard R). */
+    public static final KeyMapping RUECKKEHR = new KeyMapping("key.riftverse.rueckkehr", KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.riftverse");
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
-        event.register(ModMenus.MACHINE.get(), MachineScreen::new);
         event.register(ModMenus.PROCESSING.get(), ProcessingScreen::new);
         event.register(ModMenus.GENERATOR.get(), GeneratorScreen::new);
         event.register(ModMenus.WERKBANK.get(), WerkbankScreen::new);
+        event.register(ModMenus.FLUID_MIXER.get(), FluidMixerScreen::new);
+        event.register(ModMenus.SPEICHER.get(), SpeicherScreen::new);
     }
 
     @SubscribeEvent
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.RIFT_PORTAL.get(), RiftPortalRenderer::new);
         event.registerEntityRenderer(ModEntities.RIFT_BOSS.get(), RiftBossRenderer::new);
+        event.registerEntityRenderer(ModEntities.SCHROTT_GOLEM.get(), SchrottGolemRenderer::new);
+    }
+
+    @SubscribeEvent
+    public static void registerKeys(RegisterKeyMappingsEvent event) {
+        event.register(RUECKKEHR);
+    }
+
+    @SubscribeEvent
+    public static void setup(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> {
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.SAEURE.get(), RenderType.translucent());
+            ItemBlockRenderTypes.setRenderLayer(ModFluids.SAEURE_FLOWING.get(), RenderType.translucent());
+
+            // Meteoritenpeiler: Nadel wie beim Kompass, grün in der Xenit-Zone
+            ItemProperties.register(ModItems.METEORITENPEILER.get(), ResourceLocation.withDefaultNamespace("angle"),
+                    (ItemPropertyFunction) new CompassItemPropertyFunction((level, stack, entity) -> {
+                        PeilerZiel ziel = stack.get(ModDataComponents.PEILER.get());
+                        return ziel == null ? null : ziel.pos();
+                    }));
+            ItemProperties.register(ModItems.METEORITENPEILER.get(), Riftverse.id("zone"),
+                    (ItemPropertyFunction) (stack, level, entity, seed) -> {
+                        PeilerZiel ziel = stack.get(ModDataComponents.PEILER.get());
+                        return ziel != null && ziel.zone() ? 1.0f : 0.0f;
+                    });
+        });
     }
 
     /** Streifen der isolierten Kabel: Xenit-Petrol oder die Farbe des Farbstoffs. */
@@ -37,6 +87,34 @@ public final class ClientSetup {
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tintIndex) -> 0xFF000000 | InsulatedCableBlock.tint(state),
                 ModBlocks.KUPFERKABEL_ISOLIERT.get());
+    }
+
+    /** Fluid-Texturen sind schon farbig, daher kein Tint. */
+    @SubscribeEvent
+    public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerFluidType(fluid("saeure"), ModFluids.SAEURE_TYPE.get());
+        event.registerFluidType(fluid("roh_portalfluid"), ModFluids.ROH_PORTALFLUID_TYPE.get());
+    }
+
+    private static IClientFluidTypeExtensions fluid(String name) {
+        ResourceLocation still = Riftverse.id("block/" + name + "_still");
+        ResourceLocation flow = Riftverse.id("block/" + name + "_flow");
+        return new IClientFluidTypeExtensions() {
+            @Override
+            public ResourceLocation getStillTexture() {
+                return still;
+            }
+
+            @Override
+            public ResourceLocation getFlowingTexture() {
+                return flow;
+            }
+
+            @Override
+            public int getTintColor() {
+                return 0xFFFFFFFF;
+            }
+        };
     }
 
     private ClientSetup() {}

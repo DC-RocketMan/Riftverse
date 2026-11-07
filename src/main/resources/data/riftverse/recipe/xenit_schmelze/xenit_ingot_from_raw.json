@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:xenit_schmelze",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:raw_materials/xenit"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:xenit_ingot"
+  },
+  "time": 100
+}

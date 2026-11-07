@@ -1,0 +1,21 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " H ",
+    "G G",
+    " H "
+  ],
+  "key": {
+    "H": {
+      "item": "riftverse:zinn_huelse"
+    },
+    "G": {
+      "tag": "c:glass_panes"
+    }
+  },
+  "result": {
+    "id": "riftverse:fluid_kartusche",
+    "count": 2
+  },
+  "loetzinn": 1
+}

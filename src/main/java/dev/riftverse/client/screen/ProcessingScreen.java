@@ -12,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/** Erzmühle, Walzbank, Legierungsofen, Garagenpresse. */
+/** Verarbeitende Maschinen: Erzmühle, Walzbank, Legierungsofen, Garagenpresse, Xenit-Schmelze, Platinen-Ätzer … */
 public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
     private static final int BAR_X = 13, BAR_Y = 16, BAR_W = 8, BAR_H = 42;
 
@@ -52,7 +52,12 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
 
         int n = kind.inputs();
         for (int i = 0; i < n; i++) GuiKit.slot(g, x + ProcessingMenu.inputX(n, i), y + ProcessingMenu.IN_Y);
-        GuiKit.bigSlot(g, x + ProcessingMenu.OUT_X, y + ProcessingMenu.OUT_Y);
+        int o = kind.outputs();
+        for (int i = 0; i < o; i++) {
+            int sx = x + ProcessingMenu.outputX(o, i), sy = y + ProcessingMenu.outputY(o, i);
+            if (ProcessingMenu.bigOutput(o, i)) GuiKit.bigSlot(g, sx, sy);
+            else GuiKit.slot(g, sx, sy);
+        }
         GuiKit.arrow(g, x + ProcessingMenu.ARROW_X, y + ProcessingMenu.ARROW_Y, (float) menu.progress() / menu.maxProgress());
 
         if (kind.electric()) {

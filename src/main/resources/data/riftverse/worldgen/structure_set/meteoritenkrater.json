@@ -1,0 +1,19 @@
+{
+  "structures": [
+    {
+      "structure": "riftverse:meteoritenkrater",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 1847263195,
+    "spacing": 62,
+    "separation": 56,
+    "locate_offset": [
+      8,
+      0,
+      8
+    ]
+  }
+}

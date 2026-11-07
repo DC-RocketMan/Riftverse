@@ -34,8 +34,9 @@ jobs:
           path: build/libs/*.jar
           if-no-files-found: error
 
-      # Startet einen Server mit dem Mod, prüft Registrierung, Datapack-JSON, Rezepte und das
-      # Stromnetz (Kreativ-Quelle -> Kupferkabel -> Erzmühle, Überspannung) und beendet ihn wieder.
+      # Startet einen Server mit dem Mod, prüft Registrierung, Datapack-JSON, Rezepte, das Stromnetz
+      # (Kreativ-Quelle -> Kupferkabel -> Erzmühle, Überspannung, Xenit-Zelle), die Maschinen aus
+      # Meilenstein 2, die drei Universumstypen, einen Meteoritenkrater und die Portal-Kanone.
       - name: Rauchtest
         run: |
           mkdir -p run
@@ -46,6 +47,11 @@ jobs:
           grep -q "RIFTVERSE-RAUCHTEST: BESTANDEN" rauchtest.log
           if grep -E "/ERROR\].*riftverse" rauchtest.log; then
             echo "Fehler mit riftverse im Server-Log"
+            exit 1
+          fi
+          # Datapack-Fehler stehen oft in Folgezeilen (z. B. fehlende Tag-Einträge "(from mod/riftverse)")
+          if grep -E "from mod/riftverse|Couldn't parse data file riftverse:|Failed to (load|parse).*riftverse:" rauchtest.log; then
+            echo "Datapack-Fehler im Riftverse-Mod"
             exit 1
           fi
 

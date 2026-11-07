@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:toxische_welt",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "toxische_welt",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "toxische_welt",
+      "biomes": [
+        "riftverse:toxisch_gruen",
+        "riftverse:toxisch_schwefel"
+      ]
+    }
+  }
+}

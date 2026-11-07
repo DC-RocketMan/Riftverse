@@ -3,15 +3,15 @@
   "category": "misc",
   "pattern": [
     "SSS",
-    "SQS",
+    "SFS",
     "SSS"
   ],
   "key": {
     "S": {
       "item": "minecraft:stone"
     },
-    "Q": {
-      "item": "riftverse:quantum_ingot"
+    "F": {
+      "item": "riftverse:fluxstaub"
     }
   },
   "result": {

@@ -1,7 +1,8 @@
 package dev.riftverse.item;
 
-import dev.riftverse.story.MultiverseData;
 import dev.riftverse.universe.Multiverse;
+import dev.riftverse.universe.MultiverseData;
+import dev.riftverse.universe.UniverseCleanup;
 import dev.riftverse.universe.UniverseId;
 import dev.riftverse.universe.UniverseProfile;
 import net.minecraft.ChatFormatting;
@@ -19,7 +20,7 @@ import net.minecraft.world.level.Level;
 
 import java.util.List;
 
-/** Zeigt die Naturgesetze und den Story-Status des aktuellen Universums. */
+/** Zeigt Typ, Naturgesetze und Modifikatoren des aktuellen Universums – und ob es verankert ist. */
 public class UniverseScannerItem extends Item {
     public UniverseScannerItem(Properties properties) {
         super(properties);
@@ -28,39 +29,42 @@ public class UniverseScannerItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        if (level.isClientSide) return InteractionResultHolder.success(stack);
+        if (!(level instanceof ServerLevel sl)) return InteractionResultHolder.success(stack);
 
         UniverseId id = Multiverse.at(level, player.blockPosition());
         level.playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1f, 1.5f);
         if (id == null) {
-            player.sendSystemMessage(Component.literal("⌁ Scanner: Heimat-Realität. 1,00 g, atembar, gemäßigt.")
-                    .withStyle(ChatFormatting.AQUA));
+            player.sendSystemMessage(Component.translatable("message.riftverse.scanner.home").withStyle(ChatFormatting.AQUA));
             return InteractionResultHolder.success(stack);
         }
         UniverseProfile p = UniverseProfile.get(id);
-        MultiverseData data = MultiverseData.get(((ServerLevel) level).getServer());
-        MultiverseData.Record rec = data.record(id);
+        MultiverseData.Record rec = MultiverseData.get(sl.getServer()).record(id);
 
         player.sendSystemMessage(Component.literal("━━ " + p.title() + " „" + p.name + "“ ━━").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
-        line(player, "Gravitation", p.gravityText());
-        line(player, "Atmosphäre", p.atmosphere.label);
-        line(player, "Temperatur", p.temperature.label);
-        line(player, "Gelände", p.terrain.label + " · " + p.palette.name());
-        line(player, "Rohstoffe", p.richnessLabel());
-        line(player, "Gefahrenstufe", "★".repeat(p.danger) + "☆".repeat(5 - p.danger));
-        String status = switch (rec.state) {
-            case MultiverseData.STATE_ACTIVE -> "⚠ " + rec.bossName + " herrscht hier noch";
-            case MultiverseData.STATE_DEFEATED -> "✔ befreit (" + rec.bossName + " besiegt)";
-            case MultiverseData.STATE_SPARED -> "☮ " + rec.bossName + " wurde verschont";
-            default -> "unbekannt – noch keine Geschichte";
-        };
-        line(player, "Geschichte", status);
+        line(player, "message.riftverse.scanner.type", p.type.displayName());
+        line(player, "message.riftverse.scanner.modifiers", p.modifierText());
+        line(player, "message.riftverse.scanner.gravity", Component.literal(p.gravityText()));
+        line(player, "message.riftverse.scanner.air", Component.literal(p.atmosphere.label));
+        line(player, "message.riftverse.scanner.terrain", Component.literal(p.terrain.label + " · " + p.palette.name()));
+
+        long now = sl.getServer().overworld().getGameTime();
+        Component status;
+        if (rec.isAnchored()) {
+            status = Component.translatable("message.riftverse.scanner.anchored").withStyle(ChatFormatting.GREEN);
+        } else {
+            int days = UniverseCleanup.daysLeft(rec, now);
+            status = days < 0
+                    ? Component.translatable("message.riftverse.scanner.built").withStyle(ChatFormatting.GREEN)
+                    : Component.translatable("message.riftverse.scanner.reset", days).withStyle(ChatFormatting.YELLOW);
+        }
+        line(player, "message.riftverse.scanner.status", status);
         return InteractionResultHolder.success(stack);
     }
 
-    private static void line(Player player, String key, String value) {
-        player.sendSystemMessage(Component.literal(" " + key + ": ").withStyle(ChatFormatting.GRAY)
-                .append(Component.literal(value).withStyle(ChatFormatting.WHITE)));
+    private static void line(Player player, String key, Component value) {
+        player.sendSystemMessage(Component.literal(" ").append(Component.translatable(key).withStyle(ChatFormatting.GRAY))
+                .append(Component.literal(": ").withStyle(ChatFormatting.GRAY))
+                .append(value));
     }
 
     @Override

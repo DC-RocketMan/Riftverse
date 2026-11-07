@@ -1,0 +1,229 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "riftverse:item/meteoritenpeiler_00"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "angle": 0.0
+      },
+      "model": "riftverse:item/meteoritenpeiler_00"
+    },
+    {
+      "predicate": {
+        "angle": 0.03125
+      },
+      "model": "riftverse:item/meteoritenpeiler_01"
+    },
+    {
+      "predicate": {
+        "angle": 0.09375
+      },
+      "model": "riftverse:item/meteoritenpeiler_02"
+    },
+    {
+      "predicate": {
+        "angle": 0.15625
+      },
+      "model": "riftverse:item/meteoritenpeiler_03"
+    },
+    {
+      "predicate": {
+        "angle": 0.21875
+      },
+      "model": "riftverse:item/meteoritenpeiler_04"
+    },
+    {
+      "predicate": {
+        "angle": 0.28125
+      },
+      "model": "riftverse:item/meteoritenpeiler_05"
+    },
+    {
+      "predicate": {
+        "angle": 0.34375
+      },
+      "model": "riftverse:item/meteoritenpeiler_06"
+    },
+    {
+      "predicate": {
+        "angle": 0.40625
+      },
+      "model": "riftverse:item/meteoritenpeiler_07"
+    },
+    {
+      "predicate": {
+        "angle": 0.46875
+      },
+      "model": "riftverse:item/meteoritenpeiler_08"
+    },
+    {
+      "predicate": {
+        "angle": 0.53125
+      },
+      "model": "riftverse:item/meteoritenpeiler_09"
+    },
+    {
+      "predicate": {
+        "angle": 0.59375
+      },
+      "model": "riftverse:item/meteoritenpeiler_10"
+    },
+    {
+      "predicate": {
+        "angle": 0.65625
+      },
+      "model": "riftverse:item/meteoritenpeiler_11"
+    },
+    {
+      "predicate": {
+        "angle": 0.71875
+      },
+      "model": "riftverse:item/meteoritenpeiler_12"
+    },
+    {
+      "predicate": {
+        "angle": 0.78125
+      },
+      "model": "riftverse:item/meteoritenpeiler_13"
+    },
+    {
+      "predicate": {
+        "angle": 0.84375
+      },
+      "model": "riftverse:item/meteoritenpeiler_14"
+    },
+    {
+      "predicate": {
+        "angle": 0.90625
+      },
+      "model": "riftverse:item/meteoritenpeiler_15"
+    },
+    {
+      "predicate": {
+        "angle": 0.96875
+      },
+      "model": "riftverse:item/meteoritenpeiler_00"
+    },
+    {
+      "predicate": {
+        "angle": 0.0,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_00"
+    },
+    {
+      "predicate": {
+        "angle": 0.03125,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_01"
+    },
+    {
+      "predicate": {
+        "angle": 0.09375,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_02"
+    },
+    {
+      "predicate": {
+        "angle": 0.15625,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_03"
+    },
+    {
+      "predicate": {
+        "angle": 0.21875,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_04"
+    },
+    {
+      "predicate": {
+        "angle": 0.28125,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_05"
+    },
+    {
+      "predicate": {
+        "angle": 0.34375,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_06"
+    },
+    {
+      "predicate": {
+        "angle": 0.40625,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_07"
+    },
+    {
+      "predicate": {
+        "angle": 0.46875,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_08"
+    },
+    {
+      "predicate": {
+        "angle": 0.53125,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_09"
+    },
+    {
+      "predicate": {
+        "angle": 0.59375,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_10"
+    },
+    {
+      "predicate": {
+        "angle": 0.65625,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_11"
+    },
+    {
+      "predicate": {
+        "angle": 0.71875,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_12"
+    },
+    {
+      "predicate": {
+        "angle": 0.78125,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_13"
+    },
+    {
+      "predicate": {
+        "angle": 0.84375,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_14"
+    },
+    {
+      "predicate": {
+        "angle": 0.90625,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_15"
+    },
+    {
+      "predicate": {
+        "angle": 0.96875,
+        "riftverse:zone": 1
+      },
+      "model": "riftverse:item/meteoritenpeiler_zone_00"
+    }
+  ]
+}
