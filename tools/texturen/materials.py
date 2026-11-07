@@ -189,34 +189,22 @@ def fluid_frames(ramp, size=16, flow=False, stars=False, n=16):
 # =============================================================================
 # Item-Vorlagen
 # =============================================================================
+BAR_ROWS = [
+"................","................","..........aa....",".......aaabbc...",
+"....aaabddddbc..",".aaabddddddddbc.",".addddddddddeecc","abeddddddeeedcbf",
+"abbeddeeedgccgbf","abbbeedgccccbbb.","agbbdgccggbbgff.",".agbdgccggfff...",
+"..agbghfff......","...aaff.........","................","................"]
+
+
 def bar(ramp, accent=None):
-    """Barren im Stil klassischer Tech-Mods: dicke, schräg liegende Stange, steigt nach rechts an.
-    Helle Oberseite und dunklere Front, klar getrennt durch eine Treppenkante; Stirnseite links im Licht."""
+    """Barren in der klassischen Minecraft-Barrenform (Pixelraster des Vanilla-Barrens, leicht
+    abgerundete Ecken), nur in den Farben der Rampe."""
     t = Tex()
-    white = H('#ffffff')
-    #        x:  1   2   3   4   5   6   7   8   9  10  11  12  13  14
-    tops = [7, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3, 4, 5]
-    bots = [11, 12, 12, 12, 11, 11, 11, 10, 10, 10, 9, 9, 9, 8]
-    for i, x in enumerate(range(1, 15)):
-        edge = 9 - i // 3                       # erste Reihe der Front (Treppe parallel zur Stange)
-        for y in range(tops[i], bots[i] + 1):
-            if x == 1:
-                c = ramp[4] if y < bots[i] else ramp[3]          # Stirnseite
-            elif x == 14:
-                c = ramp[1] if y < bots[i] else ramp[0]          # rechtes Ende im Schatten
-            elif y < edge:
-                c = ramp[4] if y < min(tops[i] + 2, edge - 1) else ramp[3]   # Oberseite
-            elif y == bots[i]:
-                c = ramp[0]                                      # Unterkante
-            else:
-                c = ramp[2] if y - edge < 2 else ramp[1]         # Front
-            t.p(x, y, c)
-    for x, y in [(2, 7), (3, 7), (4, 6), (6, 6), (7, 5)]:        # Glanzlinie
-        t.p(x, y, white)
-    t.p(2, 9, ramp[3]); t.p(2, 10, ramp[3])                      # Front wird zur Stirnseite hin heller
+    leg = {'a': ramp[1], 'b': ramp[3], 'c': ramp[2], 'd': ramp[4], 'e': H('#ffffff'),
+           'f': ramp[0], 'g': ramp[2], 'h': ramp[1]}
+    t.sprite(BAR_ROWS, leg)
     if accent:
-        t.p(7, 9, accent[3]); t.p(8, 8, accent[4]); t.p(9, 8, accent[3])
-    t.outline()
+        t.p(6, 7, accent[3]); t.p(7, 7, accent[4]); t.p(8, 7, accent[3])
     return t
 
 
@@ -252,38 +240,33 @@ def raw_chunk(ramp, accent, seed):
     return t
 
 
+PLATE_ROWS = [
+"................",
+"...000..........",
+"...0WW0000......",
+"...0WWWWWW0000..",
+"..0WWWWWWWWLL0..",
+"..0WWWWWWWLLL0..",
+"..0WWWWWWLLL0...",
+"..0WWWWWLLLL0...",
+".0WWWWWLLLLL0...",
+".0WWWWLLLLLL0...",
+".0WWWLLLLLL0....",
+".000LLLLLLL0....",
+"....0000LLL0....",
+"........000.....",
+"................",
+"................"]
+
+
 def plate(ramp, rivets=True, mark=None):
-    """Platte im Stil klassischer Tech-Mods: gedrehtes Blech mit hellen Kanten oben links
-    und sichtbarer Blechdicke unten rechts."""
+    """Platte: flaches, gerades Blech (um 45 Grad gedreht), weicher Rand, einfarbige Fuellung.
+    `rivets` bleibt aus Kompatibilitaet bestehen, wird nicht mehr gezeichnet."""
     t = Tex()
-    top = [(5.0, 3.0), (13.0, 5.0), (11.0, 13.0), (3.0, 11.0)]
-    poly_fill(t, top, ramp[3])
-    # Blechdicke: unter der unteren und rechts neben der rechten Kante eine dunkle Reihe
-    edge = []
-    for y in range(16):
-        for x in range(16):
-            if t.get(x, y)[3] and (not t.get(x, y + 1)[3] or not t.get(x + 1, y)[3]):
-                edge.append((x, y))
-    for x, y in edge:
-        if not t.get(x, y + 1)[3]:
-            t.p(x, y + 1, ramp[1])
-    for x, y in edge:
-        t.p(x, y, ramp[2])
-    # helle Kanten oben und links
-    for y in range(16):
-        for x in range(16):
-            c = t.get(x, y)
-            if c == tuple(ramp[3]) and (not t.get(x, y - 1)[3] or not t.get(x - 1, y)[3]):
-                t.p(x, y, ramp[4])
-    t.p(5, 4, H('#ffffff')); t.p(6, 4, H('#ffffff')); t.p(4, 6, H('#ffffff'))
-    if rivets:
-        for x, y in [(6, 6), (10, 7), (5, 10), (9, 11)]:
-            t.p(x, y, ramp[4])
-            t.p(x + 1, y + 1, ramp[1])
+    t.sprite(PLATE_ROWS, {'0': ramp[2], 'W': ramp[3], 'L': ramp[3]})
     if mark:
         for x, y, c in mark:
             t.p(x, y, c)
-    t.outline()
     return t
 
 
