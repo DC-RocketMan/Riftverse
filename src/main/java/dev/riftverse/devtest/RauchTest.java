@@ -103,7 +103,7 @@ public final class RauchTest {
 
         // --- Netz: Kreativ-Quelle -> 3 Kupferkabel -> Erzmühle ---------------------
         BlockPos base = new BlockPos(8, 220, 8);
-        level.setChunkForced(0, 0, true);
+        for (int cz = 0; cz <= 3; cz++) level.setChunkForced(0, cz, true);   // alle Testaufbauten müssen ticken
         source = base;
         mill = base.east(4);
         level.setBlock(source, ModBlocks.KREATIV_QUELLE.get().defaultBlockState(), Block.UPDATE_ALL);
@@ -225,24 +225,6 @@ public final class RauchTest {
         check(Math.abs(KraterOrte.zoneWeight(0) - 1.0) < 1e-9 && Math.abs(KraterOrte.zoneWeight(150) - 0.25) < 1e-9
                 && KraterOrte.zoneWeight(200) == 0.0, "Xenit-Zone: 100 % am Krater, 25 % bei 150, 0 bei 200 Blöcken");
 
-        // --- Portal-Kanone: Fluid aus Kartuschen, 250 mB pro Schuss, Zerfall ------------------------------
-        FakePlayer player = FakePlayerFactory.getMinecraft(level);
-        player.getInventory().clearContent();
-        ItemStack gun = new ItemStack(ModItems.PORTAL_KANONE_MK1.get());
-        PortalKanoneItem kanone = ModItems.PORTAL_KANONE_MK1.get();
-        check(!kanone.fire(player, gun), "Kanone ohne Fluid schießt nicht");
-        long now = Zerfall.now(level);
-        player.getInventory().add(FluidKartuscheItem.gefuellt(now - 1));
-        player.getCooldowns().removeCooldown(kanone);
-        check(!kanone.fire(player, gun), "Zerfallene Kartusche wird nicht geladen");
-        player.getInventory().clearContent();
-        player.getInventory().add(FluidKartuscheItem.gefuellt(now + Zerfall.DAUER));
-        player.getCooldowns().removeCooldown(kanone);
-        check(kanone.fire(player, gun) && PortalKanoneItem.tank(gun).mb() == 750,
-                "Kanone lädt eine Kartusche und verbraucht 250 mB (" + PortalKanoneItem.tank(gun).mb() + " übrig)");
-        check(player.getInventory().countItem(ModItems.FLUID_KARTUSCHE.get()) == 1, "Leere Kartusche kommt zurück ins Inventar");
-        player.getInventory().clearContent();
-
         // --- Aufräumen der Universen ------------------------------------------------------
         MultiverseData.Record rec = new MultiverseData.Record();
         rec.lastVisit = 0;
@@ -269,7 +251,28 @@ public final class RauchTest {
         }
     }
 
+    private static void kanonenTest(ServerLevel level) {
+        // --- Portal-Kanone: Fluid aus Kartuschen, 250 mB pro Schuss, Zerfall ------------------------------
+        FakePlayer player = FakePlayerFactory.getMinecraft(level);
+        player.getInventory().clearContent();
+        ItemStack gun = new ItemStack(ModItems.PORTAL_KANONE_MK1.get());
+        PortalKanoneItem kanone = ModItems.PORTAL_KANONE_MK1.get();
+        check(!kanone.fire(player, gun), "Kanone ohne Fluid schießt nicht");
+        long now = Zerfall.now(level);   // läuft erst nach einigen hundert Ticks, damit "zerfallen" > 0 ist
+        player.getInventory().add(FluidKartuscheItem.gefuellt(Math.max(1, now - 10)));
+        player.getCooldowns().removeCooldown(kanone);
+        check(!kanone.fire(player, gun), "Zerfallene Kartusche wird nicht geladen");
+        player.getInventory().clearContent();
+        player.getInventory().add(FluidKartuscheItem.gefuellt(now + Zerfall.DAUER));
+        player.getCooldowns().removeCooldown(kanone);
+        check(kanone.fire(player, gun) && PortalKanoneItem.tank(gun).mb() == 750,
+                "Kanone lädt eine Kartusche und verbraucht 250 mB (" + PortalKanoneItem.tank(gun).mb() + " übrig)");
+        check(player.getInventory().countItem(ModItems.FLUID_KARTUSCHE.get()) == 1, "Leere Kartusche kommt zurück ins Inventar");
+        player.getInventory().clearContent();
+    }
+
     private static void meilenstein2Ergebnis(ServerLevel level) {
+        kanonenTest(level);
         if (level.getBlockEntity(grinder) instanceof ProcessingBlockEntity m) {
             ItemStack lens = m.items().getStackInSlot(m.outputSlot());
             ItemStack dust = m.items().getStackInSlot(m.outputSlot() + 1);
