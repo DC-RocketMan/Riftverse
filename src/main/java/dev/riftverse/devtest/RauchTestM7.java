@@ -194,7 +194,7 @@ final class RauchTestM7 {
 
         boolean huelle = recipes.getAllRecipesFor(ModRecipes.RIFT_SCHMIEDE_TYPE.get()).stream()
                 .filter(h -> h.value().result().is(ModItems.NULL_HUELLE.get()))
-                .anyMatch(h -> h.value().ingredients().stream().anyMatch(c -> c.test(new ItemStack(ModItems.XENIT_PLATTE.get()))));
+                .anyMatch(h -> h.value().ingredients().stream().anyMatch(c -> c.ingredient().test(new ItemStack(ModItems.XENIT_PLATTE.get()))));
         check(huelle, "Null-Hülle enthält Xenit-Platten");
     }
 
