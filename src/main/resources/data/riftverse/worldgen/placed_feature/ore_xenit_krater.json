@@ -2,6 +2,10 @@
   "feature": "riftverse:ore_xenit_krater",
   "placement": [
     {
+      "type": "riftverse:config_menge",
+      "option": "xenit_dichte"
+    },
+    {
       "type": "minecraft:count",
       "count": {
         "type": "minecraft:uniform",

@@ -45,6 +45,9 @@ public final class ModWorldgen {
             STRUCTURE_PIECES.register("krater", () -> (StructurePieceType.ContextlessType) KraterPiece::new);
     public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<KraterZonePlacement>> KRATER_ZONE =
             PLACEMENT_MODIFIERS.register("krater_zone", () -> () -> KraterZonePlacement.CODEC);
+    /** Config-Dichte für Zinn, Xenit und Fluxkristall. */
+    public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<dev.riftverse.worldgen.ConfigMengePlacement>> CONFIG_MENGE =
+            PLACEMENT_MODIFIERS.register("config_menge", () -> () -> dev.riftverse.worldgen.ConfigMengePlacement.CODEC);
 
     // --- Alien-Wracks ---
     public static final DeferredHolder<Feature<?>, AlienWrackFeature> ALIEN_WRACK =

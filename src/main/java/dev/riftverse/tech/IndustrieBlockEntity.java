@@ -177,6 +177,18 @@ public abstract class IndustrieBlockEntity extends RiftEnergyBlockEntity impleme
         return List.of(Component.translatable("tooltip.riftverse.progress", work * 100 / Math.max(1, workMax)));
     }
 
+    /** Statuszeilen für Jade: dieselben Texte wie in der GUI, auf dem Server aus den Zusatzwerten gebaut. */
+    public List<Component> statusZeilen() {
+        int[] extra = new int[6];
+        for (int i = 0; i < extra.length; i++) extra[i] = extra(i);
+        List<Component> out = new java.util.ArrayList<>(infoLines(extra));
+        if (progress() != Progress.NONE && (work() > 0 || progress() == Progress.BAR)) {
+            List<Component> tip = progressTooltip(work(), workMax(), extra);
+            if (!tip.isEmpty()) out.add(tip.get(0));
+        }
+        return out;
+    }
+
     // ------------------------------------------------------------------ Werte für die GUI (Server)
 
     protected int work() {

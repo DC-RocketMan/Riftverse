@@ -2,6 +2,10 @@
   "feature": "riftverse:ore_tin",
   "placement": [
     {
+      "type": "riftverse:config_menge",
+      "option": "zinn_dichte"
+    },
+    {
       "type": "minecraft:count",
       "count": 14
     },
