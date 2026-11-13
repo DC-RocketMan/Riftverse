@@ -1,0 +1,23 @@
+{
+  "values": [
+    "riftverse:modul_analyse_hud",
+    "riftverse:modul_nachtsicht_linse",
+    "riftverse:modul_atemfilter",
+    "riftverse:modul_tarn_detektor_modul",
+    "riftverse:modul_universal_uebersetzer",
+    "riftverse:modul_energieschild",
+    "riftverse:modul_not_portal",
+    "riftverse:modul_kanonen_integration",
+    "riftverse:modul_klon_link",
+    "riftverse:modul_gadget_halterung",
+    "riftverse:modul_servo_verstaerker",
+    "riftverse:modul_sprint_booster",
+    "riftverse:modul_gravitationsregler",
+    "riftverse:modul_schrumpf_modul",
+    "riftverse:modul_fall_daempfer",
+    "riftverse:modul_sprungfeder",
+    "riftverse:modul_phasenschritt",
+    "riftverse:modul_haftsohlen",
+    "riftverse:universums_kern"
+  ]
+}

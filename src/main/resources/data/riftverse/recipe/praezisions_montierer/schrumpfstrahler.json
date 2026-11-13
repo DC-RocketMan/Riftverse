@@ -1,0 +1,42 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:bronze_platte"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:stabilisierte_linse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:xenit_spule"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:energiezelle"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:schrumpfstrahler"
+  },
+  "time": 400
+}

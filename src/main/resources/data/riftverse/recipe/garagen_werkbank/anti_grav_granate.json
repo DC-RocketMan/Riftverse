@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " S ",
+    "PAP",
+    " S "
+  ],
+  "key": {
+    "S": {
+      "item": "riftverse:schwebstein_brocken"
+    },
+    "P": {
+      "item": "riftverse:eisen_platte"
+    },
+    "A": {
+      "item": "riftverse:antigrav_platte"
+    }
+  },
+  "result": {
+    "id": "riftverse:anti_grav_granate",
+    "count": 4
+  },
+  "hammer": 1
+}

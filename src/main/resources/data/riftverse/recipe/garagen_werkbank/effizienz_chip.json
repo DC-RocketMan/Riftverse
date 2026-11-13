@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "RIR",
+    "CKC",
+    "RIR"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:redstone"
+    },
+    "I": {
+      "item": "riftverse:isolierfolie"
+    },
+    "C": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "K": {
+      "item": "riftverse:kuehlkoerper"
+    }
+  },
+  "result": {
+    "id": "riftverse:effizienz_chip"
+  },
+  "loetzinn": 1
+}

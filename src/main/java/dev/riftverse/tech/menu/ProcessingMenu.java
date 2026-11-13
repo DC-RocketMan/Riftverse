@@ -114,6 +114,15 @@ public class ProcessingMenu extends AbstractContainerMenu {
     }
 
     /** Montageschritte des aktuellen Rezepts (Präzisions-Montierer), 0 = keins. */
+    /** Bitmaske der eingebauten Upgrade-Chips (Ordnungszahlen von UpgradeChip). */
+    public int chips() {
+        return data.get(ProcessingBlockEntity.DATA_CHIPS);
+    }
+
+    public int krise() {
+        return data.get(ProcessingBlockEntity.DATA_KRISE);
+    }
+
     public int steps() {
         return data.get(ProcessingBlockEntity.DATA_STEPS);
     }

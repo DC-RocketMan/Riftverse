@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GLG",
+    "SBS",
+    "SPS"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:glass_pane"
+    },
+    "L": {
+      "item": "riftverse:fluxlinse"
+    },
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "P": {
+      "item": "riftverse:energiezelle"
+    }
+  },
+  "result": {
+    "id": "riftverse:holo_koeder"
+  },
+  "loetzinn": 2
+}

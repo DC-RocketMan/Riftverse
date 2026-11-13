@@ -9,6 +9,7 @@ import dev.riftverse.recipe.MachineRecipe;
 import dev.riftverse.recipe.MachineRecipeInput;
 import dev.riftverse.registry.ModBlockEntities;
 import dev.riftverse.registry.ModDataComponents;
+import dev.riftverse.registry.ModItems;
 import dev.riftverse.tech.menu.ProcessingMenu;
 import dev.riftverse.universe.UniverseId;
 import net.minecraft.core.BlockPos;
@@ -40,10 +41,13 @@ import java.util.List;
  */
 public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         implements MenuProvider, RiftEnergySink, Crankable, ServerTickable, DropsContents,
-        dev.riftverse.tech.multiblock.MultiblockController {
+        dev.riftverse.tech.multiblock.MultiblockController, dev.riftverse.tech.upgrade.Aufruestbar {
 
     public static final int DATA_PROGRESS = 0, DATA_MAX = 1, DATA_ENERGY_LO = 2, DATA_ENERGY_HI = 3,
-            DATA_CAP_LO = 4, DATA_CAP_HI = 5, DATA_MODE = 6, DATA_CRANK = 7, DATA_STEPS = 8, DATA_COUNT = 9;
+            DATA_CAP_LO = 4, DATA_CAP_HI = 5, DATA_MODE = 6, DATA_CRANK = 7, DATA_STEPS = 8, DATA_CHIPS = 9, DATA_KRISE = 10,
+            DATA_COUNT = 11;
+    /** KI-Chip: Chance pro Arbeitstick auf eine existenzielle Krise, und wie lange sie dauert. */
+    public static final int KRISE_CHANCE = 2_400, KRISE_DAUER = 100;
 
     private final MachineKind kind;
     private final ItemStackHandler items;
@@ -60,6 +64,11 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
     /** Multiblock-Maschinen (Rift-Schmiede): steht der Aufbau? */
     private boolean formed;
     private int checkIn;
+    /** Eingebaute Upgrade-Chips (Meilenstein 6). */
+    private final java.util.EnumSet<dev.riftverse.tech.upgrade.UpgradeChip> chips =
+            java.util.EnumSet.noneOf(dev.riftverse.tech.upgrade.UpgradeChip.class);
+    private float progressRest;
+    private int krise;
 
     public ProcessingBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.PROCESSING.get(), pos, state, kindOf(state).capacity());
@@ -94,6 +103,8 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
                     case DATA_MODE -> mode;
                     case DATA_CRANK -> crankTicks;
                     case DATA_STEPS -> cached != null && kind.ordered() ? cached.value().steps() : 0;
+                    case DATA_CHIPS -> chipMaske();
+                    case DATA_KRISE -> krise;
                     default -> 0;
                 };
             }
@@ -178,11 +189,19 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         if (holder != null && canOutput(withTarget(holder.value().allOutputs()))) {
             MachineRecipe recipe = holder.value();
             maxProgress = recipe.time();
+            boolean doppelt = chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.PARALLEL) && kannDoppelt(recipe);
             if (kind.electric()) {
-                if (energy.stored() >= kind.energyPerTick()) {
-                    energy.take(kind.energyPerTick());
-                    progress++;
+                int cost = verbrauch(doppelt);
+                if (krise > 0) {
+                    krise--;
+                } else if (energy.stored() >= cost) {
+                    energy.take(cost);
+                    progressRest += tempo();
+                    int steps = (int) progressRest;
+                    progressRest -= steps;
+                    progress += steps;
                     working = true;
+                    if (chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.KI) && level.random.nextInt(KRISE_CHANCE) == 0) kiKrise();
                 }
             } else if (crankTicks > 0) {
                 progress++;
@@ -190,7 +209,9 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
             }
             if (progress >= maxProgress) {
                 craft(recipe);
+                if (doppelt && currentRecipe() == holder && canOutput(withTarget(recipe.allOutputs()))) craft(recipe);
                 progress = 0;
+                if (chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.KI) && level.random.nextInt(6) == 0) kiSagen("kommentar", 8);
             }
             if (working) setChanged();
         } else if (progress != 0) {
@@ -200,6 +221,90 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         if (crankTicks > 0) crankTicks--;
         setActive(working);
         if (working && kind == MachineKind.RIFT_SCHMIEDE) schmiedeEffekte();
+    }
+
+    // ------------------------------------------------------------------ Upgrade-Chips
+
+    /** Verbrauch pro Tick mit allen Chips: Tempo ×2,5, Effizienz ×0,7, zwei parallele Vorgänge ×2. */
+    public int verbrauch(boolean doppelt) {
+        double c = kind.energyPerTick();
+        if (chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.TEMPO)) c *= 2.5;
+        if (chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.EFFIZIENZ)) c *= 0.7;
+        if (doppelt) c *= 2;
+        return Math.max(1, (int) Math.ceil(c));
+    }
+
+    /** Fortschritt pro Arbeitstick: Tempo ×2, KI ×1,1. */
+    public float tempo() {
+        float t = 1f;
+        if (chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.TEMPO)) t *= 2f;
+        if (chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.KI)) t *= 1.1f;
+        return t;
+    }
+
+    /** Reichen die Zutaten für zwei Vorgänge? (Die halbierten Stapel müssen das Rezept noch erfüllen.) */
+    private boolean kannDoppelt(MachineRecipe recipe) {
+        List<ItemStack> half = new ArrayList<>(kind.inputs());
+        for (int i = 0; i < kind.inputs(); i++) {
+            ItemStack st = items.getStackInSlot(i);
+            half.add(st.copyWithCount(st.getCount() / 2));
+        }
+        if (recipe.assignment(new MachineRecipeInput(half, input().mode())) == null) return false;
+        List<ItemStack> twice = new ArrayList<>(withTarget(recipe.allOutputs()));
+        twice.addAll(withTarget(recipe.allOutputs()));
+        return canOutput(twice);
+    }
+
+    private int chipMaske() {
+        int m = 0;
+        for (dev.riftverse.tech.upgrade.UpgradeChip c : chips) m |= 1 << c.ordinal();
+        return m;
+    }
+
+    @Override
+    public java.util.Set<dev.riftverse.tech.upgrade.UpgradeChip> chips() {
+        return java.util.Collections.unmodifiableSet(chips);
+    }
+
+    @Override
+    public boolean einbauen(dev.riftverse.tech.upgrade.UpgradeChip chip) {
+        if (!kind.electric() || chips.contains(chip)) return false;
+        chips.add(chip);
+        setChanged();
+        return true;
+    }
+
+    @Override
+    public List<ItemStack> ausbauen() {
+        List<ItemStack> out = new ArrayList<>();
+        for (dev.riftverse.tech.upgrade.UpgradeChip c : chips) out.add(new ItemStack(ModItems.chip(c)));
+        chips.clear();
+        krise = 0;
+        setChanged();
+        return out;
+    }
+
+    /** KI-Chip: Die Maschine hält 5 Sekunden inne und zweifelt am Sinn des Ganzen. */
+    private void kiKrise() {
+        krise = KRISE_DAUER;
+        kiSagen("krise", 8);
+    }
+
+    private void kiSagen(String art, int varianten) {
+        if (!(level instanceof net.minecraft.server.level.ServerLevel sl)) return;
+        net.minecraft.network.chat.Component name = getBlockState().getBlock().getName();
+        net.minecraft.network.chat.Component line = net.minecraft.network.chat.Component.literal("[").append(name).append("] ")
+                .withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE)
+                .append(net.minecraft.network.chat.Component.translatable("ki.riftverse." + art + "." + sl.random.nextInt(varianten))
+                        .withStyle(net.minecraft.ChatFormatting.WHITE));
+        for (Player p : sl.players()) {
+            if (p.distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(worldPosition)) < 16 * 16) p.displayClientMessage(line, false);
+        }
+    }
+
+    /** Für den Rauchtest. */
+    public int krise() {
+        return krise;
     }
 
     /** Rift-Schmiede: Das Mini-Portal über dem Amboss wirbelt, ab und zu fällt ein Hammerschlag mit Hall. */
@@ -297,6 +402,7 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
             return;
         }
         List<ItemStack> products = withTarget(recipe.roll(level.random));
+        uebernehmen(products, slots);
         for (int i = 0; i < slots.length; i++) {
             items.extractItem(slots[i], recipe.ingredients().get(i).count(), false);
         }
@@ -306,6 +412,40 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         for (int i = 0; i < kind.outputs(); i++) {
             if (!ItemStack.matches(outs.get(i), items.getStackInSlot(outputSlot() + i))) items.setStackInSlot(outputSlot() + i, outs.get(i));
         }
+    }
+
+    /**
+     * Ausbaustufen behalten, was eingebaut ist: Wird aus einem Rüstungsteil, Gadget oder einer Kanone das nächste
+     * gebaut, wandern Module, Ladung, Tank, Schaltzustand und gespeicherte Ziele mit.
+     */
+    private void uebernehmen(List<ItemStack> products, int[] slots) {
+        for (ItemStack product : products) {
+            for (int slot : slots) {
+                ItemStack from = items.getStackInSlot(slot);
+                if (!gleicheFamilie(from, product)) continue;
+                copy(from, product, ModDataComponents.MODULE.get());
+                copy(from, product, ModDataComponents.ENERGY.get());
+                copy(from, product, ModDataComponents.KANONEN_TANK.get());
+                copy(from, product, ModDataComponents.KANONEN_ZIELE.get());
+                copy(from, product, ModDataComponents.ZUSTAND.get());
+                copy(from, product, ModDataComponents.MODUS.get());
+                break;
+            }
+        }
+    }
+
+    private static boolean gleicheFamilie(ItemStack a, ItemStack b) {
+        if (a.isEmpty() || b.isEmpty()) return false;
+        if (a.getItem() instanceof dev.riftverse.ruestung.MultiversalArmorItem x && b.getItem() instanceof dev.riftverse.ruestung.MultiversalArmorItem y) {
+            return x.getType() == y.getType();
+        }
+        if (a.getItem() instanceof dev.riftverse.gadget.MultitoolItem && b.getItem() instanceof dev.riftverse.gadget.MultitoolItem) return true;
+        return a.getItem() instanceof dev.riftverse.item.PortalKanoneItem && b.getItem() instanceof dev.riftverse.item.PortalKanoneItem;
+    }
+
+    private static <T> void copy(ItemStack from, ItemStack to, net.minecraft.core.component.DataComponentType<T> type) {
+        T v = from.get(type);
+        if (v != null) to.set(type, v);
     }
 
     private void setActive(boolean active) {
@@ -342,7 +482,11 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
 
     @Override
     public VoltageTier getSinkTier() {
-        return kind.tier();
+        VoltageTier t = kind.tier();
+        if (chips.contains(dev.riftverse.tech.upgrade.UpgradeChip.TRANSFORMATOR) && t.ordinal() + 1 < VoltageTier.values().length) {
+            return VoltageTier.values()[t.ordinal() + 1];
+        }
+        return t;
     }
 
     @Override
@@ -361,6 +505,9 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
     public void dropContents(Level level, BlockPos pos) {
         for (int i = 0; i < items.getSlots(); i++) {
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, items.getStackInSlot(i));
+        }
+        for (dev.riftverse.tech.upgrade.UpgradeChip c : chips) {
+            Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, new ItemStack(ModItems.chip(c)));
         }
     }
 
@@ -405,6 +552,12 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         tag.put("Inventory", items.serializeNBT(registries));
         tag.putInt("Progress", progress);
         tag.putInt("Mode", mode);
+        if (!chips.isEmpty()) {
+            net.minecraft.nbt.ListTag list = new net.minecraft.nbt.ListTag();
+            for (dev.riftverse.tech.upgrade.UpgradeChip c : chips) list.add(net.minecraft.nbt.StringTag.valueOf(c.name()));
+            tag.put("Chips", list);
+        }
+        tag.putInt("Krise", krise);
     }
 
     @Override
@@ -413,6 +566,13 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         items.deserializeNBT(registries, tag.getCompound("Inventory"));
         progress = tag.getInt("Progress");
         mode = tag.getInt("Mode");
+        chips.clear();
+        net.minecraft.nbt.ListTag list = tag.getList("Chips", net.minecraft.nbt.Tag.TAG_STRING);
+        for (int i = 0; i < list.size(); i++) {
+            dev.riftverse.tech.upgrade.UpgradeChip c = dev.riftverse.tech.upgrade.UpgradeChip.byName(list.getString(i));
+            if (c != null) chips.add(c);
+        }
+        krise = tag.getInt("Krise");
         recipeDirty = true;
     }
 

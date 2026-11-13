@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "KXK",
+    "CBC",
+    "KXK"
+  ],
+  "key": {
+    "K": {
+      "item": "riftverse:kupferdraht"
+    },
+    "X": {
+      "item": "riftverse:xenit_spule"
+    },
+    "C": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "B": {
+      "item": "riftverse:bronze_platte"
+    }
+  },
+  "result": {
+    "id": "riftverse:transformator_chip"
+  },
+  "loetzinn": 1
+}

@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:tarn_detektor"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_tarn_detektor_modul"
+  },
+  "time": 400
+}

@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:multiversal_multitool"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_rahmen"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:multiversal_multitool_mk2"
+  },
+  "time": 600
+}

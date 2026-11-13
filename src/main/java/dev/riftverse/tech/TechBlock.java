@@ -106,6 +106,15 @@ public class TechBlock extends BaseEntityBlock implements RiftEnergyConnector {
         if (stack.getItem() instanceof HandkurbelItem && level.getBlockEntity(pos) instanceof Crankable) {
             return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
         }
+        // Upgrade-Chips einbauen und der Schlüssel des Multitools: kein GUI, sondern das Item handelt (useOn)
+        if (stack.getItem() instanceof dev.riftverse.tech.upgrade.UpgradeChipItem
+                && level.getBlockEntity(pos) instanceof dev.riftverse.tech.upgrade.Aufruestbar) {
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        }
+        if (stack.getItem() instanceof dev.riftverse.gadget.MultitoolItem
+                && dev.riftverse.gadget.MultitoolItem.modus(stack) == dev.riftverse.gadget.MultitoolItem.SCHLUESSEL) {
+            return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+        }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
 

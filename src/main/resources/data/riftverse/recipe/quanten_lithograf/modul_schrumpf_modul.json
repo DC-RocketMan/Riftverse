@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:schrumpfstrahler"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_schrumpf_modul"
+  },
+  "time": 400
+}

@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:kanonenkern"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chrono_linse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_not_portal"
+  },
+  "time": 400
+}

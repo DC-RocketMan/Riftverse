@@ -67,6 +67,7 @@ import java.util.Optional;
  */
 public final class RauchTest {
     private static final int RUN_TICKS = 380;
+    private static final int ZWISCHEN_TICK = 40;
 
     private static final List<String> failures = new ArrayList<>();
     private static int ticks = -1;
@@ -145,6 +146,7 @@ public final class RauchTest {
         RauchTestM3.aufbauen(server, level, recipes, base.south(64));
         RauchTestM4.aufbauen(server, level, recipes, base.south(112));
         RauchTestM5.aufbauen(server, level, recipes, base.south(176));
+        RauchTestM6.aufbauen(server, level, recipes, base.south(240));
         ticks = 0;
     }
 
@@ -336,7 +338,10 @@ public final class RauchTest {
     }
 
     private static void onTick(ServerTickEvent.Post event) {
-        if (ticks < 0 || ++ticks < RUN_TICKS) return;
+        if (ticks < 0) return;
+        // Frisch erzwungene Chunks laden ihre Entities erst nach ein paar Ticks: Tests mit Mobs laufen in der Mitte
+        if (++ticks == ZWISCHEN_TICK) RauchTestM6.zwischen(event.getServer(), event.getServer().overworld());
+        if (ticks < RUN_TICKS) return;
         ticks = -1;
         MinecraftServer server = event.getServer();
         ServerLevel level = server.overworld();
@@ -356,6 +361,7 @@ public final class RauchTest {
         RauchTestM3.ergebnis(server, level);
         RauchTestM4.ergebnis(server, level);
         RauchTestM5.ergebnis(server, level);
+        RauchTestM6.ergebnis(server, level);
 
         if (failures.isEmpty()) {
             Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: BESTANDEN");

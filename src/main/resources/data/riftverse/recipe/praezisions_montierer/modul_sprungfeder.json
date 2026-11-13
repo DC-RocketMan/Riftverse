@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:feder"
+      },
+      "count": 6
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:schwebstein_brocken"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_sprungfeder"
+  },
+  "time": 300
+}

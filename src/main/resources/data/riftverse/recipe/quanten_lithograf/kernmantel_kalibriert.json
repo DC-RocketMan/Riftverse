@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:kernmantel_rohling"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:kalibrier_satz"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:kernmantel_kalibriert"
+  },
+  "time": 600
+}

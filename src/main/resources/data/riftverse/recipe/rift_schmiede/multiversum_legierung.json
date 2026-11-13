@@ -1,0 +1,45 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:inversionssplitter"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:schwebstein_brocken"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:biomasse_pulpe"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:alien_schrott"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:fluxkristall"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:multiversum_legierung"
+  },
+  "time": 400
+}

@@ -45,6 +45,25 @@ public final class ModDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> KOPPLUNG = COMPONENTS.register("kopplung",
             () -> DataComponentType.<GlobalPos>builder().persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC).build());
 
+    // --- Meilenstein 6: Gadgets und Rüstung ---
+
+    /** Eingebaute Module eines Rüstungsteils (Namen aus {@link dev.riftverse.ruestung.Modul}). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<java.util.List<String>>> MODULE = COMPONENTS.register("module",
+            () -> DataComponentType.<java.util.List<String>>builder().persistent(Codec.STRING.listOf())
+                    .networkSynchronized(ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list())).build());
+
+    /** Schaltzustand eines Rüstungsteils (Tarn-Detektor an, Gravitationsregler-Stufe, Schrumpfen …). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> ZUSTAND = COMPONENTS.register("zustand",
+            () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
+
+    /** Modus eines Gadgets (Drohne, Multitool) oder ob es eingeschaltet ist (Tarn-Detektor). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> MODUS = COMPONENTS.register("modus",
+            () -> DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT).build());
+
+    /** Gespeicherter Ort einer Erinnerungsphiole. */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<GlobalPos>> ORT = COMPONENTS.register("ort",
+            () -> DataComponentType.<GlobalPos>builder().persistent(GlobalPos.CODEC).networkSynchronized(GlobalPos.STREAM_CODEC).build());
+
     /** Gespeicherte Ziele der Portal-Kanone Mk III. */
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<KanonenZiele>> KANONEN_ZIELE = COMPONENTS.register("kanonen_ziele",
             () -> DataComponentType.<KanonenZiele>builder().persistent(KanonenZiele.CODEC).networkSynchronized(KanonenZiele.STREAM_CODEC).build());

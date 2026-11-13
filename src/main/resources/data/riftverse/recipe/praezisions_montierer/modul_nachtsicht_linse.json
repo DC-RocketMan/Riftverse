@@ -1,0 +1,31 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:stabilisierte_linse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:fluxstaub"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:glowstone_dust"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_nachtsicht_linse"
+  },
+  "time": 300
+}

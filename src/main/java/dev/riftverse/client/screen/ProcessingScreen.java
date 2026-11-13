@@ -105,6 +105,20 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
             List<Component> lines = new java.util.ArrayList<>(List.of(Component.translatable("tooltip.riftverse.progress",
                     menu.progress() * 100 / menu.maxProgress()), line));
             if (menu.kind().ordered()) lines.add(Component.translatable("tooltip.riftverse.montierer_reihenfolge"));
+            int chips = menu.chips();
+            for (dev.riftverse.tech.upgrade.UpgradeChip c : dev.riftverse.tech.upgrade.UpgradeChip.values()) {
+                if ((chips & (1 << c.ordinal())) != 0) {
+                    lines.add(Component.literal("+ ").append(Component.translatable("item.riftverse." + c.itemName()))
+                            .withStyle(net.minecraft.ChatFormatting.AQUA));
+                }
+            }
+            if (menu.krise() > 0) {
+                lines.add(Component.translatable("tooltip.riftverse.ki_krise").withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE));
+            } else if ((chips & (1 << dev.riftverse.tech.upgrade.UpgradeChip.KI.ordinal())) != 0) {
+                int n = (int) ((System.currentTimeMillis() / 8000) % 6);
+                lines.add(Component.translatable("ki.riftverse.tooltip." + n).withStyle(net.minecraft.ChatFormatting.LIGHT_PURPLE,
+                        net.minecraft.ChatFormatting.ITALIC));
+            }
             g.renderComponentTooltip(font, lines, mouseX, mouseY);
         } else if (!menu.kind().electric() && GuiKit.inside(mouseX, mouseY, x + 8, y + 28, 14, 16)) {
             g.renderComponentTooltip(font, List.of(Component.translatable("tooltip.riftverse.crank_hint")), mouseX, mouseY);

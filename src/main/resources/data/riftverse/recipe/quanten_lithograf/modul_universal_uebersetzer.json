@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:uebersetzer_halsband"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_universal_uebersetzer"
+  },
+  "time": 400
+}

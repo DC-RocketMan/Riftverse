@@ -1,0 +1,43 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:multiversum_legierung"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:nullmaterie_kern"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:leerstein"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:saeuregel"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "tag": "riftverse:story_fragmente"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:universums_kern"
+  },
+  "time": 1200
+}
