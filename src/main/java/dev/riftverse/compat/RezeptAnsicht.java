@@ -87,7 +87,8 @@ public record RezeptAnsicht(ResourceLocation id, Kategorie kategorie, List<Slot>
     @SuppressWarnings({"unchecked", "rawtypes"})
     public static List<RezeptAnsicht> alle(RecipeManager manager, Kategorie kategorie) {
         List<RezeptAnsicht> out = new ArrayList<>();
-        for (RecipeHolder<?> holder : manager.getAllRecipesFor((RecipeType) kategorie.typ())) {
+        List<RecipeHolder<?>> holders = (List<RecipeHolder<?>>) (List) manager.getAllRecipesFor((RecipeType) kategorie.typ());
+        for (RecipeHolder<?> holder : holders) {
             RezeptAnsicht a = von(holder, kategorie);
             if (a != null) out.add(a);
         }
