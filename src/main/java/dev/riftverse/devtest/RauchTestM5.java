@@ -191,7 +191,8 @@ final class RauchTestM5 {
             futterErde.add(p.immutable());
         }
         kernMaschine = kernWachsend.east();
-        place(level, kernMaschine, ModBlocks.XENIT_ZELLE.get().defaultBlockState());
+        // Eine Kiste (Block-Entity, aber kein Netzteilnehmer – eine Xenit-Zelle würde am Stufe-IV-Kern explodieren)
+        place(level, kernMaschine, Blocks.CHEST.defaultBlockState());
         futterErde.remove(kernMaschine);
         if (level.getBlockEntity(kernWachsend) instanceof SingularitaetskernBlockEntity k) {
             k.setZustand(true, SingularitaetskernBlockEntity.GEDULD - 1, 0);
@@ -247,7 +248,7 @@ final class RauchTestM5 {
             check(k.wachstum() >= 1 && eaten >= 4, "Hungriger Kern ohne Ring wächst (Stufe " + k.wachstum() + ") und frisst Blöcke ("
                     + eaten + ")");
         } else check(false, "Wachsender Singularitätskern steht noch");
-        check(level.getBlockState(kernMaschine).is(ModBlocks.XENIT_ZELLE.get()), "Der Kern frisst keine Maschinen");
+        check(level.getBlockState(kernMaschine).is(Blocks.CHEST), "Der Kern frisst keine Block-Entities (Kiste steht noch)");
         if (level.getBlockEntity(kernRing) instanceof SingularitaetskernBlockEntity k) {
             check(!k.gezuendet() && k.wachstum() == 0, "Eindämmungsring schaltet den hungrigen Kern sicher ab");
         } else check(false, "Singularitätskern im Ring steht noch");
