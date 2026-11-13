@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:graphit_gehaeuse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:nullmaterie_faser"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_rahmen"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:null_gehaeuse"
+  },
+  "time": 300
+}

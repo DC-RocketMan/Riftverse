@@ -35,6 +35,7 @@ public class KoordinatenkarteItem extends Item {
         UniverseProfile p = UniverseProfile.get(id);
         tooltip.add(Component.literal(p.title() + " „" + p.name + "“").withStyle(ChatFormatting.GREEN));
         tooltip.add(id.type().displayName().copy().withStyle(ChatFormatting.GRAY));
+        if (p.zucht != null) tooltip.add(p.zucht.describe().copy().withStyle(ChatFormatting.LIGHT_PURPLE));
         tooltip.add(p.modifierText().withStyle(ChatFormatting.DARK_AQUA));
         if (stack.getItem() == this && getClass() == KoordinatenkarteItem.class) {
             tooltip.add(Component.translatable("tooltip.riftverse.karte_benutzen").withStyle(ChatFormatting.DARK_GRAY));

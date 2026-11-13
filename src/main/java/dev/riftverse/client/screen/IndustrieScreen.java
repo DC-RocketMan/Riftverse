@@ -118,7 +118,7 @@ public class IndustrieScreen extends AbstractContainerScreen<IndustrieMenu> {
         }
         if (m.hasTank() && GuiKit.inside(mouseX, mouseY, x + TANK_X, y + TANK_Y, TANK_W, TANK_H)) {
             g.renderComponentTooltip(font, List.of(Component.translatable("tooltip.riftverse.tank",
-                    Component.translatable("fluid_type.riftverse.portalfluid"), String.format(Locale.GERMANY, "%,d", menu.fluid()), String.format(Locale.GERMANY, "%,d", menu.fluidCapacity()))),
+                    Component.translatable(m.tankFluidKey()), String.format(Locale.GERMANY, "%,d", menu.fluid()), String.format(Locale.GERMANY, "%,d", menu.fluidCapacity()))),
                     mouseX, mouseY);
             return;
         }

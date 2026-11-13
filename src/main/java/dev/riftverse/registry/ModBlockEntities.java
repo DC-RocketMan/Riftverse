@@ -51,7 +51,8 @@ public final class ModBlockEntities {
                     ModBlocks.QUANTENZENTRIFUGE.get(),
                     ModBlocks.GRAVITATIONSPRESSE.get(),
                     ModBlocks.DIMENSIONS_SCANNER.get(),
-                    ModBlocks.QUANTEN_LITHOGRAF.get()).build(null));
+                    ModBlocks.QUANTEN_LITHOGRAF.get(),
+                    ModBlocks.RIFT_SCHMIEDE.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidMixerBlockEntity>> FLUID_MIXER =
             BLOCK_ENTITIES.register("fluid_mixer", () -> BlockEntityType.Builder.of(FluidMixerBlockEntity::new,
@@ -131,6 +132,14 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("parallelzapfer", () -> BlockEntityType.Builder.of(ParallelzapferBlockEntity::new,
                     ModBlocks.PARALLELZAPFER.get()).build(null));
 
+    // --- Meilenstein 5 – T4 Weltenformer ---
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.riftverse.tech.WeltenformerBlockEntity>> WELTENFORMER =
+            BLOCK_ENTITIES.register("weltenformer", () -> BlockEntityType.Builder.of(dev.riftverse.tech.WeltenformerBlockEntity::new,
+                    ModBlocks.WELTENFORMER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.riftverse.tech.SingularitaetskernBlockEntity>> SINGULARITAETSKERN =
+            BLOCK_ENTITIES.register("singularitaetskern", () -> BlockEntityType.Builder.of(dev.riftverse.tech.SingularitaetskernBlockEntity::new,
+                    ModBlocks.SINGULARITAETSKERN.get()).build(null));
+
     /**
      * Trichter und Rohre befüllen die Maschinen; fremde FE-Leitungen docken nur am Einspeiser und Ausspeiser an.
      * Maschinen und Generatoren zeigen ihren Füllstand nur lesbar an (für Jade, Integrated Dynamics).
@@ -192,6 +201,11 @@ public final class ModBlockEntities {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PARALLELZAPFER.get(), (p, side) -> p.automationHandler());
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PARALLELZAPFER.get(), (p, side) -> p.fluidHandler());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, PARALLELZAPFER.get(), (p, side) -> p.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, WELTENFORMER.get(), (w, side) -> w.automationHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, WELTENFORMER.get(), (w, side) -> w.fluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, WELTENFORMER.get(), (w, side) -> w.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, SINGULARITAETSKERN.get(), (k, side) -> k.automationHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, SINGULARITAETSKERN.get(), (k, side) -> k.energy().readOnly());
 
         EnergyItems.register(event);
     }

@@ -626,7 +626,7 @@ EN = {
 
 
 def lang(texture_pack_de=None):
-    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE, **M4_DE}), ('en_us', {**EN, **M2_EN, **M3_EN, **M4_EN})):
+    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE, **M4_DE, **M5_DE}), ('en_us', {**EN, **M2_EN, **M3_EN, **M4_EN, **M5_EN})):
         p = os.path.join(ASSETS, 'lang', code + '.json')
         data = {}
         if os.path.exists(p):
@@ -2019,6 +2019,227 @@ M4_EN = {
 }
 
 
+# =============================================================================
+# Meilenstein 5 – T4 Weltenformer
+# =============================================================================
+M5_BLOCKS_SELF = ('null_leitung', 'null_gehaeuse', 'null_huelle', 'eindaemmungsring', 'rift_schmiede', 'weltenformer',
+                  'singularitaetskern', 'leerstein', 'nullmaterie_block')
+M5_ITEMS = ['multiversal_prozessor', 'singularitaetslinse', 'null_spule', 'nullmaterie_faser', 'nullmaterie_kern',
+            'nullmaterie', 'fluid_kartusche_essenz']
+M5_NULL = ('null_gehaeuse', 'null_huelle', 'eindaemmungsring', 'rift_schmiede', 'weltenformer', 'singularitaetskern',
+           'nullmaterie_erz', 'nullmaterie_block')
+
+
+def t4_machine(name):
+    """T4-Steuerblöcke: Front mit eigener (animierter) Textur, Seiten und Deckel aus Null-Gehäuse."""
+    block_model(name, 'minecraft:block/orientable', {
+        'top': tex('casing_t4'), 'side': tex('casing_t4'), 'front': tex(f'{name}_front')})
+    blockstate(name, {f'active={a},facing={f}': variant(name, y=y) for f, y in HORIZONTAL.items() for a in ('false', 'true')})
+    item_from_block(name)
+
+
+def m5_models():
+    cable('null_leitung', 4, False)
+    for n in ('null_huelle', 'eindaemmungsring', 'leerstein', 'nullmaterie_erz', 'nullmaterie_block'):
+        cube_all(n)
+    cube_all('null_gehaeuse', 'casing_t4')
+    for n in ('rift_schmiede', 'weltenformer', 'singularitaetskern'):
+        t4_machine(n)
+    for n in M5_ITEMS:
+        item_generated(n)
+    item_generated('portal_kanone_mk4', handheld=True)
+
+
+def m5_loot():
+    for n in M5_BLOCKS_SELF:
+        loot_self(n)
+    loot_drop('nullmaterie_erz', 'nullmaterie', 1, 1, fortune=False)
+
+
+def m5_tags():
+    tag('block', 'minecraft:mineable/pickaxe', [*M5_NULL, 'null_leitung', 'leerstein'])
+    tag('block', 'minecraft:needs_diamond_tool', list(M5_NULL))
+    tag('block', 'minecraft:needs_iron_tool', ['leerstein'])
+    for kind in ('block', 'item'):
+        tag(kind, 'c:ores/nullmaterie', ['nullmaterie_erz'])
+        tag(kind, 'c:ores', ['#c:ores/nullmaterie'])
+        tag(kind, 'c:storage_blocks/nullmaterie', ['nullmaterie_block'])
+
+
+def m5_recipes():
+    # --- Garagen-Werkbank: die Rift-Schmiede kommt noch ohne Nullmaterie aus ---------------------
+    werkbank_shaped('rift_schmiede', ['QKQ', 'GAG', 'TLT'],
+                    {'Q': 'quanten_schaltkreis', 'K': 'kanonenkern', 'G': 'graphit_gehaeuse', 'A': 'minecraft:anvil',
+                     'T': 'gravitit_spule', 'L': 'chrono_linse'}, 'rift_schmiede', loetzinn=4)
+    werkbank_shaped('weltenformer', ['PLP', 'SGS', 'QHQ'],
+                    {'P': 'multiversal_prozessor', 'L': 'singularitaetslinse', 'S': 'gravitit_spule', 'G': 'graphit_gehaeuse',
+                     'Q': 'quanten_schaltkreis', 'H': 'null_huelle'}, 'weltenformer', loetzinn=4)
+    werkbank_shaped('singularitaetskern', ['SKS', 'LGL', 'SPS'],
+                    {'S': 'null_spule', 'K': 'nullmaterie_kern', 'L': 'singularitaetslinse', 'G': 'null_gehaeuse',
+                     'P': 'multiversal_prozessor'}, 'singularitaetskern', loetzinn=4)
+    werkbank_shaped('null_leitung', ['SSS', 'FFF', 'SSS'], {'S': '#c:plates/steel', 'F': 'nullmaterie_faser'}, 'null_leitung', 6,
+                    hammer=1)
+    werkbank_shaped('eindaemmungsring', ['HSH', 'SFS', 'HSH'],
+                    {'H': 'null_huelle', 'S': '#c:plates/steel', 'F': 'flux_spule'}, 'eindaemmungsring', 8, hammer=1)
+    shaped_vanilla('nullmaterie_block', ['NNN', 'NNN', 'NNN'], {'N': 'nullmaterie'}, 'nullmaterie_block')
+    shapeless_vanilla('nullmaterie_aus_block', ['nullmaterie_block'], 'nullmaterie', 9)
+
+    # --- Rift-Schmiede (20.000 FE/t, Stufe IV) ----------------------------------------------------
+    machine_recipe2('rift_schmiede', 'multiversal_prozessor',
+                    [('quanten_schaltkreis', 2), ('inversionssplitter', 2), ('gravitit', 1), ('#c:wires/gold', 4)],
+                    'multiversal_prozessor', 1, time=400)
+    machine_recipe2('rift_schmiede', 'singularitaetslinse',
+                    [('chrono_linse', 1), ('gravitit', 4), ('inversionssplitter', 1), ('chronoglas_scheibe', 2)],
+                    'singularitaetslinse', 1, time=400)
+    machine_recipe2('rift_schmiede', 'null_huelle', [('graphit_huelle', 4), ('gravitit', 1), ('minecraft:obsidian', 2)],
+                    'null_huelle', 4, time=200)
+    machine_recipe2('rift_schmiede', 'nullmaterie_faser', [('nullmaterie', 1), ('#c:wires/gold', 2)], 'nullmaterie_faser', 4,
+                    time=200)
+    machine_recipe2('rift_schmiede', 'null_spule', [('nullmaterie_faser', 4), ('gravitit_spule', 1)], 'null_spule', 1, time=300)
+    machine_recipe2('rift_schmiede', 'nullmaterie_kern', [('nullmaterie', 4), ('singularitaetslinse', 1), ('gravitit_rahmen', 1)],
+                    'nullmaterie_kern', 1, time=600)
+    machine_recipe2('rift_schmiede', 'null_gehaeuse', [('graphit_gehaeuse', 1), ('nullmaterie_faser', 2), ('gravitit_rahmen', 1)],
+                    'null_gehaeuse', 1, time=300)
+    machine_recipe2('rift_schmiede', 'portal_kanone_mk4',
+                    [('portal_kanone_mk3', 1), ('multiversal_prozessor', 1), ('singularitaetslinse', 1), ('nullmaterie_kern', 1),
+                     (f'#{NS}:story_fragmente', 3)], 'portal_kanone_mk4', 1, time=1200)
+    machine_recipe2('erzmuehle', 'nullmaterie_erz', [('#c:ores/nullmaterie', 1)], 'nullmaterie', 1, time=600)
+
+
+def m5_universes():
+    biome('leere_sterne', False, {'sky_color': 0x000000, 'fog_color': 0x05050A, 'water_color': 0x13132A,
+                                  'water_fog_color': 0x030307, 'grass_color': 0x1F1F48, 'foliage_color': 0x13132A},
+          [spawn('minecraft:enderman', 10, 1, 1)], [], temperature=0.0)
+    base = {'ultrawarm': False, 'natural': True, 'piglin_safe': False, 'respawn_anchor_works': False,
+            'has_raids': False, 'has_skylight': True, 'has_ceiling': False, 'coordinate_scale': 1.0,
+            'ambient_light': 0.0, 'logical_height': 384, 'effects': 'minecraft:overworld',
+            'infiniburn': '#minecraft:infiniburn_overworld', 'min_y': -64, 'height': 384,
+            'monster_spawn_light_level': 7, 'monster_spawn_block_light_limit': 0}
+    # Leere Welt: ewige Nacht unter dem Sternenhimmel, Betten explodieren (kein Respawn-Anker möglich)
+    write(os.path.join(DATA, NS, 'dimension_type', 'leere_welt.json'), {**base, 'bed_works': False, 'fixed_time': 18000})
+    write(os.path.join(DATA, NS, 'dimension', 'leere_welt.json'), {
+        'type': rl('leere_welt'),
+        'generator': {'type': rl('multiverse'), 'universe': 'leere_welt',
+                      'biome_source': {'type': rl('universe'), 'universe': 'leere_welt', 'biomes': [rl('leere_sterne')]}}})
+    # Gezüchtete Universen: zwei Biome je Grundtyp in der Reihenfolge von Zucht.BASIS
+    zucht_biomes = ['schrott_dunst', 'schrott_rost', 'kristall_glanz', 'kristall_aurora', 'toxisch_gruen', 'toxisch_schwefel',
+                    'schwebe_himmel', 'schwebe_daemmerung', 'zeit_bernstein', 'zeit_violett', 'organisch_rosa',
+                    'organisch_purpur', 'hochgrav_basalt', 'hochgrav_druck', 'spiegel_silber', 'spiegel_glas']
+    write(os.path.join(DATA, NS, 'dimension_type', 'gezuechtet.json'), {**base, 'bed_works': True})
+    write(os.path.join(DATA, NS, 'dimension', 'gezuechtet.json'), {
+        'type': rl('gezuechtet'),
+        'generator': {'type': rl('multiverse'), 'universe': 'gezuechtet',
+                      'biome_source': {'type': rl('universe'), 'universe': 'gezuechtet', 'biomes': [rl(b) for b in zucht_biomes]}}})
+
+
+ROHSTOFF_DE = {'schrottwelt': 'Alien-Schrott und Xenit', 'kristallwelt': 'Fluxkristall', 'toxische_welt': 'Säuregel',
+               'niedriggravitation': 'Schwebstein', 'zeitdilatation': 'Chronoglas', 'organische_welt': 'Biomasse',
+               'hochgravitation': 'Gravitit', 'spiegelwelt': 'Inversionssplitter'}
+ROHSTOFF_EN = {'schrottwelt': 'alien scrap and xenite', 'kristallwelt': 'flux crystal', 'toxische_welt': 'acid gel',
+               'niedriggravitation': 'floatstone', 'zeitdilatation': 'chronoglass', 'organische_welt': 'biomass',
+               'hochgravitation': 'gravitite', 'spiegelwelt': 'inversion shards'}
+
+M5_DE = {
+    'block.riftverse.null_leitung': 'Null-Leitung', 'block.riftverse.null_gehaeuse': 'Null-Gehäuse',
+    'block.riftverse.null_huelle': 'Null-Hülle', 'block.riftverse.eindaemmungsring': 'Eindämmungsring',
+    'block.riftverse.rift_schmiede': 'Rift-Schmiede', 'block.riftverse.weltenformer': 'Weltenformer',
+    'block.riftverse.singularitaetskern': 'Singularitätskern', 'block.riftverse.leerstein': 'Leerstein',
+    'block.riftverse.nullmaterie_erz': 'Nullmaterie-Erz', 'block.riftverse.nullmaterie_block': 'Nullmaterie-Block',
+    'item.riftverse.portal_kanone_mk4': 'Portal-Kanone Mk IV',
+    'item.riftverse.fluid_kartusche_essenz': 'Fluid-Kartusche (Weltenformer-Essenz)',
+    'item.riftverse.fluid_kartusche_essenz.lore': '1.000 mB Weltenformer-Essenz – Treibstoff der Kanone Mk IV',
+    'item.riftverse.multiversal_prozessor': 'Multiversal-Prozessor', 'item.riftverse.singularitaetslinse': 'Singularitätslinse',
+    'item.riftverse.null_spule': 'Null-Spule', 'item.riftverse.nullmaterie_faser': 'Nullmaterie-Faser',
+    'item.riftverse.nullmaterie_kern': 'Nullmaterie-Kern',
+    'item.riftverse.nullmaterie_kern.lore': 'Verdichtete Leere. Das Herz der Kanone Mk IV.',
+    'item.riftverse.nullmaterie': 'Nullmaterie',
+    'item.riftverse.nullmaterie.lore': 'Ein Stück Nichts, das trotzdem etwas wiegt.',
+    'universe.riftverse.leere_welt': 'Leere Welt', 'universe.riftverse.gezuechtet': 'Gezüchtetes Universum',
+    'biome.riftverse.leere_sterne': 'Sternenleere',
+    'tooltip.riftverse.zucht': '%s · %s · %s · %s',
+    'zucht.riftverse.gefahren_an': 'Gefahren an', 'zucht.riftverse.gefahren_aus': 'Gefahren aus',
+    **{f'zucht.riftverse.rohstoff.{k}': v for k, v in ROHSTOFF_DE.items()},
+    'message.riftverse.leere.licht': 'Die Leere frisst das Licht …',
+    'message.riftverse.leere.kein_anker': 'Die Leere duldet keinen Respawn-Anker.',
+    'message.riftverse.kein_fluid_essenz': 'Keine Weltenformer-Essenz! Der Weltenformer gewinnt sie aus Konzentrat.',
+    'tooltip.riftverse.kanone_tank_essenz': 'Essenz: %s / %s mB (%s mB pro Schuss)',
+    'tooltip.riftverse.kanone_mk3': 'Mk III: Portalfluid-Konzentrat, alle T1- bis T3-Welten; mit Weltenformer-Essenz zufällig auch in die Leere Welt',
+    'tooltip.riftverse.kanone_mk4': 'Mk IV: nur Weltenformer-Essenz, alle Welten samt Leerer Welt und gezüchteten Universen',
+    'gui.riftverse.multiblock.luft': 'Luft (muss frei bleiben)',
+    'message.riftverse.weltenformer.erschaffen': 'Der Weltenformer hat %s erschaffen: „%s“',
+    'gui.riftverse.weltenformer.essenz': 'Essenz', 'gui.riftverse.weltenformer.universum': 'Welt',
+    'gui.riftverse.weltenformer.g0': '0,3 g', 'gui.riftverse.weltenformer.g1': '1 g', 'gui.riftverse.weltenformer.g2': '2,5 g',
+    'gui.riftverse.weltenformer.gefahr_an': 'Gefahr: an', 'gui.riftverse.weltenformer.gefahr_aus': 'Gefahr: aus',
+    'gui.riftverse.weltenformer.status.0': 'Formt …', 'gui.riftverse.weltenformer.status.1': 'Ring unvollständig',
+    'gui.riftverse.weltenformer.status.2': 'Zu wenig Konzentrat', 'gui.riftverse.weltenformer.status.3': 'Zutat fehlt',
+    'gui.riftverse.weltenformer.status.4': 'Zwei Proben nötig', 'gui.riftverse.weltenformer.status.5': 'Ausgang voll',
+    'gui.riftverse.weltenformer.status.6': 'Zu wenig Energie',
+    'tooltip.riftverse.weltenformer.essenz': 'Essenz: leere Kartusche + Inversionssplitter + %s mB Konzentrat',
+    'tooltip.riftverse.weltenformer.universum': 'Welt: zwei Proben (Landschaft, Rohstoffe) + Papier + %s mB Konzentrat',
+    'message.riftverse.singularitaet.notaus': 'Notabschaltung! Der Singularitätskern kühlt eine Minute ab.',
+    'message.riftverse.singularitaet.sicher': 'Der Eindämmungsring hat den hungrigen Singularitätskern sicher abgeschaltet.',
+    'message.riftverse.singularitaet.waechst': 'Der Singularitätskern hungert und wächst – er saugt seine Umgebung an!',
+    'gui.riftverse.singularitaet.zuenden': 'Zünden', 'gui.riftverse.singularitaet.notaus': 'Notabschaltung',
+    'gui.riftverse.singularitaet.abkuehlen': 'Kühlt ab (%s s)',
+    'gui.riftverse.singularitaet.status.0': 'Aus', 'gui.riftverse.singularitaet.status.1': 'Satt',
+    'gui.riftverse.singularitaet.status.2': 'Hungrig!', 'gui.riftverse.singularitaet.status.3': 'Wächst!',
+    'gui.riftverse.singularitaet.status.4': 'Kühlt ab', 'gui.riftverse.singularitaet.status.5': 'Sicher abgeschaltet',
+    'gui.riftverse.singularitaet.status.6': 'Speicher voll',
+    'gui.riftverse.singularitaet.leistung': '%s FE/t',
+    'gui.riftverse.singularitaet.ring': 'Eindämmungsring steht', 'gui.riftverse.singularitaet.kein_ring': 'Ohne Eindämmungsring',
+}
+
+M5_EN = {
+    'block.riftverse.null_leitung': 'Null Line', 'block.riftverse.null_gehaeuse': 'Null Casing',
+    'block.riftverse.null_huelle': 'Null Hull', 'block.riftverse.eindaemmungsring': 'Containment Ring',
+    'block.riftverse.rift_schmiede': 'Rift Forge', 'block.riftverse.weltenformer': 'World Shaper',
+    'block.riftverse.singularitaetskern': 'Singularity Core', 'block.riftverse.leerstein': 'Voidstone',
+    'block.riftverse.nullmaterie_erz': 'Null Matter Ore', 'block.riftverse.nullmaterie_block': 'Block of Null Matter',
+    'item.riftverse.portal_kanone_mk4': 'Portal Gun Mk IV',
+    'item.riftverse.fluid_kartusche_essenz': 'Fluid Cartridge (World Shaper Essence)',
+    'item.riftverse.fluid_kartusche_essenz.lore': '1,000 mB world shaper essence – fuel for the Mk IV gun',
+    'item.riftverse.multiversal_prozessor': 'Multiversal Processor', 'item.riftverse.singularitaetslinse': 'Singularity Lens',
+    'item.riftverse.null_spule': 'Null Coil', 'item.riftverse.nullmaterie_faser': 'Null Matter Fiber',
+    'item.riftverse.nullmaterie_kern': 'Null Matter Core',
+    'item.riftverse.nullmaterie_kern.lore': 'Condensed void. The heart of the Mk IV gun.',
+    'item.riftverse.nullmaterie': 'Null Matter',
+    'item.riftverse.nullmaterie.lore': 'A piece of nothing that still weighs something.',
+    'universe.riftverse.leere_welt': 'Void World', 'universe.riftverse.gezuechtet': 'Bred Universe',
+    'biome.riftverse.leere_sterne': 'Starry Void',
+    'tooltip.riftverse.zucht': '%s · %s · %s · %s',
+    'zucht.riftverse.gefahren_an': 'hazards on', 'zucht.riftverse.gefahren_aus': 'hazards off',
+    **{f'zucht.riftverse.rohstoff.{k}': v for k, v in ROHSTOFF_EN.items()},
+    'message.riftverse.leere.licht': 'The void devours the light …',
+    'message.riftverse.leere.kein_anker': 'The void tolerates no respawn anchor.',
+    'message.riftverse.kein_fluid_essenz': 'No world shaper essence! The World Shaper extracts it from concentrate.',
+    'tooltip.riftverse.kanone_tank_essenz': 'Essence: %s / %s mB (%s mB per shot)',
+    'tooltip.riftverse.kanone_mk3': 'Mk III: portal fluid concentrate, all T1 to T3 worlds; with world shaper essence also randomly into the Void World',
+    'tooltip.riftverse.kanone_mk4': 'Mk IV: world shaper essence only, all worlds including the Void World and bred universes',
+    'gui.riftverse.multiblock.luft': 'Air (must stay empty)',
+    'message.riftverse.weltenformer.erschaffen': 'The World Shaper created %s: "%s"',
+    'gui.riftverse.weltenformer.essenz': 'Essence', 'gui.riftverse.weltenformer.universum': 'World',
+    'gui.riftverse.weltenformer.g0': '0.3 g', 'gui.riftverse.weltenformer.g1': '1 g', 'gui.riftverse.weltenformer.g2': '2.5 g',
+    'gui.riftverse.weltenformer.gefahr_an': 'Hazard: on', 'gui.riftverse.weltenformer.gefahr_aus': 'Hazard: off',
+    'gui.riftverse.weltenformer.status.0': 'Shaping …', 'gui.riftverse.weltenformer.status.1': 'Ring incomplete',
+    'gui.riftverse.weltenformer.status.2': 'Not enough concentrate', 'gui.riftverse.weltenformer.status.3': 'Ingredient missing',
+    'gui.riftverse.weltenformer.status.4': 'Needs two samples', 'gui.riftverse.weltenformer.status.5': 'Output full',
+    'gui.riftverse.weltenformer.status.6': 'Not enough energy',
+    'tooltip.riftverse.weltenformer.essenz': 'Essence: empty cartridge + inversion shard + %s mB concentrate',
+    'tooltip.riftverse.weltenformer.universum': 'World: two samples (landscape, resources) + paper + %s mB concentrate',
+    'message.riftverse.singularitaet.notaus': 'Emergency shutdown! The Singularity Core cools down for a minute.',
+    'message.riftverse.singularitaet.sicher': 'The containment ring safely shut down the hungry Singularity Core.',
+    'message.riftverse.singularitaet.waechst': 'The Singularity Core is starving and growing – it is pulling in its surroundings!',
+    'gui.riftverse.singularitaet.zuenden': 'Ignite', 'gui.riftverse.singularitaet.notaus': 'Emergency stop',
+    'gui.riftverse.singularitaet.abkuehlen': 'Cooling (%s s)',
+    'gui.riftverse.singularitaet.status.0': 'Off', 'gui.riftverse.singularitaet.status.1': 'Fed',
+    'gui.riftverse.singularitaet.status.2': 'Hungry!', 'gui.riftverse.singularitaet.status.3': 'Growing!',
+    'gui.riftverse.singularitaet.status.4': 'Cooling down', 'gui.riftverse.singularitaet.status.5': 'Safely shut down',
+    'gui.riftverse.singularitaet.status.6': 'Buffer full',
+    'gui.riftverse.singularitaet.leistung': '%s FE/t',
+    'gui.riftverse.singularitaet.ring': 'Containment ring in place', 'gui.riftverse.singularitaet.kein_ring': 'No containment ring',
+}
+
+
 if __name__ == '__main__':
     import sys
     pack_de = None
@@ -2046,5 +2267,10 @@ if __name__ == '__main__':
     m4_tags()
     m4_recipes()
     m4_universes()
+    m5_models()
+    m5_loot()
+    m5_tags()
+    m5_recipes()
+    m5_universes()
     lang(pack_de)
     print('fertig')

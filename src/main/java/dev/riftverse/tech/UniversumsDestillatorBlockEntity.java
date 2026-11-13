@@ -56,8 +56,20 @@ public class UniversumsDestillatorBlockEntity extends IndustrieBlockEntity imple
             case ORGANISCH -> out.add(new ItemStack(ModItems.BIOMASSE_PULPE.get(), 4));
             case HOCHGRAVITATION -> out.add(new ItemStack(ModItems.GRAVITIT.get()));
             case SPIEGEL -> out.add(new ItemStack(ModItems.INVERSIONSSPLITTER.get()));
+            // Nullmaterie lässt sich nie automatisieren: aus der Leere kommt nur ihr Gestein
+            case LEERE -> {
+                out.add(new ItemStack(ModItems.LEERSTEIN.get(), 4));
+                if (random == null || random.nextFloat() < 0.3f) out.add(new ItemStack(net.minecraft.world.item.Items.OBSIDIAN));
+            }
+            case GEZUECHTET -> { }
         }
         return out;
+    }
+
+    /** Ausbeute einer Probe: gezüchtete Universen liefern die Rohstoffe, die man für sie gewählt hat. */
+    public static List<ItemStack> ausbeute(UniverseId id, @Nullable RandomSource random) {
+        UniverseType type = id.type() == UniverseType.GEZUECHTET ? dev.riftverse.universe.Zucht.of(id).rohstoff() : id.type();
+        return ausbeute(type, random);
     }
 
     @Nullable
@@ -72,7 +84,7 @@ public class UniversumsDestillatorBlockEntity extends IndustrieBlockEntity imple
         ItemEnergy.discharge(items.getStackInSlot(SLOT_BATTERY), energy, VoltageTier.III.maxPacket());
         UniverseId id = probe();
         boolean working = false;
-        if (id != null && fits(ausbeute(id.type(), null))) {
+        if (id != null && fits(ausbeute(id, null))) {
             if (energy.stored() >= CONSUMPTION) {
                 energy.take(CONSUMPTION);
                 progress++;
@@ -114,7 +126,7 @@ public class UniversumsDestillatorBlockEntity extends IndustrieBlockEntity imple
 
     private void finish(UniverseId id) {
         if (level == null) return;
-        for (ItemStack product : ausbeute(id.type(), level.random)) {
+        for (ItemStack product : ausbeute(id, level.random)) {
             ItemStack rest = product.copy();
             for (int i = 0; i < OUTPUTS && !rest.isEmpty(); i++) {
                 ItemStack o = items.getStackInSlot(SLOT_OUT + i);

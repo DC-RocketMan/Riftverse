@@ -63,6 +63,14 @@ public class KlonTankBlock extends BaseEntityBlock implements RiftEnergyConnecto
         BlockPos pos = ctx.getClickedPos();
         Level level = ctx.getLevel();
         if (pos.getY() >= level.getMaxBuildHeight() - 1 || !level.getBlockState(pos.above()).canBeReplaced(ctx)) return null;
+        // In der Leeren Welt gibt es keinen Respawn-Anker – auch keinen Klon-Tank
+        if (dev.riftverse.universe.LeereWelt.isLeere(level)) {
+            if (ctx.getPlayer() != null && !level.isClientSide) {
+                ctx.getPlayer().displayClientMessage(net.minecraft.network.chat.Component.translatable("message.riftverse.leere.kein_anker")
+                        .withStyle(net.minecraft.ChatFormatting.DARK_PURPLE), true);
+            }
+            return null;
+        }
         return defaultBlockState().setValue(TechBlock.FACING, ctx.getHorizontalDirection().getOpposite());
     }
 

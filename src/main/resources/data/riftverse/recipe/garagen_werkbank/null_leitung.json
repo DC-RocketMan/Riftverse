@@ -1,0 +1,21 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SSS",
+    "FFF",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "F": {
+      "item": "riftverse:nullmaterie_faser"
+    }
+  },
+  "result": {
+    "id": "riftverse:null_leitung",
+    "count": 6
+  },
+  "hammer": 1
+}

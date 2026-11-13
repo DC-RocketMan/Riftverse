@@ -10,7 +10,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import java.util.List;
 
 /**
- * Die verarbeitenden Maschinen (T0 bis T3). Jede hat einen eigenen Rezepttyp im Datapack
+ * Die verarbeitenden Maschinen (T0 bis T4). Jede hat einen eigenen Rezepttyp im Datapack
  * ({@code data/riftverse/recipe/<maschine>/...}).
  * <p>
  * Slots: Eingänge 0..n-1, Ausgänge n..n+o-1, Akku-Slot n+o (nur elektrische Maschinen).
@@ -45,7 +45,14 @@ public enum MachineKind {
 
     // --- T3 Multiversum-Industrie (Stufe III) ---------------------------------------------
     /** Rift-Schaltkreis + Chronoglas → Quanten-Schaltkreis; Chrono-Linse; Fragment-Replik. */
-    QUANTEN_LITHOGRAF("quanten_lithograf", 3, 1, 1_200, List.of(), VoltageTier.III, false);
+    QUANTEN_LITHOGRAF("quanten_lithograf", 3, 1, 1_200, List.of(), VoltageTier.III, false),
+
+    // --- T4 Weltenformer (Stufe IV) ---------------------------------------------------------
+    /**
+     * Multiblock 5 × 5 × 5: Amboss über einem dauerhaft offenen Mini-Portal. Multiversal-Prozessor, Singularitätslinse,
+     * alles aus Nullmaterie und die Kanone Mk IV. Arbeitet nur, wenn der Aufbau steht.
+     */
+    RIFT_SCHMIEDE("rift_schmiede", 6, 1, 20_000, List.of(), VoltageTier.IV, false);
 
     private final String id;
     private final int inputs;
@@ -106,6 +113,12 @@ public enum MachineKind {
         return ordered;
     }
 
+    /** Bauplan, falls die Maschine ein Multiblock ist (sonst null). */
+    @org.jetbrains.annotations.Nullable
+    public dev.riftverse.tech.multiblock.Multiblock multiblock() {
+        return this == RIFT_SCHMIEDE ? dev.riftverse.tech.multiblock.Multiblock.RIFT_SCHMIEDE : null;
+    }
+
     public List<String> modes() {
         return modes;
     }
@@ -134,6 +147,7 @@ public enum MachineKind {
             case GRAVITATIONSPRESSE -> ModRecipes.GRAVITATIONSPRESSE_TYPE.get();
             case DIMENSIONS_SCANNER -> ModRecipes.DIMENSIONS_SCANNER_TYPE.get();
             case QUANTEN_LITHOGRAF -> ModRecipes.QUANTEN_LITHOGRAF_TYPE.get();
+            case RIFT_SCHMIEDE -> ModRecipes.RIFT_SCHMIEDE_TYPE.get();
         };
     }
 
@@ -152,6 +166,7 @@ public enum MachineKind {
             case GRAVITATIONSPRESSE -> ModRecipes.GRAVITATIONSPRESSE.get();
             case DIMENSIONS_SCANNER -> ModRecipes.DIMENSIONS_SCANNER.get();
             case QUANTEN_LITHOGRAF -> ModRecipes.QUANTEN_LITHOGRAF.get();
+            case RIFT_SCHMIEDE -> ModRecipes.RIFT_SCHMIEDE.get();
         };
     }
 

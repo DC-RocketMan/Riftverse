@@ -36,7 +36,9 @@ public final class UniverseProfile {
         // Meilenstein 3 (immer hinten anhängen, die Gewichte zählen nach Position)
         SCHWEBEINSELN("Schwebeinseln"),
         // Meilenstein 4
-        PLATTGEDRUECKT("Plattgedrückte Ebene");
+        PLATTGEDRUECKT("Plattgedrückte Ebene"),
+        // Meilenstein 5
+        KERNE("Schwebende Kerne");
         public final String label;
         Terrain(String label) { this.label = label; }
     }
@@ -95,7 +97,10 @@ public final class UniverseProfile {
                     new Palette("Quarzspiegel", Blocks.QUARTZ_BLOCK, Blocks.CALCITE, Blocks.STONE, Blocks.SAND),
                     new Palette("Silberwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.DIORITE, Blocks.GRAVEL),
                     new Palette("Glasschnee", Blocks.SNOW_BLOCK, Blocks.PACKED_ICE, Blocks.STONE, Blocks.ICE),
-                    new Palette("Kalkspiegel", Blocks.CALCITE, Blocks.SMOOTH_STONE, Blocks.DEEPSLATE, Blocks.CALCITE)));
+                    new Palette("Kalkspiegel", Blocks.CALCITE, Blocks.SMOOTH_STONE, Blocks.DEEPSLATE, Blocks.CALCITE)),
+            UniverseType.LEERE, List.of(
+                    new Palette("Sternenstaub", ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get()),
+                    new Palette("Obsidiankern", ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN, ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN)));
 
     // ------------------------------------------------------------------ Cache
 
@@ -115,6 +120,18 @@ public final class UniverseProfile {
 
     public final UniverseId id;
     public final UniverseType type;
+    /**
+     * Wonach das Universum aussieht und welche Gefahren es hat (Gelände, Gestein, Deko, Biom). Bei allen Typen außer
+     * den gezüchteten Universen ist das der Typ selbst.
+     */
+    public final UniverseType look;
+    /** Woher die exklusiven Erze kommen; bei gezüchteten Universen frei gewählt. */
+    public final UniverseType rohstoff;
+    /** Umweltgefahren der Landschaft; nur gezüchtete Universen lassen sich ohne züchten. */
+    public final boolean gefahren;
+    /** Bauplan, falls gezüchtet, sonst null. */
+    @Nullable
+    public final Zucht zucht;
     public final long seed;
     public final String name;
     public final List<UniverseModifier> modifiers;
@@ -145,13 +162,17 @@ public final class UniverseProfile {
         this.seed = id.seed();
         RandomSource r = RandomSource.create(seed);
 
+        this.zucht = type == UniverseType.GEZUECHTET ? Zucht.of(id) : null;
+        this.look = zucht != null ? zucht.landschaft() : type;
+        this.rohstoff = zucht != null ? zucht.rohstoff() : type;
+        this.gefahren = zucht == null || zucht.gefahren();
         this.name = NameGen.universeName(r);
         this.modifiers = UniverseModifier.roll(r);
-        this.gravity = type.gravity();
-        this.atmosphere = type == UniverseType.TOXISCH ? Atmosphere.TOXIC : Atmosphere.NORMAL;
+        this.gravity = zucht != null ? zucht.gravity() : type.gravity();
+        this.atmosphere = look == UniverseType.TOXISCH && gefahren ? Atmosphere.TOXIC : Atmosphere.NORMAL;
         this.temperature = Temperature.TEMPERATE;
 
-        this.terrain = switch (type) {
+        this.terrain = switch (look) {
             case SCHROTT -> weighted(r, Terrain.values(), 15, 0, 0, 0, 0, 25, 60);
             case KRISTALL -> weighted(r, Terrain.values(), 30, 15, 20, 35, 0, 0, 0);
             case TOXISCH -> weighted(r, Terrain.values(), 35, 0, 15, 0, 35, 15, 0);
@@ -160,10 +181,11 @@ public final class UniverseProfile {
             case ORGANISCH -> weighted(r, Terrain.values(), 45, 0, 15, 10, 30, 0, 0);
             case HOCHGRAVITATION -> weighted(r, Terrain.values(), 0, 0, 0, 0, 0, 30, 0, 0, 70);
             case SPIEGEL -> weighted(r, Terrain.values(), 35, 20, 20, 15, 10, 0, 0);
+            case LEERE, GEZUECHTET -> Terrain.KERNE;
         };
-        List<Palette> palettes = PALETTES.get(type);
+        List<Palette> palettes = PALETTES.get(look);
         this.palette = palettes.get(r.nextInt(palettes.size()));
-        this.featureDensity = switch (type) {
+        this.featureDensity = switch (look) {
             case SCHROTT -> 0.15f + r.nextFloat() * 0.2f;
             case KRISTALL -> 0.006f + r.nextFloat() * 0.012f;
             case TOXISCH -> 0.004f + r.nextFloat() * 0.012f;
@@ -172,8 +194,9 @@ public final class UniverseProfile {
             case ORGANISCH -> 0.006f + r.nextFloat() * 0.01f;
             case HOCHGRAVITATION -> 0.004f + r.nextFloat() * 0.006f;
             case SPIEGEL -> 0.004f + r.nextFloat() * 0.008f;
+            case LEERE, GEZUECHTET -> 0.3f + r.nextFloat() * 0.15f;   // Anteil der Raster-Felder mit einem Kern
         };
-        this.plantDensity = switch (type) {
+        this.plantDensity = switch (look) {
             case SCHROTT -> 0.01f + r.nextFloat() * 0.03f;
             case KRISTALL -> 0.02f + r.nextFloat() * 0.05f;
             case TOXISCH -> 0.08f + r.nextFloat() * 0.2f;
@@ -182,16 +205,17 @@ public final class UniverseProfile {
             case ORGANISCH -> 0.03f + r.nextFloat() * 0.05f;
             case HOCHGRAVITATION -> 0.005f + r.nextFloat() * 0.02f;
             case SPIEGEL -> 0.06f + r.nextFloat() * 0.12f;
+            case LEERE, GEZUECHTET -> 0f;
         };
 
         double richness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
         this.oreRichness = modifiers.contains(UniverseModifier.DOPPELTE_ERZE) ? Math.min(2.0, richness * 2.0) : richness;
         this.danger = 1 + r.nextInt(5);
         this.biomeRoll = r.nextInt(1 << 20);
-        this.caves = r.nextFloat() < 0.75f;
+        this.caves = r.nextFloat() < 0.75f && look != UniverseType.LEERE;
 
         // Schwebeinseln haben keine Seen: unter ihnen ist nur das Nichts
-        boolean dry = palette.surface() == Blocks.RED_SAND || type == UniverseType.NIEDRIGGRAVITATION;
+        boolean dry = palette.surface() == Blocks.RED_SAND || look == UniverseType.NIEDRIGGRAVITATION || look == UniverseType.LEERE;
         this.fluidLevel = dry ? Integer.MIN_VALUE : (terrain == Terrain.ARCHIPELAGO ? 63 : 50 + r.nextInt(18));
 
         switch (terrain) {
@@ -206,7 +230,7 @@ public final class UniverseProfile {
             case PLATTGEDRUECKT -> { base = 64 + r.nextInt(8); amplitude = 3 + r.nextInt(4); frequency = 1.0 / (200 + r.nextInt(120)); }
             default -> { base = 66 + r.nextInt(10); amplitude = 6 + r.nextInt(10); frequency = 1.0 / (110 + r.nextInt(90)); }
         }
-        if (type == UniverseType.HOCHGRAVITATION && terrain == Terrain.CRATERED) {
+        if (look == UniverseType.HOCHGRAVITATION && terrain == Terrain.CRATERED) {
             // auch die Krater der Hochgravitationswelt sind flach gedrückt
             this.amplitudeScale = 0.4;
         } else {
@@ -262,7 +286,7 @@ public final class UniverseProfile {
      * @return false, wenn hier kein Land ist (Leere)
      */
     public boolean column(int x, int z, int[] out) {
-        if (type == UniverseType.SPIEGEL) {
+        if (look == UniverseType.SPIEGEL) {
             // Spiegelwelt: Das Gelände ist an der Mittelachse des Universums gespiegelt
             int axis = Multiverse.cellCenter(id.cellX());
             if (x > axis) x = 2 * axis - x;
@@ -299,6 +323,9 @@ public final class UniverseProfile {
             case SCHWEBEINSELN -> {
                 return island(x, z, n, detail, out);
             }
+            case KERNE -> {
+                return core(x, z, out);
+            }
             default -> h = base + amplitude * n + detail;
         }
         out[0] = minY;
@@ -322,6 +349,63 @@ public final class UniverseProfile {
         int depth = (int) (3 + k * k * 34 + Math.abs(detail) * 2);
         out[0] = Mth.clamp(top - depth, -60, 300);
         out[1] = Mth.clamp(top, out[0] + 1, 300);
+        return true;
+    }
+
+    // ------------------------------------------------------------------ Leere Welt
+
+    /** Raster der schwebenden Kerne in der Leeren Welt. */
+    public static final int KERN_RASTER = 40;
+    /** Um die Zellmitte schwebt der große Ankunftskern; im Umkreis davon gibt es keine anderen Kerne. */
+    public static final int ANKUNFT_RADIUS = 14, ANKUNFT_Y = 80;
+
+    /**
+     * Ein schwebender Kern der Leeren Welt.
+     * @param nullkern ob er Nullmaterie trägt (dann mit Kammer und Wächter-Spawner in der Mitte)
+     */
+    public record Kern(int x, int y, int z, int radius, boolean nullkern) {}
+
+    /** Kern im Rasterfeld (gx, gz), oder null. Mitte immer mindestens 2 Blöcke vom Chunkrand (Kammer passt in einen Chunk). */
+    @Nullable
+    public Kern kernIn(int gx, int gz) {
+        int cx = Multiverse.cellCenter(id.cellX()), cz = Multiverse.cellCenter(id.cellZ());
+        long h = UniverseId.mix(seed ^ ((long) gx * 0x632BE59BD9B4E019L) ^ ((long) gz * 0x85157AF5L) ^ 0x4B45524EL);
+        if ((h & 0xFFFF) / 65535.0 > featureDensity) return null;
+        int x = gx * KERN_RASTER + 11 + (int) ((h >>> 16) & 15);
+        int z = gz * KERN_RASTER + 11 + (int) ((h >>> 20) & 15);
+        if ((x & 15) < 2) x += 2;
+        if ((x & 15) > 13) x -= 2;
+        if ((z & 15) < 2) z += 2;
+        if ((z & 15) > 13) z -= 2;
+        double dx = x - cx, dz = z - cz;
+        if (dx * dx + dz * dz < 44 * 44) return null;
+        int radius = 4 + (int) ((h >>> 24) % 6);
+        int y = 40 + (int) ((h >>> 32) % 120);
+        boolean nullkern = look == UniverseType.LEERE && radius >= 6 && ((h >>> 40) & 0xFF) < 40;
+        return new Kern(x, y, z, radius, nullkern);
+    }
+
+    /** Ein schwebender Kern: unten tief und rund, oben flach abgeplattet. Um die Zellmitte liegt der Ankunftskern. */
+    private boolean core(int x, int z, int[] out) {
+        int cx = Multiverse.cellCenter(id.cellX()), cz = Multiverse.cellCenter(id.cellZ());
+        double rough = fbm(detailNoise, x / 9.0, z / 9.0, 2);
+        double dh = Math.sqrt((double) (x - cx) * (x - cx) + (double) (z - cz) * (z - cz));
+        if (dh < ANKUNFT_RADIUS) {
+            double k = Math.sqrt(ANKUNFT_RADIUS * ANKUNFT_RADIUS - dh * dh);
+            out[0] = (int) (ANKUNFT_Y - k * 1.1 + rough * 2);
+            out[1] = (int) (ANKUNFT_Y + Math.min(3, k * 0.25) + rough);
+            return true;
+        }
+        int gx = Math.floorDiv(x, KERN_RASTER), gz = Math.floorDiv(z, KERN_RASTER);
+        Kern k = kernIn(gx, gz);
+        if (k == null) return false;
+        double d = Math.sqrt((double) (x - k.x()) * (x - k.x()) + (double) (z - k.z()) * (z - k.z()));
+        double r = k.radius() + rough * 1.2;
+        if (d >= r) return false;
+        double s = Math.sqrt(r * r - d * d);
+        out[0] = (int) Math.floor(k.y() - s);
+        out[1] = (int) Math.ceil(k.y() + s * 0.55);
+        if (out[1] <= out[0]) out[1] = out[0] + 1;
         return true;
     }
 
@@ -365,7 +449,7 @@ public final class UniverseProfile {
 
     /** Seen: Säure in der toxischen Welt, sonst Wasser. */
     public BlockState fluidBlock() {
-        return type == UniverseType.TOXISCH ? ModBlocks.SAEURE.get().defaultBlockState() : Blocks.WATER.defaultBlockState();
+        return look == UniverseType.TOXISCH ? ModBlocks.SAEURE.get().defaultBlockState() : Blocks.WATER.defaultBlockState();
     }
 
     public BlockState stoneAt(int y) {
@@ -380,7 +464,7 @@ public final class UniverseProfile {
     }
 
     public BlockState caveFluid() {
-        return type == UniverseType.TOXISCH ? ModBlocks.SAEURE.get().defaultBlockState() : Blocks.LAVA.defaultBlockState();
+        return look == UniverseType.TOXISCH ? ModBlocks.SAEURE.get().defaultBlockState() : Blocks.LAVA.defaultBlockState();
     }
 
     /** Erz-Adern über 3D-Rauschen: zusammenhängende Klumpen statt Einzelblöcke. */
@@ -393,6 +477,9 @@ public final class UniverseProfile {
                 ^ ((long) Math.floorDiv(y, 8) * 0xC2B2AE3D27D4EB4FL) ^ ((long) Math.floorDiv(z, 8) * 0x165667B19E3779F9L));
         int roll = (int) Math.floorMod(h, 1000);
         boolean deep = y < 0;
+        UniverseType type = rohstoff;
+        // Die Leere hat außer Nullmaterie (in den Nullkernen, siehe Weltengenerator) kaum Rohstoffe
+        if (type == UniverseType.LEERE) return roll < 40 ? Blocks.OBSIDIAN.defaultBlockState() : null;
         // Typ-Erz zuerst: Fluxkristall in der Kristallwelt, etwas Xenit in der Schrottwelt
         if (type == UniverseType.KRISTALL && roll < 220) return ModBlocks.FLUXKRISTALL_ORE.get().defaultBlockState();
         if (type == UniverseType.SCHROTT && roll < 60) {

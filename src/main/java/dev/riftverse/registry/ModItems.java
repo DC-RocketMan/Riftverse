@@ -278,6 +278,46 @@ public final class ModItems {
     public static final DeferredItem<Item> INVERSIONSSPLITTER = ITEMS.register("inversionssplitter",
             () -> new LoreItem(new Item.Properties(), "item.riftverse.inversionssplitter.lore"));
 
+    // =====================================================================
+    // Meilenstein 5 – T4 Weltenformer
+    // =====================================================================
+
+    // --- Netz, Gehäuse, Maschinen ---
+    public static final DeferredItem<BlockItem> NULL_LEITUNG = blockItem("null_leitung", ModBlocks.NULL_LEITUNG);
+    public static final DeferredItem<BlockItem> NULL_GEHAEUSE = blockItem("null_gehaeuse", ModBlocks.NULL_GEHAEUSE);
+    public static final DeferredItem<BlockItem> NULL_HUELLE = blockItem("null_huelle", ModBlocks.NULL_HUELLE);
+    public static final DeferredItem<BlockItem> EINDAEMMUNGSRING = blockItem("eindaemmungsring", ModBlocks.EINDAEMMUNGSRING);
+    public static final DeferredItem<BlockItem> RIFT_SCHMIEDE = blockItem("rift_schmiede", ModBlocks.RIFT_SCHMIEDE);
+    public static final DeferredItem<BlockItem> WELTENFORMER = ITEMS.register("weltenformer",
+            () -> new BlockItem(ModBlocks.WELTENFORMER.get(), new Item.Properties().rarity(Rarity.EPIC)));
+    public static final DeferredItem<BlockItem> SINGULARITAETSKERN = ITEMS.register("singularitaetskern",
+            () -> new BlockItem(ModBlocks.SINGULARITAETSKERN.get(), new Item.Properties().rarity(Rarity.EPIC)));
+
+    // --- Kanone und Fluid ---
+    public static final DeferredItem<PortalKanoneItem> PORTAL_KANONE_MK4 = ITEMS.register("portal_kanone_mk4",
+            () -> new PortalKanoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant(), 4));
+    public static final DeferredItem<Item> FLUID_KARTUSCHE_ESSENZ = ITEMS.register("fluid_kartusche_essenz",
+            () -> new LoreItem(new Item.Properties().stacksTo(16).rarity(Rarity.RARE), "item.riftverse.fluid_kartusche_essenz.lore"));
+
+    // --- Zwischenprodukte der T4-Leitern ---
+    public static final DeferredItem<Item> MULTIVERSAL_PROZESSOR = ITEMS.register("multiversal_prozessor",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> SINGULARITAETSLINSE = ITEMS.register("singularitaetslinse",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> NULL_SPULE = ITEMS.register("null_spule",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<Item> NULLMATERIE_FASER = simple("nullmaterie_faser");
+    public static final DeferredItem<Item> NULLMATERIE_KERN = ITEMS.register("nullmaterie_kern",
+            () -> new LoreItem(new Item.Properties().rarity(Rarity.EPIC), "item.riftverse.nullmaterie_kern.lore"));
+
+    // --- Rohstoffe aus der Leeren Welt ---
+    public static final DeferredItem<Item> NULLMATERIE = ITEMS.register("nullmaterie",
+            () -> new LoreItem(new Item.Properties().rarity(Rarity.RARE).fireResistant(), "item.riftverse.nullmaterie.lore"));
+    public static final DeferredItem<BlockItem> NULLMATERIE_ERZ = blockItem("nullmaterie_erz", ModBlocks.NULLMATERIE_ERZ);
+    public static final DeferredItem<BlockItem> NULLMATERIE_BLOCK = ITEMS.register("nullmaterie_block",
+            () -> new BlockItem(ModBlocks.NULLMATERIE_BLOCK.get(), new Item.Properties().rarity(Rarity.RARE).fireResistant()));
+    public static final DeferredItem<BlockItem> LEERSTEIN = blockItem("leerstein", ModBlocks.LEERSTEIN);
+
     private static DeferredItem<Item> simple(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));
     }

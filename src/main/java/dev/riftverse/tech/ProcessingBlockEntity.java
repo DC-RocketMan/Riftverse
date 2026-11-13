@@ -39,7 +39,8 @@ import java.util.List;
  * Slots: Eingänge 0..n-1, Ausgänge n..n+o-1, Akku-Slot n+o (nur elektrische Maschinen).
  */
 public class ProcessingBlockEntity extends RiftEnergyBlockEntity
-        implements MenuProvider, RiftEnergySink, Crankable, ServerTickable, DropsContents {
+        implements MenuProvider, RiftEnergySink, Crankable, ServerTickable, DropsContents,
+        dev.riftverse.tech.multiblock.MultiblockController {
 
     public static final int DATA_PROGRESS = 0, DATA_MAX = 1, DATA_ENERGY_LO = 2, DATA_ENERGY_HI = 3,
             DATA_CAP_LO = 4, DATA_CAP_HI = 5, DATA_MODE = 6, DATA_CRANK = 7, DATA_STEPS = 8, DATA_COUNT = 9;
@@ -56,6 +57,9 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
     private boolean recipeDirty = true;
     @Nullable
     private RecipeHolder<MachineRecipe> cached;
+    /** Multiblock-Maschinen (Rift-Schmiede): steht der Aufbau? */
+    private boolean formed;
+    private int checkIn;
 
     public ProcessingBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.PROCESSING.get(), pos, state, kindOf(state).capacity());
@@ -142,12 +146,34 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
 
     // ------------------------------------------------------------------ Tick
 
+    private net.minecraft.core.Direction facing() {
+        BlockState state = getBlockState();
+        return state.hasProperty(TechBlock.FACING) ? state.getValue(TechBlock.FACING) : net.minecraft.core.Direction.NORTH;
+    }
+
+    /** Ob der Multiblock steht; Einzelmaschinen sind immer „vollständig“. */
+    public boolean formed() {
+        return kind.multiblock() == null || formed;
+    }
+
+    @Nullable
+    @Override
+    public net.minecraft.network.chat.Component checkStructure() {
+        dev.riftverse.tech.multiblock.Multiblock mb = kind.multiblock();
+        if (mb == null || level == null) return null;
+        net.minecraft.network.chat.Component missing = mb.missingMessage(level, worldPosition, facing());
+        formed = missing == null;
+        checkIn = 20;
+        return missing;
+    }
+
     @Override
     public void serverTick() {
         if (level == null) return;
         if (kind.electric()) ItemEnergy.discharge(items.getStackInSlot(batterySlot()), energy, kind.tier().maxPacket());
+        if (kind.multiblock() != null && --checkIn <= 0) checkStructure();
 
-        RecipeHolder<MachineRecipe> holder = currentRecipe();
+        RecipeHolder<MachineRecipe> holder = formed() ? currentRecipe() : null;
         boolean working = false;
         if (holder != null && canOutput(withTarget(holder.value().allOutputs()))) {
             MachineRecipe recipe = holder.value();
@@ -173,6 +199,23 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         }
         if (crankTicks > 0) crankTicks--;
         setActive(working);
+        if (working && kind == MachineKind.RIFT_SCHMIEDE) schmiedeEffekte();
+    }
+
+    /** Rift-Schmiede: Das Mini-Portal über dem Amboss wirbelt, ab und zu fällt ein Hammerschlag mit Hall. */
+    private void schmiedeEffekte() {
+        if (!(level instanceof net.minecraft.server.level.ServerLevel sl)) return;
+        long t = level.getGameTime();
+        BlockPos portal = dev.riftverse.tech.multiblock.Multiblock.at(worldPosition, facing(), dev.riftverse.tech.multiblock.Multiblock.SCHMIEDE_PORTAL);
+        if (t % 5 == 0) {
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL, portal.getX() + 0.5, portal.getY() + 0.5, portal.getZ() + 0.5,
+                    6, 0.25, 0.25, 0.25, 0.4);
+        }
+        if (t % 40 == 0) {
+            sl.playSound(null, portal, net.minecraft.sounds.SoundEvents.ANVIL_USE, net.minecraft.sounds.SoundSource.BLOCKS, 0.7f, 0.6f);
+            sl.sendParticles(net.minecraft.core.particles.ParticleTypes.ELECTRIC_SPARK, portal.getX() + 0.5, portal.getY() - 0.4, portal.getZ() + 0.5,
+                    10, 0.3, 0.05, 0.3, 0.15);
+        }
     }
 
     private MachineRecipeInput input() {

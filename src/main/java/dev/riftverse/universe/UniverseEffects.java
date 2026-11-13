@@ -71,7 +71,7 @@ public final class UniverseEffects {
         if (player.tickCount % 10 == 0) applyGravity(player, p);
         if (p == null || player.isCreative() || player.isSpectator()) return;
 
-        switch (p.type) {
+        if (p.gefahren) switch (p.look) {
             case TOXISCH -> {
                 if (player.tickCount % 20 == 0) toxicAir(player);
                 if (player.tickCount % 40 == 0) acidRain(level, player);
@@ -218,7 +218,7 @@ public final class UniverseEffects {
 
     public static void applyGravity(LivingEntity e, @Nullable UniverseProfile p) {
         double g = p == null ? 1.0 : p.gravity;
-        boolean heavy = p != null && p.type == UniverseType.HOCHGRAVITATION;
+        boolean heavy = p != null && p.gravity >= 2.0;
         set(e, Attributes.GRAVITY, GRAVITY, g - 1.0);
         set(e, Attributes.SAFE_FALL_DISTANCE, SAFE_FALL, 1.0 / g - 1.0);
         // Hochgravitation: Fallschaden 3×, schon kleine Stürze sind tödlich

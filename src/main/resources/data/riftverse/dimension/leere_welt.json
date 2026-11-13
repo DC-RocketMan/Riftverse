@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:leere_welt",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "leere_welt",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "leere_welt",
+      "biomes": [
+        "riftverse:leere_sterne"
+      ]
+    }
+  }
+}

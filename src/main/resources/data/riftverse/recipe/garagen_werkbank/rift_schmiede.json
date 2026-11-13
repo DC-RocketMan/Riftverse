@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "QKQ",
+    "GAG",
+    "TLT"
+  ],
+  "key": {
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "K": {
+      "item": "riftverse:kanonenkern"
+    },
+    "G": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "A": {
+      "item": "minecraft:anvil"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "L": {
+      "item": "riftverse:chrono_linse"
+    }
+  },
+  "result": {
+    "id": "riftverse:rift_schmiede"
+  },
+  "loetzinn": 4
+}

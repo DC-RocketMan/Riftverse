@@ -1,0 +1,31 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:chrono_linse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:inversionssplitter"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:singularitaetslinse"
+  },
+  "time": 400
+}

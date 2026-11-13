@@ -41,7 +41,8 @@ public class UniverseScannerItem extends Item {
         MultiverseData.Record rec = MultiverseData.get(sl.getServer()).record(id);
 
         player.sendSystemMessage(Component.literal("━━ " + p.title() + " „" + p.name + "“ ━━").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
-        line(player, "message.riftverse.scanner.type", p.type.displayName());
+        line(player, "message.riftverse.scanner.type", p.zucht != null
+                ? p.type.displayName().copy().append(" (").append(p.zucht.describe()).append(")") : p.type.displayName());
         line(player, "message.riftverse.scanner.modifiers", p.modifierText());
         line(player, "message.riftverse.scanner.gravity", Component.literal(p.gravityText()));
         line(player, "message.riftverse.scanner.air", Component.literal(p.atmosphere.label));

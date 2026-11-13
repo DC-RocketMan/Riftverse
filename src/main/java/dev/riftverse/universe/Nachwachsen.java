@@ -57,7 +57,8 @@ public final class Nachwachsen extends SavedData {
     @SubscribeEvent
     public static void onBreak(BlockEvent.BreakEvent event) {
         if (!(event.getLevel() instanceof ServerLevel level)) return;
-        if (UniverseType.of(level.dimension()) != UniverseType.ORGANISCH) return;
+        UniverseProfile profile = Multiverse.profileAt(level, event.getPos());
+        if (profile == null || profile.look != UniverseType.ORGANISCH) return;
         BlockState state = event.getState();
         if (!state.is(ModTags.Blocks.WAECHST_NACH)) return;
         long due = level.getGameTime() + MIN_DELAY + level.random.nextInt(RANDOM_DELAY);
@@ -67,7 +68,8 @@ public final class Nachwachsen extends SavedData {
     @SubscribeEvent
     public static void onLevelTick(LevelTickEvent.Post event) {
         if (!(event.getLevel() instanceof ServerLevel level) || level.getGameTime() % 20 != 0) return;
-        if (UniverseType.of(level.dimension()) != UniverseType.ORGANISCH) return;
+        UniverseType type = UniverseType.of(level.dimension());
+        if (type != UniverseType.ORGANISCH && type != UniverseType.GEZUECHTET) return;
         Nachwachsen data = get(level);
         if (data.entries.isEmpty()) return;
         long now = level.getGameTime();

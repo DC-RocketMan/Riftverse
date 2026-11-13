@@ -1,0 +1,21 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:nullmaterie"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:wires/gold"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:nullmaterie_faser",
+    "count": 4
+  },
+  "time": 200
+}

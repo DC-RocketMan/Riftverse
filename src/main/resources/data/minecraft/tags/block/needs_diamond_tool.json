@@ -1,5 +1,13 @@
 {
   "values": [
-    "riftverse:gravitit_ore"
+    "riftverse:gravitit_ore",
+    "riftverse:null_gehaeuse",
+    "riftverse:null_huelle",
+    "riftverse:eindaemmungsring",
+    "riftverse:rift_schmiede",
+    "riftverse:weltenformer",
+    "riftverse:singularitaetskern",
+    "riftverse:nullmaterie_erz",
+    "riftverse:nullmaterie_block"
   ]
 }

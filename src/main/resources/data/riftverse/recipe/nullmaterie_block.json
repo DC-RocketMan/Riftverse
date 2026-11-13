@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "NNN",
+    "NNN",
+    "NNN"
+  ],
+  "key": {
+    "N": {
+      "item": "riftverse:nullmaterie"
+    }
+  },
+  "result": {
+    "id": "riftverse:nullmaterie_block"
+  }
+}

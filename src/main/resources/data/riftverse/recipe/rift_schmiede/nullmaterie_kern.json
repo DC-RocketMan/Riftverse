@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:nullmaterie"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:singularitaetslinse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_rahmen"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:nullmaterie_kern"
+  },
+  "time": 600
+}

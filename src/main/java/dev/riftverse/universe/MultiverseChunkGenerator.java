@@ -94,7 +94,7 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         BlockState scrap = ModBlocks.SCHROTT_HAUFEN.get().defaultBlockState();
         BlockState gravel = Blocks.GRAVEL.defaultBlockState();
         BlockState schwebstein = ModBlocks.SCHWEBSTEIN.get().defaultBlockState();
-        boolean islands = p.type == UniverseType.NIEDRIGGRAVITATION;
+        boolean islands = p.look == UniverseType.NIEDRIGGRAVITATION;
         RandomSource rnd = RandomSource.create(UniverseId.mix(p.seed ^ cp.toLong() ^ 0x5EEDL));
 
         for (int lx = 0; lx < 16; lx++) {
@@ -107,7 +107,7 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
                 int bottom = Math.max(col[0], minY);
                 boolean underwater = fluid != null && top < p.fluidLevel;
                 // Schrottwelt: Die Müllberge tragen eine Kruste aus Schrott und Geröll
-                double halde = p.type == UniverseType.SCHROTT && !underwater ? p.halde(x, z) : -1;
+                double halde = p.look == UniverseType.SCHROTT && !underwater ? p.halde(x, z) : -1;
 
                 for (int y = bottom; y <= top; y++) {
                     BlockState state;
@@ -142,7 +142,7 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
             }
         }
 
-        switch (p.type) {
+        switch (p.look) {
             case SCHROTT -> decorateScrap(chunk, p, tops, pos);
             case KRISTALL -> decorateCrystal(chunk, p, tops, pos);
             case TOXISCH -> decorateToxic(chunk, p, tops, pos);
@@ -151,6 +151,8 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
             case ORGANISCH -> decorateOrganic(chunk, p, tops, pos);
             case HOCHGRAVITATION -> decorateHeavy(chunk, p, tops, pos);
             case SPIEGEL -> decorateMirror(chunk, p, tops, pos);
+            case LEERE -> decorateVoid(chunk, p, pos);
+            case GEZUECHTET -> { }
         }
         return CompletableFuture.completedFuture(chunk);
     }
@@ -467,6 +469,78 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
     // ------------------------------------------------------------------ Spiegelwelt
 
     /** Spiegelkristall-Nadeln und helle Blumen. */
+    // ------------------------------------------------------------------ Leere Welt
+
+    /**
+     * Nullkerne: In der Mitte liegt eine kleine Kammer mit einem Wächter-Spawner (Plagegeister), drumherum ein paar
+     * Blöcke Nullmaterie-Erz; oben verrät weinender Obsidian den Kern. Die Kammer liegt immer ganz in einem Chunk.
+     */
+    private void decorateVoid(ChunkAccess chunk, UniverseProfile p, BlockPos.MutableBlockPos pos) {
+        ChunkPos cp = chunk.getPos();
+        int x0 = cp.getMinBlockX(), z0 = cp.getMinBlockZ();
+        int gx0 = Math.floorDiv(x0, UniverseProfile.KERN_RASTER), gx1 = Math.floorDiv(x0 + 15, UniverseProfile.KERN_RASTER);
+        int gz0 = Math.floorDiv(z0, UniverseProfile.KERN_RASTER), gz1 = Math.floorDiv(z0 + 15, UniverseProfile.KERN_RASTER);
+        for (int gx = gx0; gx <= gx1; gx++) {
+            for (int gz = gz0; gz <= gz1; gz++) {
+                UniverseProfile.Kern k = p.kernIn(gx, gz);
+                if (k == null || !k.nullkern()) continue;
+                if (Multiverse.inBorder(k.x(), k.z())) continue;
+                if (k.x() < x0 || k.x() > x0 + 15 || k.z() < z0 || k.z() > z0 + 15) continue;
+                nullkern(chunk, p, k, pos);
+            }
+        }
+    }
+
+    private void nullkern(ChunkAccess chunk, UniverseProfile p, UniverseProfile.Kern k, BlockPos.MutableBlockPos pos) {
+        RandomSource rnd = RandomSource.create(UniverseId.mix(p.seed ^ ((long) k.x() << 20) ^ k.z() ^ 0x4E554C4CL));
+        BlockState erz = ModBlocks.NULLMATERIE_ERZ.get().defaultBlockState();
+        BlockState air = Blocks.AIR.defaultBlockState();
+        int cx = k.x(), cy = k.y(), cz = k.z();
+        // Erz in der Schale um die Kammer
+        int ores = 4 + rnd.nextInt(4);
+        for (int i = 0; i < ores * 4 && ores > 0; i++) {
+            int dx = rnd.nextInt(5) - 2, dy = rnd.nextInt(5) - 2, dz = rnd.nextInt(5) - 2;
+            if (Math.max(Math.abs(dx), Math.max(Math.abs(dy), Math.abs(dz))) != 2) continue;
+            pos.set(cx + dx, cy + dy, cz + dz);
+            if (chunk.getBlockState(pos).isAir()) continue;
+            chunk.setBlockState(pos, erz, false);
+            ores--;
+        }
+        // Kammer und Wächter
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dy = -1; dy <= 1; dy++) {
+                for (int dz = -1; dz <= 1; dz++) chunk.setBlockState(pos.set(cx + dx, cy + dy, cz + dz), air, false);
+            }
+        }
+        BlockPos spawner = new BlockPos(cx, cy - 1, cz);
+        chunk.setBlockState(spawner, Blocks.SPAWNER.defaultBlockState(), false);
+        net.minecraft.nbt.CompoundTag tag = new net.minecraft.nbt.CompoundTag();
+        tag.putString("id", "minecraft:mob_spawner");
+        tag.putInt("x", spawner.getX());
+        tag.putInt("y", spawner.getY());
+        tag.putInt("z", spawner.getZ());
+        net.minecraft.nbt.CompoundTag entity = new net.minecraft.nbt.CompoundTag();
+        entity.putString("id", "minecraft:vex");
+        net.minecraft.nbt.CompoundTag data = new net.minecraft.nbt.CompoundTag();
+        data.put("entity", entity);
+        tag.put("SpawnData", data);
+        tag.putShort("MaxNearbyEntities", (short) 4);
+        tag.putShort("RequiredPlayerRange", (short) 20);
+        chunk.setBlockEntityNbt(tag);
+        // Oben verrät weinender Obsidian den Kern
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
+                if (dx * dx + dz * dz > 5 || rnd.nextFloat() < 0.35f) continue;
+                for (int y = cy + k.radius() + 2; y > cy + 1; y--) {
+                    if (!chunk.getBlockState(pos.set(cx + dx, y, cz + dz)).isAir()) {
+                        chunk.setBlockState(pos, Blocks.CRYING_OBSIDIAN.defaultBlockState(), false);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     private void decorateMirror(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
         RandomSource rnd = decoRandom(p, chunk);
         ChunkPos cp = chunk.getPos();

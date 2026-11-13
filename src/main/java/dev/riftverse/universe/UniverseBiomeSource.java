@@ -13,7 +13,7 @@ import java.util.stream.Stream;
 
 /**
  * Jedes Universum bekommt genau ein Biom (Himmels-, Nebel-, Wasser- und Grasfarben, Spawns)
- * aus der Liste seines Typs – passend zum Universums-Seed.
+ * aus der Liste seines Typs – passend zum Universums-Seed. Gezüchtete Universen nehmen ein Biom ihrer Landschaft.
  */
 public class UniverseBiomeSource extends BiomeSource {
     public static final MapCodec<UniverseBiomeSource> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -44,7 +44,12 @@ public class UniverseBiomeSource extends BiomeSource {
         int x = QuartPos.toBlock(quartX);
         int z = QuartPos.toBlock(quartZ);
         UniverseId id = new UniverseId(type, Multiverse.cellOf(x), Multiverse.cellOf(z));
-        int index = Math.floorMod(UniverseProfile.get(id).biomeRoll, biomes.size());
+        UniverseProfile p = UniverseProfile.get(id);
+        int index = Math.floorMod(p.biomeRoll, biomes.size());
+        // Gezüchtete Universen: zwei Biome je Grundtyp, in der Reihenfolge von Zucht.BASIS
+        if (p.zucht != null && biomes.size() >= Zucht.BASIS.size() * 2) {
+            index = Zucht.BASIS.indexOf(p.look) * 2 + Math.floorMod(p.biomeRoll, 2);
+        }
         return biomes.get(index);
     }
 }

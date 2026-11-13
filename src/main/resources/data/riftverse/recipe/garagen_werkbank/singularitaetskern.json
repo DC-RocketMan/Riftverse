@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SKS",
+    "LGL",
+    "SPS"
+  ],
+  "key": {
+    "S": {
+      "item": "riftverse:null_spule"
+    },
+    "K": {
+      "item": "riftverse:nullmaterie_kern"
+    },
+    "L": {
+      "item": "riftverse:singularitaetslinse"
+    },
+    "G": {
+      "item": "riftverse:null_gehaeuse"
+    },
+    "P": {
+      "item": "riftverse:multiversal_prozessor"
+    }
+  },
+  "result": {
+    "id": "riftverse:singularitaetskern"
+  },
+  "loetzinn": 4
+}
