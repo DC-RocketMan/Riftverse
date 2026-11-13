@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "AKA",
+    "QGQ",
+    "TLT"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:lightning_rod"
+    },
+    "K": {
+      "item": "riftverse:kanonenkern"
+    },
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "G": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "L": {
+      "item": "riftverse:chrono_linse"
+    }
+  },
+  "result": {
+    "id": "riftverse:parallelzapfer"
+  },
+  "loetzinn": 4
+}

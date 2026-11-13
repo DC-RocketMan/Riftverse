@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GRG",
+    "SLS",
+    "GRG"
+  ],
+  "key": {
+    "G": {
+      "item": "riftverse:graphitplatte"
+    },
+    "R": {
+      "item": "riftverse:gravitit_rahmen"
+    },
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    }
+  },
+  "result": {
+    "id": "riftverse:graphit_gehaeuse"
+  },
+  "hammer": 2
+}

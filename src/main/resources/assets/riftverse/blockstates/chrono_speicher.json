@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "riftverse:block/chrono_speicher"
+    },
+    "active=true,facing=north": {
+      "model": "riftverse:block/chrono_speicher_on"
+    },
+    "active=false,facing=east": {
+      "model": "riftverse:block/chrono_speicher"
+    },
+    "active=true,facing=east": {
+      "model": "riftverse:block/chrono_speicher_on"
+    },
+    "active=false,facing=south": {
+      "model": "riftverse:block/chrono_speicher"
+    },
+    "active=true,facing=south": {
+      "model": "riftverse:block/chrono_speicher_on"
+    },
+    "active=false,facing=west": {
+      "model": "riftverse:block/chrono_speicher"
+    },
+    "active=true,facing=west": {
+      "model": "riftverse:block/chrono_speicher_on"
+    }
+  }
+}

@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import dev.riftverse.devtest.RauchTest;
 import dev.riftverse.energy.EnergyNet;
 import dev.riftverse.network.RueckkehrPayload;
+import dev.riftverse.network.ZielPayload;
 import dev.riftverse.registry.ModAttachments;
 import dev.riftverse.registry.ModBiomeModifiers;
 import dev.riftverse.registry.ModBlockEntities;
@@ -59,6 +60,7 @@ public class Riftverse {
         modBus.addListener(ModEntities::registerAttributes);
         modBus.addListener(ModEntities::registerSpawnPlacements);
         modBus.addListener(RueckkehrPayload::register);
+        modBus.addListener(ZielPayload::register);
         modBus.addListener(ModBlockEntities::registerCapabilities);
 
         // Riftverse-Stromnetz: verteilt am Ende jedes Server-Ticks

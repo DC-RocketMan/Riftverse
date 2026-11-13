@@ -5,6 +5,7 @@ import dev.riftverse.item.EnergiezelleItem;
 import dev.riftverse.item.HandkurbelItem;
 import dev.riftverse.item.KoordinatenkarteItem;
 import dev.riftverse.item.UniversumsprobeItem;
+import dev.riftverse.tech.ChronoSpeicherBlockEntity;
 import dev.riftverse.tech.FluxZelleBlockEntity;
 import dev.riftverse.item.FluidKartuscheItem;
 import dev.riftverse.item.LoreItem;
@@ -14,6 +15,7 @@ import dev.riftverse.item.UniverseScannerItem;
 import dev.riftverse.item.XenitZelleItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Rarity;
@@ -223,6 +225,58 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> BIOMASSE_BLOCK = blockItem("biomasse_block", ModBlocks.BIOMASSE_BLOCK);
     public static final DeferredItem<Item> BIOMASSE_PULPE = simple("biomasse_pulpe");
     public static final DeferredItem<BlockItem> FRESSENDE_FLORA = blockItem("fressende_flora", ModBlocks.FRESSENDE_FLORA);
+
+    // =====================================================================
+    // Meilenstein 4 – T3 Multiversum-Industrie
+    // =====================================================================
+
+    // --- Netz, Speicher, Gehäuse ---
+    public static final DeferredItem<BlockItem> GRAVITIT_LEITUNG = blockItem("gravitit_leitung", ModBlocks.GRAVITIT_LEITUNG);
+    public static final DeferredItem<BlockItem> GRAVITIT_LEITUNG_ISOLIERT = blockItem("gravitit_leitung_isoliert", ModBlocks.GRAVITIT_LEITUNG_ISOLIERT);
+    public static final DeferredItem<BlockItem> GRAVITIT_LEITUNG_DOPPELT = blockItem("gravitit_leitung_doppelt", ModBlocks.GRAVITIT_LEITUNG_DOPPELT);
+    public static final DeferredItem<BlockItem> UMSPANNER_II = blockItem("umspanner_ii", ModBlocks.UMSPANNER_II);
+    public static final DeferredItem<BlockItem> UMSPANNER_III = blockItem("umspanner_iii", ModBlocks.UMSPANNER_III);
+    public static final DeferredItem<XenitZelleItem> CHRONO_SPEICHER = ITEMS.register("chrono_speicher",
+            () -> new XenitZelleItem(ModBlocks.CHRONO_SPEICHER.get(), new Item.Properties().stacksTo(1).rarity(Rarity.RARE),
+                    ChronoSpeicherBlockEntity.CHRONO_CAPACITY, "tooltip.riftverse.chrono_speicher"));
+    public static final DeferredItem<BlockItem> GRAPHIT_GEHAEUSE = blockItem("graphit_gehaeuse", ModBlocks.GRAPHIT_GEHAEUSE);
+    public static final DeferredItem<BlockItem> GRAPHIT_HUELLE = blockItem("graphit_huelle", ModBlocks.GRAPHIT_HUELLE);
+
+    // --- Maschinen und Generatoren ---
+    public static final DeferredItem<BlockItem> QUANTEN_LITHOGRAF = blockItem("quanten_lithograf", ModBlocks.QUANTEN_LITHOGRAF);
+    public static final DeferredItem<BlockItem> MATERIE_REKONFIGURATOR = blockItem("materie_rekonfigurator", ModBlocks.MATERIE_REKONFIGURATOR);
+    public static final DeferredItem<BlockItem> KLON_TANK = ITEMS.register("klon_tank",
+            () -> new DoubleHighBlockItem(ModBlocks.KLON_TANK.get(), new Item.Properties()));
+    public static final DeferredItem<BlockItem> UNIVERSUMS_DESTILLATOR = blockItem("universums_destillator", ModBlocks.UNIVERSUMS_DESTILLATOR);
+    public static final DeferredItem<BlockItem> RIFT_KABELKNOTEN = blockItem("rift_kabelknoten", ModBlocks.RIFT_KABELKNOTEN);
+    public static final DeferredItem<BlockItem> MIKROKOSMOS_ZELLE = blockItem("mikrokosmos_zelle", ModBlocks.MIKROKOSMOS_ZELLE);
+    public static final DeferredItem<BlockItem> PARALLELZAPFER = blockItem("parallelzapfer", ModBlocks.PARALLELZAPFER);
+
+    // --- Kanone, Fluid, Werkzeuge ---
+    public static final DeferredItem<PortalKanoneItem> PORTAL_KANONE_MK3 = ITEMS.register("portal_kanone_mk3",
+            () -> new PortalKanoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC), 3));
+    public static final DeferredItem<Item> FLUID_KARTUSCHE_KONZENTRAT = ITEMS.register("fluid_kartusche_konzentrat",
+            () -> new LoreItem(new Item.Properties().stacksTo(16), "item.riftverse.fluid_kartusche_konzentrat.lore"));
+    public static final DeferredItem<Item> KOPPLUNGSKARTE = ITEMS.register("kopplungskarte",
+            () -> new LoreItem(new Item.Properties().stacksTo(1), "item.riftverse.kopplungskarte.lore"));
+
+    // --- Zwischenprodukte ---
+    public static final DeferredItem<Item> QUANTEN_SCHALTKREIS = simple("quanten_schaltkreis");
+    public static final DeferredItem<Item> CHRONO_LINSE = simple("chrono_linse");
+    public static final DeferredItem<Item> GRAVITIT_SPULE = simple("gravitit_spule");
+    public static final DeferredItem<Item> GRAVITIT_RAHMEN = simple("gravitit_rahmen");
+    public static final DeferredItem<Item> GRAPHITPLATTE = simple("graphitplatte");
+    /** Ersatz für Story-Fragmente bis zum Story-Modus (Tag {@code riftverse:story_fragmente}). */
+    public static final DeferredItem<Item> FRAGMENT_REPLIK = ITEMS.register("fragment_replik",
+            () -> new LoreItem(new Item.Properties().rarity(Rarity.UNCOMMON), "item.riftverse.fragment_replik.lore"));
+
+    // --- Rohstoffe aus den T3-Universen ---
+    public static final DeferredItem<BlockItem> GRAVITIT_ORE = blockItem("gravitit_ore", ModBlocks.GRAVITIT_ORE);
+    public static final DeferredItem<Item> GRAVITIT = ITEMS.register("gravitit",
+            () -> new LoreItem(new Item.Properties(), "item.riftverse.gravitit.lore"));
+    public static final DeferredItem<BlockItem> SPIEGELKRISTALL = blockItem("spiegelkristall", ModBlocks.SPIEGELKRISTALL);
+    public static final DeferredItem<Item> INVERSIONSSPLITTER = ITEMS.register("inversionssplitter",
+            () -> new LoreItem(new Item.Properties(), "item.riftverse.inversionssplitter.lore"));
 
     private static DeferredItem<Item> simple(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

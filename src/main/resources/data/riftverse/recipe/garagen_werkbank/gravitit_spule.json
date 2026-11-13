@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "WGW",
+    "WXW",
+    "WGW"
+  ],
+  "key": {
+    "W": {
+      "tag": "c:wires/gold"
+    },
+    "G": {
+      "item": "riftverse:gravitit"
+    },
+    "X": {
+      "item": "riftverse:flux_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:gravitit_spule"
+  },
+  "loetzinn": 1
+}

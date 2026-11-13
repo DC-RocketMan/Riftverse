@@ -2,6 +2,7 @@ package dev.riftverse.client;
 
 import dev.riftverse.Riftverse;
 import dev.riftverse.network.RueckkehrPayload;
+import dev.riftverse.network.ZielPayload;
 import dev.riftverse.universe.UniverseType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.material.FogType;
@@ -21,6 +22,9 @@ public final class ClientEvents {
         Minecraft mc = Minecraft.getInstance();
         while (ClientSetup.RUECKKEHR.consumeClick()) {
             if (mc.player != null && mc.screen == null) PacketDistributor.sendToServer(new RueckkehrPayload());
+        }
+        while (ClientSetup.ZIEL.consumeClick()) {
+            if (mc.player != null && mc.screen == null) PacketDistributor.sendToServer(new ZielPayload(mc.player.isShiftKeyDown()));
         }
     }
 

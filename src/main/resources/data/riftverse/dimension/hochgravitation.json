@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:hochgravitation",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "hochgravitation",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "hochgravitation",
+      "biomes": [
+        "riftverse:hochgrav_basalt",
+        "riftverse:hochgrav_druck"
+      ]
+    }
+  }
+}

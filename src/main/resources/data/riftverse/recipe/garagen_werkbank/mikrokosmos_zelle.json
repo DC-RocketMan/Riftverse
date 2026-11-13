@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GUG",
+    "QXQ",
+    "TZT"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "U": {
+      "item": "riftverse:universumsprobe"
+    },
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "X": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "Z": {
+      "item": "riftverse:xenit_zelle"
+    }
+  },
+  "result": {
+    "id": "riftverse:mikrokosmos_zelle"
+  },
+  "loetzinn": 3
+}

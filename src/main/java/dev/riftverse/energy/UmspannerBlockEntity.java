@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * Umspanner: Puffer für acht Pakete der hohen Stufe. Heruntergespannt gibt er bis zu vier Pakete der niedrigen
+ * Umspanner: Puffer für acht Pakete der hohen Stufe (Stufe IV: acht Pakete à 32.768 FE). Heruntergespannt gibt er bis zu vier Pakete der niedrigen
  * Stufe pro Tick ab, hochgespannt ein Paket der hohen Stufe.
  */
 public class UmspannerBlockEntity extends RiftEnergyBlockEntity
@@ -20,7 +20,7 @@ public class UmspannerBlockEntity extends RiftEnergyBlockEntity
     private int flowTicks;
 
     public UmspannerBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.UMSPANNER.get(), pos, state, highOf(state).maxPacket() * 8);
+        super(ModBlockEntities.UMSPANNER.get(), pos, state, highOf(state).emitPacket() * 8);
     }
 
     private static VoltageTier lowOf(BlockState state) {

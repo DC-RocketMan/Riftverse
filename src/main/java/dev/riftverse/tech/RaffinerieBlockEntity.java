@@ -47,6 +47,8 @@ import java.util.List;
 /**
  * Portalfluid-Raffinerie (T2, Multiblock 3 × 3 × 4, 250 FE/t): Roh-Portalfluid + Säuregel + Fluxstaub →
  * stabilisiertes Portalfluid, das nicht mehr zerfällt. Füllt leere Fluid-Kartuschen für die Kanone.
+ * Ab Meilenstein 4 verdichtet sie Roh-Portalfluid mit Chronoglas und Flux-Stabilisator auch zu Portalfluid-Konzentrat
+ * (2:1), dem Treibstoff der Kanone Mk III; der Ausgangstank nimmt immer nur eine Sorte auf einmal.
  * <p>
  * Das Roh-Portalfluid zerfällt auch hier im Eingangstank: Mixer und Raffinerie müssen durchlaufen.
  * Es kommt aus vollen Kartuschen oder über Rohre direkt aus dem Fluid-Mixer.
@@ -258,15 +260,17 @@ public class RaffinerieBlockEntity extends RiftEnergyBlockEntity
         setChanged();
     }
 
-    /** Leere Kartusche mit 1.000 mB stabilisiertem Portalfluid füllen. */
+    /** Leere Kartusche mit 1.000 mB stabilisiertem Portalfluid (oder Konzentrat) füllen. */
     private void fillCartridge() {
         if (stabil.getAmount() < KARTUSCHE) return;
         ItemStack in = items.getStackInSlot(SLOT_CART_IN);
         if (!in.is(ModItems.FLUID_KARTUSCHE.get())) return;
+        net.minecraft.world.item.Item full = stabil.is(ModFluids.PORTALFLUID_KONZENTRAT.get())
+                ? ModItems.FLUID_KARTUSCHE_KONZENTRAT.get() : ModItems.FLUID_KARTUSCHE_STABIL.get();
         ItemStack out = items.getStackInSlot(SLOT_CART_OUT);
-        if (!out.isEmpty() && (!out.is(ModItems.FLUID_KARTUSCHE_STABIL.get()) || out.getCount() >= out.getMaxStackSize())) return;
+        if (!out.isEmpty() && (!out.is(full) || out.getCount() >= out.getMaxStackSize())) return;
         items.extractItem(SLOT_CART_IN, 1, false);
-        if (out.isEmpty()) items.setStackInSlot(SLOT_CART_OUT, new ItemStack(ModItems.FLUID_KARTUSCHE_STABIL.get()));
+        if (out.isEmpty()) items.setStackInSlot(SLOT_CART_OUT, new ItemStack(full));
         else items.setStackInSlot(SLOT_CART_OUT, out.copyWithCount(out.getCount() + 1));
         stabil.shrink(KARTUSCHE);
         if (stabil.isEmpty()) stabil = FluidStack.EMPTY;

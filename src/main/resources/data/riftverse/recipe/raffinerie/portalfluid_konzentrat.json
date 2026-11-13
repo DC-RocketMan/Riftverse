@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:raffinerie",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "riftverse:compat/stabilisator"
+      }
+    }
+  ],
+  "fluid": {
+    "fluid": "riftverse:roh_portalfluid",
+    "amount": 1000
+  },
+  "result": {
+    "id": "riftverse:portalfluid_konzentrat",
+    "amount": 500
+  },
+  "time": 300
+}

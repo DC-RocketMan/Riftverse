@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "active=false,facing=north,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom"
+    },
+    "active=false,facing=north,half=upper": {
+      "model": "riftverse:block/klon_tank_top"
+    },
+    "active=true,facing=north,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom_on"
+    },
+    "active=true,facing=north,half=upper": {
+      "model": "riftverse:block/klon_tank_top_on"
+    },
+    "active=false,facing=east,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom",
+      "y": 90
+    },
+    "active=false,facing=east,half=upper": {
+      "model": "riftverse:block/klon_tank_top",
+      "y": 90
+    },
+    "active=true,facing=east,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom_on",
+      "y": 90
+    },
+    "active=true,facing=east,half=upper": {
+      "model": "riftverse:block/klon_tank_top_on",
+      "y": 90
+    },
+    "active=false,facing=south,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom",
+      "y": 180
+    },
+    "active=false,facing=south,half=upper": {
+      "model": "riftverse:block/klon_tank_top",
+      "y": 180
+    },
+    "active=true,facing=south,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom_on",
+      "y": 180
+    },
+    "active=true,facing=south,half=upper": {
+      "model": "riftverse:block/klon_tank_top_on",
+      "y": 180
+    },
+    "active=false,facing=west,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom",
+      "y": 270
+    },
+    "active=false,facing=west,half=upper": {
+      "model": "riftverse:block/klon_tank_top",
+      "y": 270
+    },
+    "active=true,facing=west,half=lower": {
+      "model": "riftverse:block/klon_tank_bottom_on",
+      "y": 270
+    },
+    "active=true,facing=west,half=upper": {
+      "model": "riftverse:block/klon_tank_top_on",
+      "y": 270
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " A ",
+    "QGQ",
+    "TRT"
+  ],
+  "key": {
+    "A": {
+      "item": "minecraft:lightning_rod"
+    },
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "G": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "R": {
+      "item": "riftverse:rift_anker"
+    }
+  },
+  "result": {
+    "id": "riftverse:rift_kabelknoten",
+    "count": 2
+  },
+  "loetzinn": 3
+}

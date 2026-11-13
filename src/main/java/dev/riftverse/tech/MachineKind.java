@@ -10,7 +10,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import java.util.List;
 
 /**
- * Die verarbeitenden Maschinen (T0 bis T2). Jede hat einen eigenen Rezepttyp im Datapack
+ * Die verarbeitenden Maschinen (T0 bis T3). Jede hat einen eigenen Rezepttyp im Datapack
  * ({@code data/riftverse/recipe/<maschine>/...}).
  * <p>
  * Slots: Eingänge 0..n-1, Ausgänge n..n+o-1, Akku-Slot n+o (nur elektrische Maschinen).
@@ -41,7 +41,11 @@ public enum MachineKind {
     /** Schwebstein → Antigrav-Platte (ab T3 auch Gravitit → Rahmen) */
     GRAVITATIONSPRESSE("gravitationspresse", 1, 1, 350, List.of(), VoltageTier.II, false),
     /** Universumsprobe + Papier → Koordinatenkarte mit Typ und Modifikatoren */
-    DIMENSIONS_SCANNER("dimensions_scanner", 2, 1, 150, List.of(), VoltageTier.II, false);
+    DIMENSIONS_SCANNER("dimensions_scanner", 2, 1, 150, List.of(), VoltageTier.II, false),
+
+    // --- T3 Multiversum-Industrie (Stufe III) ---------------------------------------------
+    /** Rift-Schaltkreis + Chronoglas → Quanten-Schaltkreis; Chrono-Linse; Fragment-Replik. */
+    QUANTEN_LITHOGRAF("quanten_lithograf", 3, 1, 1_200, List.of(), VoltageTier.III, false);
 
     private final String id;
     private final int inputs;
@@ -129,6 +133,7 @@ public enum MachineKind {
             case QUANTENZENTRIFUGE -> ModRecipes.QUANTENZENTRIFUGE_TYPE.get();
             case GRAVITATIONSPRESSE -> ModRecipes.GRAVITATIONSPRESSE_TYPE.get();
             case DIMENSIONS_SCANNER -> ModRecipes.DIMENSIONS_SCANNER_TYPE.get();
+            case QUANTEN_LITHOGRAF -> ModRecipes.QUANTEN_LITHOGRAF_TYPE.get();
         };
     }
 
@@ -146,6 +151,7 @@ public enum MachineKind {
             case QUANTENZENTRIFUGE -> ModRecipes.QUANTENZENTRIFUGE.get();
             case GRAVITATIONSPRESSE -> ModRecipes.GRAVITATIONSPRESSE.get();
             case DIMENSIONS_SCANNER -> ModRecipes.DIMENSIONS_SCANNER.get();
+            case QUANTEN_LITHOGRAF -> ModRecipes.QUANTEN_LITHOGRAF.get();
         };
     }
 

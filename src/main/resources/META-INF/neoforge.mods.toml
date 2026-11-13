@@ -12,6 +12,10 @@ Baue eine Rift-Kanone, schiess Portale in zufaellig generierte Universen mit eig
 und triff auf Bosse, deren Geschichten in Echtzeit erzeugt werden.
 '''
 
+# Spiegelwelt: vertauschte Tageszeit (dev.riftverse.mixin.DimensionTypeMixin)
+[[mixins]]
+config="riftverse.mixins.json"
+
 [[dependencies.riftverse]]
     modId="neoforge"
     type="required"

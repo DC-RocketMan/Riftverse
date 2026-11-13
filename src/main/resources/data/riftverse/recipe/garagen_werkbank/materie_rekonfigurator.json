@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "QZQ",
+    "IGI",
+    "TLT"
+  ],
+  "key": {
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "Z": {
+      "item": "riftverse:quantenzentrifuge"
+    },
+    "I": {
+      "item": "riftverse:inversionssplitter"
+    },
+    "G": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "L": {
+      "item": "riftverse:chrono_linse"
+    }
+  },
+  "result": {
+    "id": "riftverse:materie_rekonfigurator"
+  },
+  "loetzinn": 4
+}

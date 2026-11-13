@@ -47,6 +47,18 @@ public final class ModFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> PORTALFLUID_FLOWING = FLUIDS.register("portalfluid_flowing",
             () -> new BaseFlowingFluid.Flowing(portalProperties()));
 
+    // --- Portalfluid-Konzentrat (Raffinerie, Meilenstein 4): Treibstoff der Kanone Mk III -----------------
+    public static final DeferredHolder<FluidType, FluidType> PORTALFLUID_KONZENTRAT_TYPE = FLUID_TYPES.register("portalfluid_konzentrat",
+            () -> new FluidType(FluidType.Properties.create().density(1400).viscosity(2500).lightLevel(14)));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PORTALFLUID_KONZENTRAT = FLUIDS.register("portalfluid_konzentrat",
+            () -> new BaseFlowingFluid.Source(konzentratProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> PORTALFLUID_KONZENTRAT_FLOWING = FLUIDS.register("portalfluid_konzentrat_flowing",
+            () -> new BaseFlowingFluid.Flowing(konzentratProperties()));
+
+    private static BaseFlowingFluid.Properties konzentratProperties() {
+        return new BaseFlowingFluid.Properties(PORTALFLUID_KONZENTRAT_TYPE, PORTALFLUID_KONZENTRAT, PORTALFLUID_KONZENTRAT_FLOWING);
+    }
+
     private static BaseFlowingFluid.Properties portalProperties() {
         return new BaseFlowingFluid.Properties(PORTALFLUID_TYPE, PORTALFLUID, PORTALFLUID_FLOWING);
     }

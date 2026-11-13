@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SGS",
+    "TXT",
+    "SQS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "G": {
+      "item": "riftverse:gravitit_leitung_doppelt"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "X": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    }
+  },
+  "result": {
+    "id": "riftverse:umspanner_iii"
+  },
+  "loetzinn": 3
+}

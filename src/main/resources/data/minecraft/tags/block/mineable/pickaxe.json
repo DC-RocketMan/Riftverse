@@ -48,6 +48,23 @@
     "riftverse:biomasse_kessel",
     "riftverse:schwebstein",
     "riftverse:flux_leitung",
-    "riftverse:flux_leitung_isoliert"
+    "riftverse:flux_leitung_isoliert",
+    "riftverse:quanten_lithograf",
+    "riftverse:materie_rekonfigurator",
+    "riftverse:universums_destillator",
+    "riftverse:umspanner_ii",
+    "riftverse:umspanner_iii",
+    "riftverse:graphit_gehaeuse",
+    "riftverse:graphit_huelle",
+    "riftverse:rift_kabelknoten",
+    "riftverse:mikrokosmos_zelle",
+    "riftverse:parallelzapfer",
+    "riftverse:chrono_speicher",
+    "riftverse:klon_tank",
+    "riftverse:gravitit_ore",
+    "riftverse:spiegelkristall",
+    "riftverse:gravitit_leitung",
+    "riftverse:gravitit_leitung_isoliert",
+    "riftverse:gravitit_leitung_doppelt"
   ]
 }

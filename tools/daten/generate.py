@@ -1,6 +1,7 @@
 """Erzeugt Blockstates, Modelle, Loot-Tabellen, Tags, Rezepte, Worldgen, Dimensionen und Sprachdateien.
 
-Meilenstein 1 (Fundament) und Meilenstein 2 (Spielbarer Prototyp) stehen in getrennten Abschnitten.
+Jeder Meilenstein (1 Fundament, 2 Spielbarer Prototyp, 3 T2 Rift-Labor, 4 T3 Multiversum-Industrie) steht in einem
+eigenen Abschnitt.
 
 Aufruf aus dem Repo-Wurzelordner:
     python3 tools/daten/generate.py
@@ -625,7 +626,7 @@ EN = {
 
 
 def lang(texture_pack_de=None):
-    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE}), ('en_us', {**EN, **M2_EN, **M3_EN})):
+    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE, **M4_DE}), ('en_us', {**EN, **M2_EN, **M3_EN, **M4_EN})):
         p = os.path.join(ASSETS, 'lang', code + '.json')
         data = {}
         if os.path.exists(p):
@@ -1570,6 +1571,454 @@ M3_EN = {
 }
 
 
+# =============================================================================
+# Meilenstein 4 – T3 Multiversum-Industrie
+# =============================================================================
+M4_MACHINES = ('quanten_lithograf', 'materie_rekonfigurator', 'universums_destillator')
+M4_BLOCKS_SELF = M4_MACHINES + ('umspanner_ii', 'umspanner_iii', 'graphit_gehaeuse', 'graphit_huelle', 'rift_kabelknoten',
+                                'mikrokosmos_zelle', 'parallelzapfer', 'gravitit_leitung', 'gravitit_leitung_isoliert',
+                                'gravitit_leitung_doppelt')
+M4_ITEMS = ['quanten_schaltkreis', 'chrono_linse', 'gravitit_spule', 'gravitit_rahmen', 'graphitplatte', 'fragment_replik',
+            'gravitit', 'inversionssplitter', 'fluid_kartusche_konzentrat', 'kopplungskarte']
+M4_GRAPHIT = (*M4_MACHINES, 'umspanner_ii', 'umspanner_iii', 'graphit_gehaeuse', 'graphit_huelle', 'rift_kabelknoten',
+              'mikrokosmos_zelle', 'parallelzapfer', 'chrono_speicher', 'klon_tank')
+
+
+def umspanner(name):
+    """Umspanner wie in Meilenstein 3, mit eigenen Texturen je Stufe."""
+    for suffix in ('', '_hoch'):
+        side = tex(name + '_side')
+        block_model(name + suffix, 'minecraft:block/cube', {
+            'particle': side, 'north': tex(name + '_front' + suffix), 'south': side, 'east': side, 'west': side,
+            'up': side, 'down': side})
+    variants = {}
+    for facing, (x, y) in ALL_DIRS.items():
+        for powered in ('false', 'true'):
+            for active in ('false', 'true'):
+                variants[f'active={active},facing={facing},powered={powered}'] = variant(
+                    name + ('_hoch' if powered == 'true' else ''), x=x, y=y)
+    blockstate(name, variants)
+    item_from_block(name)
+
+
+def m4_models():
+    cable('gravitit_leitung', 6, False)
+    cable('gravitit_leitung_isoliert', 8, True)
+    cable('gravitit_leitung_doppelt', 10, True)
+    umspanner('umspanner_ii')
+    umspanner('umspanner_iii')
+
+    # Chrono-Speicher: Graphit-Deckel, Seiten mit Uhrwerk-Band
+    for suffix in ('', '_on'):
+        block_model('chrono_speicher' + suffix, 'minecraft:block/cube_bottom_top', {
+            'top': tex('casing_t3_top'), 'bottom': tex('casing_t3_top'), 'side': tex('chrono_speicher_side' + suffix)})
+    blockstate('chrono_speicher', {f'active={a},facing={f}': variant('chrono_speicher' + ('_on' if a == 'true' else ''))
+                                   for f in HORIZONTAL for a in ('false', 'true')})
+    item_from_block('chrono_speicher')
+
+    casing_block('graphit_gehaeuse', 3)
+    for n in ('graphit_huelle', 'gravitit_ore', 'spiegelkristall'):
+        cube_all(n)
+    for n in M4_MACHINES:
+        machine(n, 3)
+
+    # Parallelzapfer: Antennen-Deckel
+    for suffix in ('', '_on'):
+        block_model('parallelzapfer' + suffix, 'minecraft:block/orientable', {
+            'top': tex('parallelzapfer_top'), 'side': tex('casing_t3'), 'front': tex('parallelzapfer_front' + suffix)})
+    blockstate('parallelzapfer', {f'active={a},facing={f}': variant('parallelzapfer' + ('_on' if a == 'true' else ''), y=y)
+                                  for f, y in HORIZONTAL.items() for a in ('false', 'true')})
+    item_from_block('parallelzapfer')
+
+    # Mikrokosmos-Zelle: Glasdeckel mit der Stadt, die Lichter gehen an, wenn sie Strom macht
+    for suffix in ('', '_on'):
+        block_model('mikrokosmos_zelle' + suffix, 'minecraft:block/cube_bottom_top', {
+            'top': tex('mikrokosmos_zelle_top' + suffix), 'side': tex('mikrokosmos_zelle_side'), 'bottom': tex('casing_t3')})
+    blockstate('mikrokosmos_zelle', {f'active={a},facing={f}': variant('mikrokosmos_zelle' + ('_on' if a == 'true' else ''), y=y)
+                                     for f, y in HORIZONTAL.items() for a in ('false', 'true')})
+    item_from_block('mikrokosmos_zelle')
+
+    # Rift-Kabelknoten: Antennenmast
+    for suffix in ('', '_on'):
+        block_model('rift_kabelknoten' + suffix, 'minecraft:block/cube_column', {
+            'end': tex('rift_kabelknoten_top' + suffix), 'side': tex('rift_kabelknoten_side')})
+    blockstate('rift_kabelknoten', {f'active={a},facing={f}': variant('rift_kabelknoten' + ('_on' if a == 'true' else ''))
+                                    for f in HORIZONTAL for a in ('false', 'true')})
+    item_from_block('rift_kabelknoten')
+
+    # Klon-Tank: zwei Blöcke hoch, durchscheinend
+    for half in ('bottom', 'top'):
+        for suffix in ('', '_on'):
+            block_model(f'klon_tank_{half}{suffix}', 'minecraft:block/cube_column', {
+                'end': tex('casing_t3_top'), 'side': tex(f'klon_tank_{half}{suffix}')}, render_type='minecraft:translucent')
+    variants = {}
+    for facing, y in HORIZONTAL.items():
+        for active in ('false', 'true'):
+            for half, model in (('lower', 'bottom'), ('upper', 'top')):
+                variants[f'active={active},facing={facing},half={half}'] = variant(
+                    f'klon_tank_{model}' + ('_on' if active == 'true' else ''), y=y)
+    blockstate('klon_tank', variants)
+    item_generated('klon_tank')
+
+    for n in M4_ITEMS:
+        item_generated(n)
+    item_generated('portal_kanone_mk3', handheld=True)
+
+
+def m4_loot():
+    for n in M4_BLOCKS_SELF:
+        loot_self(n)
+    write(os.path.join(DATA, NS, 'loot_table', 'blocks', 'chrono_speicher.json'), {
+        'type': 'minecraft:block',
+        'pools': [{'rolls': 1, 'bonus_rolls': 0,
+                   'entries': [{'type': 'minecraft:item', 'name': rl('chrono_speicher'), 'functions': [
+                       {'function': 'minecraft:copy_components', 'source': 'block_entity', 'include': [f'{NS}:energy']}]}],
+                   'conditions': [{'condition': 'minecraft:survives_explosion'}]}],
+        'random_sequence': f'{NS}:blocks/chrono_speicher'})
+    # Klon-Tank: nur die untere Hälfte lässt etwas fallen
+    write(os.path.join(DATA, NS, 'loot_table', 'blocks', 'klon_tank.json'), {
+        'type': 'minecraft:block',
+        'pools': [{'rolls': 1, 'bonus_rolls': 0,
+                   'entries': [{'type': 'minecraft:item', 'name': rl('klon_tank')}],
+                   'conditions': [{'condition': 'minecraft:block_state_property', 'block': rl('klon_tank'),
+                                   'properties': {'half': 'lower'}},
+                                  {'condition': 'minecraft:survives_explosion'}]}],
+        'random_sequence': f'{NS}:blocks/klon_tank'})
+    loot_drop('gravitit_ore', 'gravitit', 1, 2)
+    loot_drop('spiegelkristall', 'inversionssplitter', 1, 3)
+
+
+def m4_tags():
+    tag('block', 'minecraft:mineable/pickaxe', [*M4_GRAPHIT, 'gravitit_ore', 'spiegelkristall', 'gravitit_leitung',
+                                                'gravitit_leitung_isoliert', 'gravitit_leitung_doppelt'])
+    tag('block', 'minecraft:needs_iron_tool', [*M4_GRAPHIT, 'spiegelkristall'])
+    tag('block', 'minecraft:needs_diamond_tool', ['gravitit_ore'])
+    for kind in ('block', 'item'):
+        tag(kind, 'c:ores/gravitit', ['gravitit_ore'])
+        tag(kind, 'c:ores/inversionssplitter', ['spiegelkristall'])
+        tag(kind, 'c:ores', ['#c:ores/gravitit', '#c:ores/inversionssplitter'])
+    tag('item', 'c:gems/inversionssplitter', ['inversionssplitter'])
+    tag('item', 'c:plates/graphit', ['graphitplatte'])
+    tag('item', 'c:plates', ['#c:plates/graphit'])
+    # Story-Fragmente: bis zum Story-Modus füllt die Fragment-Replik das Tag
+    tag('item', f'{NS}:story_fragmente', ['fragment_replik'])
+    # Materie-Rekonfigurator: was sich ineinander umbauen lässt
+    tag('item', f'{NS}:wertstufe/erdmetalle', ['minecraft:iron_ingot', 'minecraft:copper_ingot', 'tin_ingot'])
+    tag('item', f'{NS}:wertstufe/universen_t1', ['alien_schrott', 'fluxkristall', 'saeuregel'])
+    tag('item', f'{NS}:wertstufe/universen_t2', ['schwebstein_brocken', 'chronoglas_sand', 'biomasse_pulpe'])
+    tag('item', f'{NS}:wertstufe/universen_t3', ['gravitit', 'inversionssplitter'])
+    # Mikrokosmos-Zelle: Baumaterial für die Bewohner
+    tag('item', f'{NS}:mikrokosmos_material', ['#c:ingots', '#c:plates', '#minecraft:planks', 'minecraft:bricks',
+                                               'minecraft:stone_bricks', 'minecraft:glass'])
+
+
+def m4_recipes():
+    # --- Garagen-Werkbank: Netz, Gehäuse, Bauteile -----------------------------------------
+    werkbank_shaped('gravitit_leitung', ['SSS', 'GGG', 'SSS'], {'S': '#c:plates/steel', 'G': 'gravitit'}, 'gravitit_leitung', 6,
+                    hammer=1)
+    werkbank_shapeless('gravitit_leitung_isoliert', ['gravitit_leitung', 'isolierfolie'], 'gravitit_leitung_isoliert')
+    werkbank_shapeless('gravitit_leitung_doppelt', ['gravitit_leitung_isoliert', 'isolierfolie'], 'gravitit_leitung_doppelt')
+    werkbank_shaped('graphit_huelle', ['GSG', 'S S', 'GSG'], {'G': 'graphitplatte', 'S': '#c:plates/steel'}, 'graphit_huelle', 4,
+                    hammer=1)
+    werkbank_shaped('graphit_gehaeuse', ['GRG', 'SLS', 'GRG'],
+                    {'G': 'graphitplatte', 'R': 'gravitit_rahmen', 'S': '#c:plates/steel', 'L': 'labor_gehaeuse'},
+                    'graphit_gehaeuse', hammer=2)
+    werkbank_shaped('gravitit_spule', ['WGW', 'WXW', 'WGW'],
+                    {'W': '#c:wires/gold', 'G': 'gravitit', 'X': 'flux_spule'}, 'gravitit_spule', loetzinn=1)
+    werkbank_shaped('umspanner_ii', ['SFS', 'TLU', 'SGS'],
+                    {'S': '#c:plates/steel', 'F': 'flux_leitung_isoliert', 'T': 'flux_spule', 'L': 'labor_gehaeuse',
+                     'U': 'gravitit_spule', 'G': 'gravitit_leitung_isoliert'}, 'umspanner_ii', loetzinn=2)
+    werkbank_shaped('umspanner_iii', ['SGS', 'TXT', 'SQS'],
+                    {'S': '#c:plates/steel', 'G': 'gravitit_leitung_doppelt', 'T': 'gravitit_spule', 'X': 'graphit_gehaeuse',
+                     'Q': 'quanten_schaltkreis'}, 'umspanner_iii', loetzinn=3)
+    werkbank_shaped('chrono_speicher', ['ZTZ', 'QGQ', 'ZCZ'],
+                    {'Z': 'flux_zelle', 'T': 'gravitit_spule', 'Q': 'quanten_schaltkreis', 'G': 'graphit_gehaeuse',
+                     'C': 'chrono_linse'}, 'chrono_speicher', loetzinn=4)
+    werkbank_shapeless('kopplungskarte', ['minecraft:paper', '#c:dusts/fluxkristall', 'rift_schaltkreis'], 'kopplungskarte')
+
+    # --- Garagen-Werkbank: Maschinen und Generatoren -----------------------------------------
+    # Der Lithograf macht die Quanten-Schaltkreise erst, also kommt er mit Rift-Schaltkreisen aus
+    werkbank_shaped('quanten_lithograf', ['CLC', 'RGR', 'TST'],
+                    {'C': 'chronoglas_scheibe', 'L': 'stabilisierte_linse', 'R': 'rift_schaltkreis', 'G': 'graphit_gehaeuse',
+                     'T': 'gravitit_spule', 'S': '#c:plates/steel'}, 'quanten_lithograf', loetzinn=4)
+    werkbank_shaped('materie_rekonfigurator', ['QZQ', 'IGI', 'TLT'],
+                    {'Q': 'quanten_schaltkreis', 'Z': 'quantenzentrifuge', 'I': 'inversionssplitter', 'G': 'graphit_gehaeuse',
+                     'T': 'gravitit_spule', 'L': 'chrono_linse'}, 'materie_rekonfigurator', loetzinn=4)
+    werkbank_shaped('klon_tank', ['GQG', 'GCG', 'TXT'],
+                    {'G': '#c:glass_blocks', 'Q': 'quanten_schaltkreis', 'C': 'minecraft:cauldron', 'T': 'gravitit_spule',
+                     'X': 'graphit_gehaeuse'}, 'klon_tank', loetzinn=3)
+    werkbank_shaped('universums_destillator', ['LUL', 'QGQ', 'TST'],
+                    {'L': 'chrono_linse', 'U': 'universumsprobe', 'Q': 'quanten_schaltkreis', 'G': 'graphit_gehaeuse',
+                     'T': 'gravitit_spule', 'S': 'dimensions_scanner'}, 'universums_destillator', loetzinn=4)
+    werkbank_shaped('rift_kabelknoten', [' A ', 'QGQ', 'TRT'],
+                    {'A': 'minecraft:lightning_rod', 'Q': 'quanten_schaltkreis', 'G': 'graphit_gehaeuse', 'T': 'gravitit_spule',
+                     'R': 'rift_anker'}, 'rift_kabelknoten', 2, loetzinn=3)
+    werkbank_shaped('mikrokosmos_zelle', ['GUG', 'QXQ', 'TZT'],
+                    {'G': '#c:glass_blocks', 'U': 'universumsprobe', 'Q': 'quanten_schaltkreis', 'X': 'graphit_gehaeuse',
+                     'T': 'gravitit_spule', 'Z': 'xenit_zelle'}, 'mikrokosmos_zelle', loetzinn=3)
+    werkbank_shaped('parallelzapfer', ['AKA', 'QGQ', 'TLT'],
+                    {'A': 'minecraft:lightning_rod', 'K': 'kanonenkern', 'Q': 'quanten_schaltkreis', 'G': 'graphit_gehaeuse',
+                     'T': 'gravitit_spule', 'L': 'chrono_linse'}, 'parallelzapfer', loetzinn=4)
+
+    # --- Maschinen ------------------------------------------------------------------------------
+    machine_recipe2('gravitationspresse', 'gravitit_rahmen', [('gravitit', 2)], 'gravitit_rahmen', 1, time=300)
+    machine_recipe2('gravitationspresse', 'graphitplatte', [('minecraft:coal_block', 1)], 'graphitplatte', 2, time=200)
+    machine_recipe2('quanten_lithograf', 'quanten_schaltkreis',
+                    [('rift_schaltkreis', 1), ('chronoglas_scheibe', 1), ('#c:wires/gold', 2)], 'quanten_schaltkreis', 1, time=300)
+    machine_recipe2('quanten_lithograf', 'chrono_linse',
+                    [('stabilisierte_linse', 1), ('chronoglas_scheibe', 2), ('gravitit', 1)], 'chrono_linse', 1, time=300)
+    machine_recipe2('quanten_lithograf', 'fragment_replik',
+                    [('inversionssplitter', 2), ('chronoglas_scheibe', 1), ('naehrserum', 1)], 'fragment_replik', 1, time=600)
+    machine_recipe2('erzmuehle', 'gravitit_ore', [('#c:ores/gravitit', 1)], 'gravitit', 2, time=300)
+    machine_recipe2('erzmuehle', 'spiegelkristall', [('#c:ores/inversionssplitter', 1)], 'inversionssplitter', 3, time=200)
+    montierer('portal_kanone_mk3', [('portal_kanone_mk2', 1), ('quanten_schaltkreis', 2), ('gravitit_rahmen', 1),
+                                    ('inversionssplitter', 1), ('chrono_linse', 1), (f'#{NS}:story_fragmente', 1)],
+              'portal_kanone_mk3', time=600)
+    # Raffinerie: Roh-Portalfluid verdichten (2:1) – mit Chronoglas und Stabilisator
+    recipe('raffinerie/portalfluid_konzentrat', {
+        'type': f'{NS}:raffinerie',
+        'ingredients': [{'ingredient': ing('chronoglas_scheibe')}, {'ingredient': ing(f'#{NS}:compat/stabilisator')}],
+        'fluid': {'fluid': rl('roh_portalfluid'), 'amount': 1000},
+        'result': {'id': rl('portalfluid_konzentrat'), 'amount': 500},
+        'time': 300})
+
+
+M4_UNIVERSES = {
+    # typ: (Biome, Himmelseffekte)
+    'hochgravitation': (['hochgrav_basalt', 'hochgrav_druck'], 'minecraft:overworld'),
+    'spiegelwelt': (['spiegel_silber', 'spiegel_glas'], f'{NS}:spiegelwelt'),
+}
+
+
+def m4_universes():
+    heavy_monsters = [spawn('minecraft:zombie', 50, 2, 3), spawn('minecraft:skeleton', 30, 1, 2), spawn('minecraft:silverfish', 20, 2, 4)]
+    mirror_monsters = [spawn('minecraft:zombie', 40, 2, 3), spawn('minecraft:skeleton', 30, 1, 2), spawn('minecraft:enderman', 15, 1, 1),
+                       spawn('minecraft:witch', 10, 1, 1)]
+    heavy_animals = [spawn('minecraft:armadillo', 6, 1, 2)]
+    mirror_animals = [spawn('minecraft:sheep', 8, 2, 3), spawn('minecraft:rabbit', 6, 2, 3), spawn('minecraft:fox', 4, 1, 2)]
+    biome('hochgrav_basalt', False, {'sky_color': 0x5A6A8A, 'fog_color': 0x6A7488, 'water_color': 0x3A4A70,
+                                     'water_fog_color': 0x1A2440, 'grass_color': 0x6A7A60, 'foliage_color': 0x5A6A50},
+          heavy_monsters, heavy_animals, temperature=1.0)
+    biome('hochgrav_druck', False, {'sky_color': 0x4A62A8, 'fog_color': 0x5A6898, 'water_color': 0x2B3B6E,
+                                    'water_fog_color': 0x0D1327, 'grass_color': 0x707A68, 'foliage_color': 0x606A58},
+          heavy_monsters, heavy_animals, temperature=1.0)
+    biome('spiegel_silber', True, {'sky_color': 0xCFDBE3, 'fog_color': 0xF2F7FA, 'water_color': 0xA5B5C1,
+                                   'water_fog_color': 0x748491, 'grass_color': 0xB0C8C0, 'foliage_color': 0x98B0A8},
+          mirror_monsters, mirror_animals, temperature=0.5)
+    biome('spiegel_glas', True, {'sky_color': 0xB8C8FF, 'fog_color': 0xE8F0FF, 'water_color': 0xC4F6FF,
+                                 'water_fog_color': 0x6AD8EA, 'grass_color': 0xA8D8D0, 'foliage_color': 0x90C0B8},
+          mirror_monsters, mirror_animals, temperature=0.3)
+
+    for dim, (biomes, effects) in M4_UNIVERSES.items():
+        dt = {'ultrawarm': False, 'natural': True, 'piglin_safe': False, 'respawn_anchor_works': False, 'bed_works': True,
+              'has_raids': False, 'has_skylight': True, 'has_ceiling': False, 'coordinate_scale': 1.0,
+              'ambient_light': 0.0, 'logical_height': 384, 'effects': effects,
+              'infiniburn': '#minecraft:infiniburn_overworld', 'min_y': -64, 'height': 384,
+              'monster_spawn_light_level': 7, 'monster_spawn_block_light_limit': 0}
+        write(os.path.join(DATA, NS, 'dimension_type', dim + '.json'), dt)
+        write(os.path.join(DATA, NS, 'dimension', dim + '.json'), {
+            'type': rl(dim),
+            'generator': {'type': rl('multiverse'), 'universe': dim,
+                          'biome_source': {'type': rl('universe'), 'universe': dim, 'biomes': [rl(b) for b in biomes]}}})
+
+
+M4_DE = {
+    'block.riftverse.gravitit_leitung': 'Gravitit-Leitung', 'block.riftverse.gravitit_leitung_isoliert': 'Isolierte Gravitit-Leitung',
+    'block.riftverse.gravitit_leitung_doppelt': 'Doppelt isolierte Gravitit-Leitung',
+    'block.riftverse.umspanner_ii': 'Umspanner (II ↔ III)', 'block.riftverse.umspanner_iii': 'Umspanner (III ↔ IV)',
+    'block.riftverse.chrono_speicher': 'Chrono-Speicher', 'block.riftverse.graphit_gehaeuse': 'Graphit-Gehäuse',
+    'block.riftverse.graphit_huelle': 'Graphit-Hülle', 'block.riftverse.quanten_lithograf': 'Quanten-Lithograf',
+    'block.riftverse.materie_rekonfigurator': 'Materie-Rekonfigurator', 'block.riftverse.klon_tank': 'Klon-Tank',
+    'block.riftverse.universums_destillator': 'Universums-Destillator', 'block.riftverse.rift_kabelknoten': 'Rift-Kabelknoten',
+    'block.riftverse.mikrokosmos_zelle': 'Mikrokosmos-Zelle', 'block.riftverse.parallelzapfer': 'Parallelzapfer',
+    'block.riftverse.gravitit_ore': 'Gravitit-Erz', 'block.riftverse.spiegelkristall': 'Spiegelkristall',
+    'item.riftverse.portal_kanone_mk3': 'Portal-Kanone Mk III',
+    'item.riftverse.fluid_kartusche_konzentrat': 'Fluid-Kartusche (Konzentrat)',
+    'item.riftverse.fluid_kartusche_konzentrat.lore': '1.000 mB Portalfluid-Konzentrat – Treibstoff der Kanone Mk III',
+    'item.riftverse.kopplungskarte': 'Kopplungskarte',
+    'item.riftverse.kopplungskarte.lore': 'Erst an den sendenden, dann an den empfangenden Rift-Kabelknoten halten',
+    'item.riftverse.quanten_schaltkreis': 'Quanten-Schaltkreis', 'item.riftverse.chrono_linse': 'Chrono-Linse',
+    'item.riftverse.gravitit_spule': 'Gravitit-Spule', 'item.riftverse.gravitit_rahmen': 'Gravitit-Rahmen',
+    'item.riftverse.graphitplatte': 'Graphitplatte',
+    'item.riftverse.fragment_replik': 'Fragment-Replik',
+    'item.riftverse.fragment_replik.lore': 'Nachgebautes Story-Fragment – zählt überall, wo eins verlangt wird',
+    'item.riftverse.gravitit': 'Gravitit', 'item.riftverse.gravitit.lore': 'Extrem dicht. Fühlt sich schwerer an, als es ist.',
+    'item.riftverse.inversionssplitter': 'Inversionssplitter',
+    'item.riftverse.inversionssplitter.lore': 'Dein Spiegelbild darin zwinkert zurück.',
+    'fluid_type.riftverse.portalfluid_konzentrat': 'Portalfluid-Konzentrat',
+    'universe.riftverse.hochgravitation': 'Hochgravitationswelt', 'universe.riftverse.spiegelwelt': 'Spiegelwelt',
+    'dimension.riftverse.hochgravitation': 'Hochgravitationswelten', 'dimension.riftverse.spiegelwelt': 'Spiegelwelten',
+    'biome.riftverse.hochgrav_basalt': 'Basaltdruck', 'biome.riftverse.hochgrav_druck': 'Schweres Blau',
+    'biome.riftverse.spiegel_silber': 'Silberspiegel', 'biome.riftverse.spiegel_glas': 'Glasland',
+    'entity.riftverse.doppelgaenger': 'Spiegel-%s',
+    'key.riftverse.ziel': 'Kanonen-Ziel wechseln (Mk III)',
+    'gui.riftverse.destillator_probe': 'Gefüllte Universumsprobe einlegen',
+    'gui.riftverse.destillator_rest': 'Probe: noch %s von %s Durchläufen',
+    'gui.riftverse.klon.titel': 'Klon-Tank von %s',
+    'gui.riftverse.klon.state.0': 'Nicht gebunden',
+    'gui.riftverse.klon.state.1': 'Wartet auf Zutaten',
+    'gui.riftverse.klon.state.2': 'Klon wächst …',
+    'gui.riftverse.klon.state.3': 'Klon bereit',
+    'gui.riftverse.klon.state.4': 'Zu wenig Strom!',
+    'gui.riftverse.mikrokosmos.drossel': 'Abzug: %s %%',
+    'gui.riftverse.mikrokosmos.stufe': 'Stufe %s · %s FE/t',
+    'gui.riftverse.mikrokosmos.streik': 'STREIK!',
+    'gui.riftverse.zapfer.ausrichten': 'Neu ausrichten',
+    'gui.riftverse.zapfer.richtet_aus': 'Richtet aus … %s s',
+    'gui.riftverse.zapfer.luft': 'Luft (dort öffnet sich der Riss)',
+    'gui.riftverse.zapfer.status.0': 'Zapft an',
+    'gui.riftverse.zapfer.status.1': 'Struktur unvollständig',
+    'gui.riftverse.zapfer.status.2': 'Kein Portalfluid',
+    'gui.riftverse.zapfer.status.3': 'Quelle erschöpft',
+    'gui.riftverse.zapfer.status.4': 'Richtet sich aus',
+    'gui.riftverse.zapfer.status.5': 'Entdeckt! Pause',
+    'gui.riftverse.zapfer.status.6': 'Puffer voll',
+    'tooltip.riftverse.rekonfigurator_regel': 'Material und Muster derselben Wertstufe · %s mB Portalfluid pro Stück',
+    'tooltip.riftverse.klon_wachstum': 'Klon: %s %%',
+    'tooltip.riftverse.klon_zutaten': 'Ein Klon braucht %s Biomasse-Pulpe und %s Nährserum',
+    'tooltip.riftverse.klon_strom': 'Wachsen: %s FE/t · Erhalt: %s FE/t',
+    'tooltip.riftverse.mikrokosmos.zufriedenheit': 'Zufriedenheit: %s %%',
+    'tooltip.riftverse.mikrokosmos.satt': 'Die Bewohner sind satt',
+    'tooltip.riftverse.mikrokosmos.hunger': 'Die Bewohner hungern!',
+    'tooltip.riftverse.mikrokosmos.baut': 'Es wird gebaut',
+    'tooltip.riftverse.mikrokosmos.material': 'Kein Baumaterial!',
+    'tooltip.riftverse.mikrokosmos.regel': 'Weniger Abzug macht zufrieden; bei 90 % wächst die Zivilisation',
+    'tooltip.riftverse.zapfer.quelle': 'Quelle: noch %s h %s min',
+    'tooltip.riftverse.zapfer.regel': '%s mB Portalfluid pro Tick · Stufe IV: Umspanner davor!',
+    'tooltip.riftverse.chrono_speicher': 'Stufe III · lädt 2.048, gibt 8.192 FE/t ab · behält die Ladung',
+    'tooltip.riftverse.kanone_mk2': 'Mk II: stabiles Portalfluid (T1- und T2-Welten) oder Konzentrat (zufällig auch T3)',
+    'tooltip.riftverse.kanone_mk3': 'Mk III: nur Portalfluid-Konzentrat, alle T1- bis T3-Welten',
+    'tooltip.riftverse.kanone_tank_konzentrat': 'Konzentrat: %s / %s mB (%s mB pro Schuss)',
+    'tooltip.riftverse.kanone_ziele': 'Taste V: Ziel wechseln · Schleichen + V: Ziel löschen',
+    'tooltip.riftverse.probe_destillator': 'Destillator: noch %s von %s Durchläufen',
+    'message.riftverse.kein_fluid_konzentrat': 'Kein Portalfluid-Konzentrat! Die Raffinerie verdichtet es aus Roh-Portalfluid.',
+    'message.riftverse.kurzstrecke': 'Kurzstrecken-Rift: %s Blöcke',
+    'message.riftverse.kurzstrecke_kein_ziel': 'Kein Ziel in Reichweite (%s Blöcke)',
+    'message.riftverse.ziele_erst_mk3': 'Ziele speichert erst die Kanone Mk III.',
+    'message.riftverse.keine_kanone_hand': 'Nimm die Portal-Kanone in die Hand.',
+    'message.riftverse.ziel_zufall': 'Ziel: Zufall',
+    'message.riftverse.ziel_kurzstrecke': 'Ziel: Kurzstrecke (in dieser Welt)',
+    'message.riftverse.ziel_nummer': 'Ziel %s/%s: %s (%s)',
+    'message.riftverse.knoten.gemerkt': 'Knoten gemerkt – jetzt den empfangenden Knoten anklicken',
+    'message.riftverse.knoten.derselbe': 'Das ist derselbe Knoten.',
+    'message.riftverse.knoten.gekoppelt': 'Gekoppelt mit dem Knoten in %s',
+    'message.riftverse.knoten.weg': 'Der gemerkte Knoten ist nicht mehr da.',
+    'message.riftverse.knoten.frei': 'Rift-Kabelknoten: nicht gekoppelt (Kopplungskarte benutzen)',
+    'message.riftverse.knoten.sendet': 'Sendet nach %s %s %s %s · Puffer %s FE',
+    'message.riftverse.knoten.empfaengt': 'Empfängt aus %s %s %s %s · Puffer %s FE',
+    'message.riftverse.klon.gebunden': 'Klon-Tank gehört jetzt %s',
+    'message.riftverse.klon.bereit': 'Dein Klon ist fertig gewachsen.',
+    'message.riftverse.klon.abgestorben': 'Dein Klon ist ohne Strom abgestorben!',
+    'message.riftverse.klon.aufgewacht': 'Du wachst in deinem Klon auf – mit allem, was du dabeihattest.',
+    'message.riftverse.mikrokosmos.streik': 'Die Bewohner der Mikrokosmos-Zelle streiken!',
+    'message.riftverse.mikrokosmos.streikende': 'Der Streik in der Mikrokosmos-Zelle ist vorbei.',
+    'message.riftverse.mikrokosmos.aufstieg': 'Die Zivilisation in der Zelle erreicht Stufe %s!',
+    'message.riftverse.mikrokosmos.abstieg': 'Die Zivilisation in der Zelle fällt auf Stufe %s zurück.',
+    'message.riftverse.zapfer.erschoepft': 'Die Quelle des Parallelzapfers ist erschöpft – neu ausrichten!',
+    'message.riftverse.zapfer.entdeckt': 'Die andere Seite hat den Diebstahl bemerkt!',
+    'message.riftverse.hochgravitation': 'Hohe Gravitation: Springen geht kaum, jeder Sturz zählt dreifach.',
+    'message.riftverse.doppelgaenger': 'Irgendwo hier läuft jemand herum, der aussieht wie du …',
+}
+
+M4_EN = {
+    'block.riftverse.gravitit_leitung': 'Gravitite Line', 'block.riftverse.gravitit_leitung_isoliert': 'Insulated Gravitite Line',
+    'block.riftverse.gravitit_leitung_doppelt': 'Double Insulated Gravitite Line',
+    'block.riftverse.umspanner_ii': 'Transformer (II ↔ III)', 'block.riftverse.umspanner_iii': 'Transformer (III ↔ IV)',
+    'block.riftverse.chrono_speicher': 'Chrono Storage', 'block.riftverse.graphit_gehaeuse': 'Graphite Casing',
+    'block.riftverse.graphit_huelle': 'Graphite Hull', 'block.riftverse.quanten_lithograf': 'Quantum Lithograph',
+    'block.riftverse.materie_rekonfigurator': 'Matter Reconfigurator', 'block.riftverse.klon_tank': 'Clone Tank',
+    'block.riftverse.universums_destillator': 'Universe Distiller', 'block.riftverse.rift_kabelknoten': 'Rift Cable Node',
+    'block.riftverse.mikrokosmos_zelle': 'Microverse Cell', 'block.riftverse.parallelzapfer': 'Parallel Tap',
+    'block.riftverse.gravitit_ore': 'Gravitite Ore', 'block.riftverse.spiegelkristall': 'Mirror Crystal',
+    'item.riftverse.portal_kanone_mk3': 'Portal Gun Mk III',
+    'item.riftverse.fluid_kartusche_konzentrat': 'Fluid Cartridge (concentrate)',
+    'item.riftverse.fluid_kartusche_konzentrat.lore': '1,000 mB portal fluid concentrate – fuel for the Mk III gun',
+    'item.riftverse.kopplungskarte': 'Coupling Card',
+    'item.riftverse.kopplungskarte.lore': 'Use on the sending rift cable node first, then on the receiving one',
+    'item.riftverse.quanten_schaltkreis': 'Quantum Circuit', 'item.riftverse.chrono_linse': 'Chrono Lens',
+    'item.riftverse.gravitit_spule': 'Gravitite Coil', 'item.riftverse.gravitit_rahmen': 'Gravitite Frame',
+    'item.riftverse.graphitplatte': 'Graphite Plate',
+    'item.riftverse.fragment_replik': 'Fragment Replica',
+    'item.riftverse.fragment_replik.lore': 'A rebuilt story fragment – counts wherever one is required',
+    'item.riftverse.gravitit': 'Gravitite', 'item.riftverse.gravitit.lore': 'Extremely dense. Feels heavier than it is.',
+    'item.riftverse.inversionssplitter': 'Inversion Shard',
+    'item.riftverse.inversionssplitter.lore': 'Your reflection in it winks back.',
+    'fluid_type.riftverse.portalfluid_konzentrat': 'Portal Fluid Concentrate',
+    'universe.riftverse.hochgravitation': 'High Gravity World', 'universe.riftverse.spiegelwelt': 'Mirror World',
+    'dimension.riftverse.hochgravitation': 'High Gravity Worlds', 'dimension.riftverse.spiegelwelt': 'Mirror Worlds',
+    'biome.riftverse.hochgrav_basalt': 'Basalt Pressure', 'biome.riftverse.hochgrav_druck': 'Heavy Blue',
+    'biome.riftverse.spiegel_silber': 'Silver Mirror', 'biome.riftverse.spiegel_glas': 'Glassland',
+    'entity.riftverse.doppelgaenger': 'Mirror %s',
+    'key.riftverse.ziel': 'Switch gun target (Mk III)',
+    'gui.riftverse.destillator_probe': 'Insert a filled universe sample',
+    'gui.riftverse.destillator_rest': 'Sample: %s of %s runs left',
+    'gui.riftverse.klon.titel': 'Clone Tank of %s',
+    'gui.riftverse.klon.state.0': 'Not bound',
+    'gui.riftverse.klon.state.1': 'Waiting for ingredients',
+    'gui.riftverse.klon.state.2': 'Clone growing …',
+    'gui.riftverse.klon.state.3': 'Clone ready',
+    'gui.riftverse.klon.state.4': 'Not enough power!',
+    'gui.riftverse.mikrokosmos.drossel': 'Draw: %s %%',
+    'gui.riftverse.mikrokosmos.stufe': 'Level %s · %s FE/t',
+    'gui.riftverse.mikrokosmos.streik': 'STRIKE!',
+    'gui.riftverse.zapfer.ausrichten': 'Realign',
+    'gui.riftverse.zapfer.richtet_aus': 'Aligning … %s s',
+    'gui.riftverse.zapfer.luft': 'Air (the rift opens there)',
+    'gui.riftverse.zapfer.status.0': 'Tapping',
+    'gui.riftverse.zapfer.status.1': 'Structure incomplete',
+    'gui.riftverse.zapfer.status.2': 'No portal fluid',
+    'gui.riftverse.zapfer.status.3': 'Source depleted',
+    'gui.riftverse.zapfer.status.4': 'Aligning',
+    'gui.riftverse.zapfer.status.5': 'Discovered! Paused',
+    'gui.riftverse.zapfer.status.6': 'Buffer full',
+    'tooltip.riftverse.rekonfigurator_regel': 'Material and pattern of the same value tier · %s mB portal fluid each',
+    'tooltip.riftverse.klon_wachstum': 'Clone: %s %%',
+    'tooltip.riftverse.klon_zutaten': 'A clone needs %s biomass pulp and %s nutrient serum',
+    'tooltip.riftverse.klon_strom': 'Growing: %s FE/t · upkeep: %s FE/t',
+    'tooltip.riftverse.mikrokosmos.zufriedenheit': 'Happiness: %s %%',
+    'tooltip.riftverse.mikrokosmos.satt': 'The inhabitants are fed',
+    'tooltip.riftverse.mikrokosmos.hunger': 'The inhabitants are starving!',
+    'tooltip.riftverse.mikrokosmos.baut': 'They are building',
+    'tooltip.riftverse.mikrokosmos.material': 'No building material!',
+    'tooltip.riftverse.mikrokosmos.regel': 'Less draw keeps them happy; at 90 % the civilization grows',
+    'tooltip.riftverse.zapfer.quelle': 'Source: %s h %s min left',
+    'tooltip.riftverse.zapfer.regel': '%s mB portal fluid per tick · tier IV: put a transformer in front!',
+    'tooltip.riftverse.chrono_speicher': 'Tier III · charges 2,048, discharges 8,192 FE/t · keeps its charge',
+    'tooltip.riftverse.kanone_mk2': 'Mk II: stable portal fluid (T1 and T2 worlds) or concentrate (randomly T3 too)',
+    'tooltip.riftverse.kanone_mk3': 'Mk III: portal fluid concentrate only, all T1 to T3 worlds',
+    'tooltip.riftverse.kanone_tank_konzentrat': 'Concentrate: %s / %s mB (%s mB per shot)',
+    'tooltip.riftverse.kanone_ziele': 'Key V: switch target · sneak + V: delete target',
+    'tooltip.riftverse.probe_destillator': 'Distiller: %s of %s runs left',
+    'message.riftverse.kein_fluid_konzentrat': 'No portal fluid concentrate! The refinery condenses it from raw portal fluid.',
+    'message.riftverse.kurzstrecke': 'Short-range rift: %s blocks',
+    'message.riftverse.kurzstrecke_kein_ziel': 'No target in range (%s blocks)',
+    'message.riftverse.ziele_erst_mk3': 'Only the Mk III gun stores targets.',
+    'message.riftverse.keine_kanone_hand': 'Hold the portal gun in your hand.',
+    'message.riftverse.ziel_zufall': 'Target: random',
+    'message.riftverse.ziel_kurzstrecke': 'Target: short range (this world)',
+    'message.riftverse.ziel_nummer': 'Target %s/%s: %s (%s)',
+    'message.riftverse.knoten.gemerkt': 'Node remembered – now click the receiving node',
+    'message.riftverse.knoten.derselbe': 'That is the same node.',
+    'message.riftverse.knoten.gekoppelt': 'Coupled with the node in %s',
+    'message.riftverse.knoten.weg': 'The remembered node is gone.',
+    'message.riftverse.knoten.frei': 'Rift cable node: not coupled (use a coupling card)',
+    'message.riftverse.knoten.sendet': 'Sending to %s %s %s %s · buffer %s FE',
+    'message.riftverse.knoten.empfaengt': 'Receiving from %s %s %s %s · buffer %s FE',
+    'message.riftverse.klon.gebunden': 'Clone tank now belongs to %s',
+    'message.riftverse.klon.bereit': 'Your clone has finished growing.',
+    'message.riftverse.klon.abgestorben': 'Your clone died without power!',
+    'message.riftverse.klon.aufgewacht': 'You wake up in your clone – with everything you had on you.',
+    'message.riftverse.mikrokosmos.streik': 'The inhabitants of the microverse cell are on strike!',
+    'message.riftverse.mikrokosmos.streikende': 'The strike in the microverse cell is over.',
+    'message.riftverse.mikrokosmos.aufstieg': 'The civilization in the cell reaches level %s!',
+    'message.riftverse.mikrokosmos.abstieg': 'The civilization in the cell falls back to level %s.',
+    'message.riftverse.zapfer.erschoepft': 'The parallel tap source is depleted – realign it!',
+    'message.riftverse.zapfer.entdeckt': 'The other side noticed the theft!',
+    'message.riftverse.hochgravitation': 'High gravity: you can barely jump, every fall counts triple.',
+    'message.riftverse.doppelgaenger': 'Somewhere around here walks someone who looks like you …',
+}
+
+
 if __name__ == '__main__':
     import sys
     pack_de = None
@@ -1592,5 +2041,10 @@ if __name__ == '__main__':
     m3_tags()
     m3_recipes()
     m3_universes()
+    m4_models()
+    m4_loot()
+    m4_tags()
+    m4_recipes()
+    m4_universes()
     lang(pack_de)
     print('fertig')

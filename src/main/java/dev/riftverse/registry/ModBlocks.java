@@ -13,6 +13,8 @@ import dev.riftverse.block.SchwebsteinBlock;
 import dev.riftverse.energy.UmspannerBlock;
 import dev.riftverse.tech.ChronoBeschleunigerBlock;
 import dev.riftverse.tech.FluxZelleBlock;
+import dev.riftverse.tech.KlonTankBlock;
+import dev.riftverse.tech.RiftKabelknotenBlock;
 import dev.riftverse.block.MeteoritenkernBlock;
 import dev.riftverse.block.RiftAnkerBlock;
 import dev.riftverse.block.SaeureBlock;
@@ -228,7 +230,64 @@ public final class ModBlocks {
                     .instabreak().sound(SoundType.SWEET_BERRY_BUSH).offsetType(BlockBehaviour.OffsetType.XZ)
                     .pushReaction(PushReaction.DESTROY)));
 
+    // =====================================================================
+    // Meilenstein 4 – T3 Multiversum-Industrie
+    // =====================================================================
+
+    // --- Energienetz Stufe III ---
+    /** Blank: starker Schlag; einfach isoliert noch ein Schlag; doppelt isoliert sicher (wie IC2-Hochspannungskabel). */
+    public static final DeferredBlock<CableBlock> GRAVITIT_LEITUNG = BLOCKS.register("gravitit_leitung",
+            () -> new CableBlock(cableProps(SoundType.NETHERITE_BLOCK), VoltageTier.III, 2.0, 6, false, 4.0f));
+    public static final DeferredBlock<InsulatedCableBlock> GRAVITIT_LEITUNG_ISOLIERT = BLOCKS.register("gravitit_leitung_isoliert",
+            () -> new InsulatedCableBlock(cableProps(SoundType.WOOL), VoltageTier.III, 2.0, 8, 2.0f));
+    public static final DeferredBlock<InsulatedCableBlock> GRAVITIT_LEITUNG_DOPPELT = BLOCKS.register("gravitit_leitung_doppelt",
+            () -> new InsulatedCableBlock(cableProps(SoundType.WOOL), VoltageTier.III, 2.0, 10));
+    public static final DeferredBlock<UmspannerBlock> UMSPANNER_II = BLOCKS.register("umspanner_ii",
+            () -> new UmspannerBlock(graphitProps().lightLevel(activeLight(5)), VoltageTier.II));
+    public static final DeferredBlock<UmspannerBlock> UMSPANNER_III = BLOCKS.register("umspanner_iii",
+            () -> new UmspannerBlock(graphitProps().lightLevel(activeLight(7)), VoltageTier.III));
+    public static final DeferredBlock<TechBlock> CHRONO_SPEICHER = BLOCKS.register("chrono_speicher",
+            () -> new TechBlock(graphitProps().lightLevel(activeLight(6)), ModBlockEntities.CHRONO_SPEICHER, true));
+
+    // --- Gehäuse und Multiblock-Hülle ---
+    public static final DeferredBlock<Block> GRAPHIT_GEHAEUSE = BLOCKS.register("graphit_gehaeuse", () -> new Block(graphitProps()));
+    public static final DeferredBlock<Block> GRAPHIT_HUELLE = BLOCKS.register("graphit_huelle", () -> new Block(graphitProps()));
+
+    // --- T3-Maschinen ---
+    public static final DeferredBlock<ProcessingBlock> QUANTEN_LITHOGRAF = BLOCKS.register("quanten_lithograf",
+            () -> new ProcessingBlock(graphitProps().lightLevel(activeLight(9)), MachineKind.QUANTEN_LITHOGRAF));
+    public static final DeferredBlock<TechBlock> MATERIE_REKONFIGURATOR = BLOCKS.register("materie_rekonfigurator",
+            () -> new TechBlock(graphitProps().lightLevel(activeLight(10)), ModBlockEntities.MATERIE_REKONFIGURATOR, true));
+    public static final DeferredBlock<KlonTankBlock> KLON_TANK = BLOCKS.register("klon_tank",
+            () -> new KlonTankBlock(graphitProps().noOcclusion().lightLevel(activeLight(8))
+                    .isViewBlocking((state, level, pos) -> false).isSuffocating((state, level, pos) -> false)));
+    public static final DeferredBlock<TechBlock> UNIVERSUMS_DESTILLATOR = BLOCKS.register("universums_destillator",
+            () -> new TechBlock(graphitProps().lightLevel(activeLight(9)), ModBlockEntities.UNIVERSUMS_DESTILLATOR, true));
+    public static final DeferredBlock<RiftKabelknotenBlock> RIFT_KABELKNOTEN = BLOCKS.register("rift_kabelknoten",
+            () -> new RiftKabelknotenBlock(graphitProps().lightLevel(state -> state.getValue(TechBlock.ACTIVE) ? 12 : 5)));
+
+    // --- T3-Generatoren ---
+    public static final DeferredBlock<TechBlock> MIKROKOSMOS_ZELLE = BLOCKS.register("mikrokosmos_zelle",
+            () -> new TechBlock(graphitProps().lightLevel(activeLight(9)), ModBlockEntities.MIKROKOSMOS_ZELLE, true));
+    public static final DeferredBlock<TechBlock> PARALLELZAPFER = BLOCKS.register("parallelzapfer",
+            () -> new TechBlock(graphitProps().lightLevel(activeLight(13)), ModBlockEntities.PARALLELZAPFER, true));
+
+    // --- Universen: Hochgravitation und Spiegelwelt ---
+    /** Extrem dichtes Erz: hart wie Obsidian, braucht eine Diamantspitzhacke. */
+    public static final DeferredBlock<Block> GRAVITIT_ORE = BLOCKS.register("gravitit_ore",
+            () -> new DropExperienceBlock(UniformInt.of(3, 7), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLUE)
+                    .strength(25.0f, 1200.0f).requiresCorrectToolForDrops().sound(SoundType.ANCIENT_DEBRIS).lightLevel(state -> 2)));
+    public static final DeferredBlock<Block> SPIEGELKRISTALL = BLOCKS.register("spiegelkristall",
+            () -> new DropExperienceBlock(UniformInt.of(2, 5), BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ)
+                    .strength(3.0f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.GLASS).lightLevel(state -> 6)));
+
     // ---------------------------------------------------------------------
+
+    /** T3-Industrie: Graphit mit Petrol-Leiterbahnen, braucht eine Eisenspitzhacke. */
+    private static BlockBehaviour.Properties graphitProps() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).strength(5.0f, 10.0f)
+                .requiresCorrectToolForDrops().sound(SoundType.NETHERITE_BLOCK);
+    }
 
     /** T2-Labortechnik: Labor-Weiß, braucht eine Eisenspitzhacke. */
     private static BlockBehaviour.Properties laborProps() {

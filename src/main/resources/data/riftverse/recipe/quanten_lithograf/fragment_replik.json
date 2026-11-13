@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:inversionssplitter"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:naehrserum"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:fragment_replik"
+  },
+  "time": 600
+}

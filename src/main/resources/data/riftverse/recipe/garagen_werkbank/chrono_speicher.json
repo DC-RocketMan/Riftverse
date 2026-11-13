@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "ZTZ",
+    "QGQ",
+    "ZCZ"
+  ],
+  "key": {
+    "Z": {
+      "item": "riftverse:flux_zelle"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "G": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "C": {
+      "item": "riftverse:chrono_linse"
+    }
+  },
+  "result": {
+    "id": "riftverse:chrono_speicher"
+  },
+  "loetzinn": 4
+}

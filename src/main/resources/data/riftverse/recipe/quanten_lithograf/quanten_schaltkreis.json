@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:wires/gold"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:quanten_schaltkreis"
+  },
+  "time": 300
+}

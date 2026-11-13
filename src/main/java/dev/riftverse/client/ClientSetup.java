@@ -5,6 +5,7 @@ import dev.riftverse.Riftverse;
 import dev.riftverse.cable.InsulatedCableBlock;
 import dev.riftverse.client.screen.FluidMixerScreen;
 import dev.riftverse.client.screen.GeneratorScreen;
+import dev.riftverse.client.screen.IndustrieScreen;
 import dev.riftverse.client.screen.ProcessingScreen;
 import dev.riftverse.client.screen.RaffinerieScreen;
 import dev.riftverse.client.screen.ResonatorScreen;
@@ -17,7 +18,9 @@ import dev.riftverse.registry.ModEntities;
 import dev.riftverse.registry.ModFluids;
 import dev.riftverse.registry.ModItems;
 import dev.riftverse.registry.ModMenus;
+import dev.riftverse.universe.SpiegelZeit;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.item.CompassItemPropertyFunction;
@@ -30,6 +33,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -42,6 +46,9 @@ public final class ClientSetup {
     /** Rückkehr-Taste der Portal-Kanone (Standard R). */
     public static final KeyMapping RUECKKEHR = new KeyMapping("key.riftverse.rueckkehr", KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, "key.categories.riftverse");
+    /** Ziel-Taste der Kanone ab Mk III (Standard V). */
+    public static final KeyMapping ZIEL = new KeyMapping("key.riftverse.ziel", KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.riftverse");
 
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
@@ -52,6 +59,7 @@ public final class ClientSetup {
         event.register(ModMenus.SPEICHER.get(), SpeicherScreen::new);
         event.register(ModMenus.RAFFINERIE.get(), RaffinerieScreen::new);
         event.register(ModMenus.RESONATOR.get(), ResonatorScreen::new);
+        event.register(ModMenus.INDUSTRIE.get(), IndustrieScreen::new);
     }
 
     @SubscribeEvent
@@ -64,6 +72,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(RUECKKEHR);
+        event.register(ZIEL);
     }
 
     @SubscribeEvent
@@ -90,7 +99,8 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tintIndex) -> 0xFF000000 | InsulatedCableBlock.tint(state),
-                ModBlocks.KUPFERKABEL_ISOLIERT.get(), ModBlocks.FLUX_LEITUNG_ISOLIERT.get());
+                ModBlocks.KUPFERKABEL_ISOLIERT.get(), ModBlocks.FLUX_LEITUNG_ISOLIERT.get(),
+                ModBlocks.GRAVITIT_LEITUNG_ISOLIERT.get(), ModBlocks.GRAVITIT_LEITUNG_DOPPELT.get());
     }
 
     /** Fluid-Texturen sind schon farbig, daher kein Tint. */
@@ -99,6 +109,19 @@ public final class ClientSetup {
         event.registerFluidType(fluid("saeure"), ModFluids.SAEURE_TYPE.get());
         event.registerFluidType(fluid("roh_portalfluid"), ModFluids.ROH_PORTALFLUID_TYPE.get());
         event.registerFluidType(fluid("portalfluid"), ModFluids.PORTALFLUID_TYPE.get());
+        event.registerFluidType(fluid("portalfluid_konzentrat"), ModFluids.PORTALFLUID_KONZENTRAT_TYPE.get());
+    }
+
+    /** Spiegelwelt: eigener Himmelseffekt-Schlüssel (daran erkennt der Mixin die vertauschte Tageszeit), sonst wie die Overworld. */
+    @SubscribeEvent
+    public static void registerDimensionEffects(RegisterDimensionSpecialEffectsEvent event) {
+        event.register(SpiegelZeit.EFFECTS, new DimensionSpecialEffects.OverworldEffects());
+    }
+
+    /** Portalfluid-Konzentrat durchscheinend rendern. */
+    @SubscribeEvent
+    public static void registerRenderLayers(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> ItemBlockRenderTypes.setRenderLayer(ModFluids.PORTALFLUID_KONZENTRAT.get(), RenderType.translucent()));
     }
 
     private static IClientFluidTypeExtensions fluid(String name) {
