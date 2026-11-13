@@ -306,6 +306,7 @@ final class RauchTestM6 {
             SchrumpfstrahlerItem.setFaktor(pig, 0.25);
             check(Math.abs(pig.getScale() - 0.25) < 1e-3 && Math.abs(SchrumpfstrahlerItem.faktor(pig) - 0.25) < 1e-3, "Schrumpfstrahler: Schwein auf 0,25");
             pig.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 600));
+            pig.setInvisible(true);   // der Effekt schaltet die Unsichtbarkeit erst im nächsten Tick
             check(TarnDetektorItem.aufdecken(level, p) >= 1 && pig.hasEffect(MobEffects.GLOWING), "Tarn-Detektor deckt das unsichtbare Schwein auf");
             check(AntiGravGranateEntity.zuenden(level, pig) >= 1 && pig.hasEffect(MobEffects.LEVITATION), "Anti-Grav-Granate: Schwein schwebt");
         }
