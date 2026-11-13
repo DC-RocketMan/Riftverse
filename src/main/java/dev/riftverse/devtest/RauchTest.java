@@ -67,6 +67,7 @@ import java.util.Optional;
  */
 public final class RauchTest {
     private static final int RUN_TICKS = 380;
+    private static final int ZWISCHEN_TICK = 40;
 
     private static final List<String> failures = new ArrayList<>();
     private static int ticks = -1;
@@ -337,7 +338,10 @@ public final class RauchTest {
     }
 
     private static void onTick(ServerTickEvent.Post event) {
-        if (ticks < 0 || ++ticks < RUN_TICKS) return;
+        if (ticks < 0) return;
+        // Frisch erzwungene Chunks laden ihre Entities erst nach ein paar Ticks: Tests mit Mobs laufen in der Mitte
+        if (++ticks == ZWISCHEN_TICK) RauchTestM6.zwischen(event.getServer(), event.getServer().overworld());
+        if (ticks < RUN_TICKS) return;
         ticks = -1;
         MinecraftServer server = event.getServer();
         ServerLevel level = server.overworld();

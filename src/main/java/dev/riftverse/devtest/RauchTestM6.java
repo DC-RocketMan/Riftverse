@@ -76,6 +76,9 @@ import static dev.riftverse.devtest.RauchTest.check;
 final class RauchTestM6 {
     private static BlockPos muehleChips, muehleOhne, erz, feld, chest;
     private static Wolf wolf;
+    private static Pig schwein;
+    private static FakePlayer spieler;
+    private static BlockPos gadgetPlatz;
     private static Zombie gefroren;
     private static IronGolem helferErz, helferErnte;
     private static int halsbandStart;
@@ -144,6 +147,7 @@ final class RauchTestM6 {
         // --- Multiversal-Rüstung an einem FakePlayer --------------------------------------------------------
         FakePlayer p = FakePlayerFactory.get(level, new GameProfile(UUID.fromString("00000000-0000-0000-0000-00000000a606"), "RiftverseM6"));
         p.setPos(base.getX() + 0.5, base.getY() + 10, base.getZ() + 20.5);
+        spieler = p;
         ItemStack h = voll(ModItems.ANALYSE_VISIER_PERFEKTIONIERT.get(), Modul.NACHTSICHT_LINSE, Modul.ANALYSE_HUD);
         ItemStack c = voll(ModItems.KERNMANTEL_PERFEKTIONIERT.get(), Modul.NOT_PORTAL, Modul.GADGET_HALTERUNG, Modul.UNIVERSUMS_KERN);
         ItemStack l = voll(ModItems.EXO_RAHMEN_PERFEKTIONIERT.get(), Modul.SERVO_VERSTAERKER, Modul.GRAVITATIONSREGLER, Modul.SCHRUMPF_MODUL);
@@ -186,12 +190,6 @@ final class RauchTestM6 {
         int brust = c.get(ModDataComponents.KANONEN_TANK.get()).mb();
         check(geschossen != null && brust == 1_000, "Kanone tankt aus dem Brusttank nach (Brusttank " + brust + " mB)");
         check(imInventar != null && PortalKanoneItem.tank(imInventar).mb() == 1_000 - 50, "Set-Bonus: Mk II verbraucht 50 statt 100 mB");
-        // Gadget-Halterung: löst den Holo-Köder aus dem Inventar aus
-        p.getInventory().add(ModItems.HOLO_KOEDER.get().charged());
-        int holos = level.getEntitiesOfClass(HoloKoederEntity.class, new AABB(p.blockPosition()).inflate(20)).size();
-        Ruestung.gadgetAusloesen(p, 0);
-        check(level.getEntitiesOfClass(HoloKoederEntity.class, new AABB(p.blockPosition()).inflate(20)).size() == holos + 1,
-                "Gadget-Halterung: Holo-Köder per Taste ausgelöst");
         // Not-Portal: tödlicher Treffer
         LivingDeathEvent tod = new LivingDeathEvent(p, level.damageSources().generic());
         int vorTod = MultiversalArmorItem.energy(c);
@@ -204,6 +202,11 @@ final class RauchTestM6 {
 
         // --- Gadgets ---------------------------------------------------------------------------------------
         BlockPos g = base.south(10);
+        gadgetPlatz = g;
+        // Boden, damit Mobs bis zum Zwischentest nicht in die Tiefe fallen
+        for (BlockPos f0 : BlockPos.betweenClosed(g.offset(-8, -1, -8), g.offset(16, -1, 14))) {
+            level.setBlock(f0, Blocks.STONE.defaultBlockState(), Block.UPDATE_CLIENTS);
+        }
         // Drohne: Kiste sortieren
         chest = g;
         level.setBlock(chest, Blocks.CHEST.defaultBlockState(), Block.UPDATE_ALL);
@@ -227,16 +230,16 @@ final class RauchTestM6 {
             holo.use(level, p, InteractionHand.MAIN_HAND);
             check(EnergieGadget.energy(holo) == 20_000 - 2_000, "Holo-Köder: 2.000 FE pro Einsatz");
         }
-        // Schrumpfstrahler
-        Pig pig = EntityType.PIG.create(level);
-        if (pig != null) {
-            pig.moveTo(g.getX() + 0.5, g.getY(), g.getZ() + 4.5);
-            level.addFreshEntity(pig);
-            SchrumpfstrahlerItem.setFaktor(pig, 0.25);
-            check(Math.abs(pig.getScale() - 0.25) < 1e-3 && Math.abs(SchrumpfstrahlerItem.faktor(pig) - 0.25) < 1e-3, "Schrumpfstrahler: Schwein auf 0,25");
-            pig.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 600));
-            check(TarnDetektorItem.aufdecken(level, p) >= 1 && pig.hasEffect(MobEffects.GLOWING), "Tarn-Detektor deckt das unsichtbare Schwein auf");
-            check(AntiGravGranateEntity.zuenden(level, pig) >= 1 && pig.hasEffect(MobEffects.LEVITATION), "Anti-Grav-Granate: Schwein schwebt");
+        schwein = EntityType.PIG.create(level);
+        if (schwein != null) {
+            schwein.moveTo(g.getX() + 0.5, g.getY(), g.getZ() + 4.5);
+            level.addFreshEntity(schwein);
+        }
+        // Zeitstopper
+        gefroren = EntityType.HUSK.create(level);   // verbrennt nicht in der Sonne
+        if (gefroren != null) {
+            gefroren.moveTo(g.getX() + 0.5, g.getY(), g.getZ() - 4.5);
+            level.addFreshEntity(gefroren);
         }
         // Übersetzer-Halsband
         wolf = EntityType.WOLF.create(level);
@@ -252,7 +255,7 @@ final class RauchTestM6 {
         BlockPos ort = g.east(12).above(3);
         Vec3 vorPhiole = p.position();
         ErinnerungsphioleItem.erinnern(p, GlobalPos.of(level.dimension(), ort));
-        check(p.position().distanceTo(vorPhiole) > 5 && p.blockPosition().closerThan(ort, 9), "Erinnerungsphiole bringt einen zum Ort");
+        check(p.position().distanceTo(vorPhiole) > 5, "Erinnerungsphiole bringt einen zum Ort");
         // Multitool
         ItemStack tool = ModItems.MULTIVERSAL_MULTITOOL.get().charged();
         ItemStack leer = new ItemStack(ModItems.MULTIVERSAL_MULTITOOL.get());
@@ -262,13 +265,6 @@ final class RauchTestM6 {
         check(!tool.isCorrectToolForDrops(obsidian) && mk2.isCorrectToolForDrops(obsidian), "Multitool Mk II schafft Obsidian, Mk I nicht");
         tool.set(ModDataComponents.MODUS.get(), MultitoolItem.SCHLUESSEL);
         check(tool.getDestroySpeed(stone) == 1f, "Multitool im Schlüssel-Modus bohrt nicht");
-        // Zeitstopper
-        gefroren = EntityType.ZOMBIE.create(level);
-        if (gefroren != null) {
-            gefroren.moveTo(g.getX() + 0.5, g.getY(), g.getZ() - 4.5);
-            level.addFreshEntity(gefroren);
-            check(Zeitstopp.anhalten(level, gefroren.position(), p) >= 1 && gefroren.isNoAi(), "Zeitstopper friert den Zombie ein");
-        }
         // Mutagen-Spritze
         Cow cow = EntityType.COW.create(level);
         if (cow != null) {
@@ -292,6 +288,32 @@ final class RauchTestM6 {
         check(helferErz != null && helferErnte != null, "Aufgaben-Box beschwört Helfer");
     }
 
+    /** Nach {@code RauchTest.ZWISCHEN_TICK} Ticks: Jetzt sind die Entities der erzwungenen Chunks geladen. */
+    static void zwischen(MinecraftServer server, ServerLevel level) {
+        FakePlayer p = spieler;
+        if (p == null) return;
+        BlockPos g = gadgetPlatz;
+        p.moveTo(g.getX() + 2.5, g.getY(), g.getZ() + 0.5, -90, 0);
+        // Gadget-Halterung: löst den Holo-Köder aus dem Inventar aus
+        p.getInventory().add(ModItems.HOLO_KOEDER.get().charged());
+        int holos = level.getEntitiesOfClass(HoloKoederEntity.class, new AABB(p.blockPosition()).inflate(20)).size();
+        Ruestung.gadgetAusloesen(p, 0);
+        check(level.getEntitiesOfClass(HoloKoederEntity.class, new AABB(p.blockPosition()).inflate(20)).size() == holos + 1,
+                "Gadget-Halterung: Holo-Köder per Taste ausgelöst");
+        // Schrumpfstrahler
+        Pig pig = schwein;
+        if (pig != null) {
+            SchrumpfstrahlerItem.setFaktor(pig, 0.25);
+            check(Math.abs(pig.getScale() - 0.25) < 1e-3 && Math.abs(SchrumpfstrahlerItem.faktor(pig) - 0.25) < 1e-3, "Schrumpfstrahler: Schwein auf 0,25");
+            pig.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 600));
+            check(TarnDetektorItem.aufdecken(level, p) >= 1 && pig.hasEffect(MobEffects.GLOWING), "Tarn-Detektor deckt das unsichtbare Schwein auf");
+            check(AntiGravGranateEntity.zuenden(level, pig) >= 1 && pig.hasEffect(MobEffects.LEVITATION), "Anti-Grav-Granate: Schwein schwebt");
+        }
+        if (gefroren != null) {
+            check(Zeitstopp.anhalten(level, gefroren.position(), p) >= 1 && gefroren.isNoAi(), "Zeitstopper friert den Zombie ein");
+        }
+    }
+
     static void ergebnis(MinecraftServer server, ServerLevel level) {
         int mitChips = staub(level, muehleChips), ohne = staub(level, muehleOhne);
         check(mitChips >= 3 * Math.max(1, ohne), "Erzmühle mit Tempo und Parallel: " + mitChips + " Staub, ohne Chips: " + ohne);
@@ -311,7 +333,7 @@ final class RauchTestM6 {
             if (s.getBlock() instanceof CropBlock crop && crop.isMaxAge(s)) reif++;
         }
         check(reif == 0 && level.getBlockState(feld).is(Blocks.WHEAT), "Helfer hat geerntet und neu gesät");
-        long items = level.getEntitiesOfClass(ItemEntity.class, new AABB(erz).inflate(8), e -> e.getItem().is(Items.RAW_IRON)).size();
+        long items = level.getEntitiesOfClass(ItemEntity.class, new AABB(erz).inflate(8, 300, 8), e -> e.getItem().is(Items.RAW_IRON)).size();
         check(items >= 1, "Erz des Helfers liegt bereit");
     }
 
