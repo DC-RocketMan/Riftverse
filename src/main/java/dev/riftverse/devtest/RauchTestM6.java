@@ -181,10 +181,11 @@ final class RauchTestM6 {
         ItemStack cartridge = new ItemStack(ModItems.FLUID_KARTUSCHE_STABIL.get());
         check(Ruestung.brusttankFuellen(p, c, cartridge, 2) && c.get(ModDataComponents.KANONEN_TANK.get()).mb() == 2_000,
                 "Brusttank: Kartusche hinein (2.000 mB)");
-        KanonenTank geschossen = ((PortalKanoneItem) gun.getItem()).shoot(p, PortalKanoneItem.find(p));
+        ItemStack imInventar = PortalKanoneItem.find(p);
+        KanonenTank geschossen = imInventar == null ? null : ((PortalKanoneItem) imInventar.getItem()).shoot(p, imInventar);
         int brust = c.get(ModDataComponents.KANONEN_TANK.get()).mb();
         check(geschossen != null && brust == 1_000, "Kanone tankt aus dem Brusttank nach (Brusttank " + brust + " mB)");
-        check(PortalKanoneItem.tank(PortalKanoneItem.find(p)).mb() == 1_000 - 50, "Set-Bonus: Mk II verbraucht 50 statt 100 mB");
+        check(imInventar != null && PortalKanoneItem.tank(imInventar).mb() == 1_000 - 50, "Set-Bonus: Mk II verbraucht 50 statt 100 mB");
         // Gadget-Halterung: löst den Holo-Köder aus dem Inventar aus
         p.getInventory().add(ModItems.HOLO_KOEDER.get().charged());
         int holos = level.getEntitiesOfClass(HoloKoederEntity.class, new AABB(p.blockPosition()).inflate(20)).size();

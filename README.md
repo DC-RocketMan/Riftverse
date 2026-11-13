@@ -4,7 +4,81 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
-## Stand: Meilenstein 5 – T4 Weltenformer
+## Stand: Meilenstein 6 – Gadgets und Rüstung
+
+Mit Meilenstein 6 kommen alle Gadgets, die Multiversal-Rüstung mit 18 Modulen, drei Ausbaustufen und Set-Bonus sowie
+die fünf Maschinen-Upgrades dazu.
+
+| Bereich | Inhalt |
+|---|---|
+| **Gadgets T1** | Einzweck-Drohne (5.000 FE: aufsammeln, reichen oder eine Kiste sortieren; fragt im Leerlauf nach ihrem Lebenssinn), Holo-Köder (2.000 FE pro Einsatz, Mobs greifen 10 s lang das Hologramm an) |
+| **Gadgets T2** | Schrumpfstrahler (50.000 FE, 2.000 pro Schuss, 1 → 0,5 → 0,25), Anti-Grav-Granate (Mobs im Radius 6 schweben 8 s), Übersetzer-Halsband (10.000 FE, Tier spricht, sammelt, warnt, kommentiert), Erinnerungsphiole (Ort speichern, trinken bringt zurück), Tarn-Detektor (1.000 FE/s), Multiversal-Multitool Mk I |
+| **Gadgets T3/T4** | Zeitstopper (200.000 FE, 40.000 pro Einsatz, Radius 12 für 6 s), Mutagen-Spritze (10 % Fehlmutation mit Sonderbeute), Aufgaben-Box (Helfer baut eine Erzader ab, erntet oder kämpft; nach 5 min zerfällt er), Multitool Mk II (500.000 FE) und Mk III (2 Mio. FE) |
+| **Maschinen-Upgrades** | Tempo-, Effizienz-, Parallel-, Transformator- und KI-Chip für alle Verarbeitungsmaschinen ab T1 |
+| **Multiversal-Rüstung** | Analyse-Visier (3 Slots, 500.000 FE), Kernmantel (4 Slots, 2 Mio. FE, Brusttank 4.000 mB), Exo-Rahmen (3 Slots, 500.000 FE, +10 % Abbautempo), Gravi-Stiefel (2 Slots, 250.000 FE, kein Fallschaden bis 10 Blöcke); jeweils Rohling, Kalibriert, Perfektioniert |
+| **Module** | Helm: Analyse-HUD, Nachtsicht-Linse, Atemfilter, Tarn-Detektor, Universal-Übersetzer · Brust: Energieschild, Not-Portal, Kanonen-Integration, Klon-Link, Gadget-Halterung · Hose: Servo-Verstärker, Sprint-Booster, Gravitationsregler, Schrumpf-Modul · Stiefel: Fall-Dämpfer, Sprungfeder, Phasenschritt, Haftsohlen |
+| **Set-Bonus** | „Multiversale Resonanz“: alle vier Teile perfektioniert und ein Universums-Kern im Kernmantel – halber Kanonenverbrauch, Phasenschritt ohne Abklingzeit in fremden Universen |
+
+### So spielt sich Meilenstein 6
+
+1. **Gadgets** baut man je nach Stufe an der Garagen-Werkbank, im Präzisions-Montierer, im Quanten-Lithografen oder
+   in der Rift-Schmiede. Alle Akkus sind reines FE und laden in jedem Ladegerät und im Akku-Slot jedes Generators.
+2. **Upgrade-Chips:** Rechtsklick mit dem Chip auf eine Maschine baut ihn ein (jede Sorte einmal). Der Tooltip des
+   Fortschrittspfeils zeigt, was drinsteckt. Ausbauen: Multitool im Schlüssel-Modus, Schleichen + Rechtsklick.
+3. **Rüstung:** den **Rohling** im Präzisions-Montierer (6 Schritte: Graphitplatten, Gravitit-Rahmen,
+   Rift-Schaltkreise, Flux-Spulen, ein Teil-Bauteil und Wolle für den Labormantel), **Kalibriert** im
+   Quanten-Lithografen (Rohling + 2 Quanten-Schaltkreise + Kalibrier-Satz), **Perfektioniert** in der Rift-Schmiede
+   (2 Minuten bei 20.000 FE/t: Kalibriert + 4 Nullmaterie + 2 Multiversal-Prozessoren + Multiversum-Legierung +
+   3 Story-Fragmente). Module, Ladung und Brusttank wandern bei jeder Ausbaustufe mit.
+4. **Module einbauen:** an der Werkbank Rüstungsteil + Modul. Ausbauen: das Teil allein in die Werkbank, das zuletzt
+   eingebaute Modul bleibt im Raster liegen.
+5. **Brusttank füllen:** mit angelegtem Kernmantel Schleichen + Rechtsklick mit einer vollen Kartusche. Die Kanone
+   tankt zuerst aus dem Brusttank nach, dann aus Kartuschen.
+6. **Tasten** (änderbar): H Tarn-Detektor, B Kanonen-Integration (Schleichen: nach Hause), Z und X Gadget 1 und 2,
+   G Gravitationsregler (aus → 50 % → 100 % → 200 %), N Schrumpf-Modul. Phasenschritt: in der Luft noch einmal springen.
+
+### Gadgets im Einzelnen
+
+- **Einzweck-Drohne:** Schleichen + Rechtsklick in die Luft wechselt die Aufgabe. *Aufsammeln:* Rechtsklick schaltet
+  ein, sie holt alles im Umkreis von 8 Blöcken (2 FE/t). *Reichen:* Rechtsklick auf einen Spieler gibt ihm den Stapel
+  aus deiner Zweithand, Schleichen + Rechtsklick auf eine Kiste legt ihn hinein. *Sortieren:* Schleichen + Rechtsklick
+  auf eine Kiste fasst Stapel zusammen und sortiert sie nach Namen.
+- **Übersetzer-Halsband:** auf ein eigenes gezähmtes Tier. Es spricht in Sprechblasen und im Chat, sammelt
+  Gegenstände in seiner Nähe für dich ein, warnt vor Feinden in deiner Nähe und kommentiert die Lage (auch passend zum
+  Universum). 2 FE pro Sekunde; Schleichen + Rechtsklick mit leerer Hand nimmt das Halsband ab.
+- **Multitool:** Bohrer (Spitzhacke, Schaufel, Axt und Hacke in einem; Eisen-, Diamant-, Netherit-Stufe; 50 FE pro
+  Block), Schlüssel (dreht Riftverse-Maschinen; Schleichen baut erst die Chips, dann die Maschine mit Inhalt ab),
+  Scanner (wie der Universums-Scanner).
+- **Aufgaben-Box:** Rechtsklick auf ein Erz – der Helfer baut die ganze zusammenhängende Ader ab (bis 64 Blöcke);
+  auf ein Feld – er erntet reife Pflanzen im Umkreis von 8 Blöcken und sät neu; in die Luft – er kämpft gegen Feinde
+  in deiner Nähe. Die letzte Viertelminute ist er rot und raucht, dann zerfällt er in einer Explosion ohne Blockschaden.
+
+### Entscheidungen in Meilenstein 6
+
+- **Rüstung ohne Haltbarkeit:** Die Multiversal-Rüstung lebt von FE. Jedes Teil hat einen eigenen Speicher; was
+  leer ist, zieht aus dem Kernmantel nach. Laufende Kosten werden einmal pro Sekunde abgebucht.
+- **„8 Montageschritte“ sind 6:** Der Präzisions-Montierer hat sechs Eingänge, deshalb hat der Rohling sechs Schritte.
+- **Kalibrier-Satz und Multiversum-Legierung:** Der Quanten-Lithograf hat nur drei Eingänge. Das „Material aus drei
+  Universumstypen“ (Fluxkristall, Säuregel, Chronoglas) und das Story-Fragment stecken deshalb im Kalibrier-Satz aus
+  dem Montierer. Für die Perfektionierung bündelt die Multiversum-Legierung sechs Universumstypen.
+- **Universums-Kern** belegt einen Platz im perfektionierten Kernmantel; er braucht Material aus allen Typen samt der
+  Leeren Welt.
+- **Atemschutz:** Das Atemfilter-Modul schützt ganz vor giftiger Luft. Jeder andere Helm schützt weiterhin, nutzt sich
+  dabei aber ab (1 Haltbarkeit pro Sekunde), damit die toxische Welt in T1 spielbar bleibt.
+- **Gravitationsregler** ersetzt die Schwerkraft des Universums (samt Fallschaden ab 200 %), statt sie zu verrechnen.
+- **Klon-Link:** Der Klon-Tank bringt das Inventar schon immer mit; mit dem Klon-Link bleibt zusätzlich die Erfahrung
+  erhalten, statt als Kugeln liegen zu bleiben.
+- **Gadget-Halterung:** Die Tasten lösen das erste und zweite Gadget im Inventar aus, als läge es in der Hand.
+  Gadgets, die man halten muss (Erinnerungsphiole trinken), gehen so nicht.
+- **Universal-Übersetzer und Story-Hinweise** wirken erst, wenn es Alien-NPCs und Story-Arcs gibt; Modul und
+  Set-Bonus sind schon da.
+- **Tarn-Detektor:** Aufgedeckte Wesen leuchten für alle Spieler, nicht nur für den Träger.
+- **Upgrades:** Jede Chip-Sorte passt einmal in eine Maschine. Chips gibt es für alle Verarbeitungsmaschinen ab T1
+  (auch die Rift-Schmiede), nicht für die Sondergeräte aus T3 und T4 und nicht für handbetriebene T0-Maschinen.
+  Der KI-Chip pausiert im Schnitt alle zwei Minuten Arbeitszeit für 5 Sekunden.
+- **Garagen-Raumgleiter** (im Dokument optional) bleibt für später, wenn klar ist, ob Create Aeronautics ins Pack kommt.
+
+## Meilenstein 5 – T4 Weltenformer
 
 Mit dem Weltenformer kommen Stufe IV mit der Null-Leitung, die Rift-Schmiede, der Weltenformer, der Singularitätskern,
 die Portal-Kanone Mk IV, die Leere Welt und gezüchtete Universen dazu.
@@ -276,7 +350,7 @@ Ab jetzt lässt sich Riftverse im Überleben von der Garage bis zum ersten Sprun
 - **Modifikatoren:** Riesen- oder Mini-Mobs, doppelte Erze, keine Tiere, Dauergewitter (Blitze in der Nähe),
   supraleitend oder hochohmig (Kabelverlust 0 bzw. doppelt) und als Kuriosität hüpfende oder leuchtende Kreaturen.
   „Ewige Nacht“ fehlt noch, weil sich alle Universen eines Typs eine Dimension und damit eine Tageszeit teilen.
-- **Atemschutz:** Bis das Atemfilter-Modul (Meilenstein 6) kommt, schützt jeder Helm vor der giftigen Luft.
+- **Atemschutz:** Bis das Atemfilter-Modul (Meilenstein 6) kam, schützte jeder Helm vor der giftigen Luft.
   Säureregen fällt, wenn es in der Overworld regnet.
 - **Säuregel:** Glasflasche an einer Säurequelle füllen. Gebraucht wird es ab dem Rift-Labor (Meilenstein 3).
 - **Kristall-Schleifer:** 1 Fluxkristall → 1 Fluxlinse + 2 Fluxstaub, damit ein Kristall zwei Kartuschen füllt.
