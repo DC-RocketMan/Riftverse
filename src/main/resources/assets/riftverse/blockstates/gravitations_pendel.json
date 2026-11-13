@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "riftverse:block/gravitations_pendel"
+    },
+    "active=true,facing=north": {
+      "model": "riftverse:block/gravitations_pendel_on"
+    },
+    "active=false,facing=east": {
+      "model": "riftverse:block/gravitations_pendel",
+      "y": 90
+    },
+    "active=true,facing=east": {
+      "model": "riftverse:block/gravitations_pendel_on",
+      "y": 90
+    },
+    "active=false,facing=south": {
+      "model": "riftverse:block/gravitations_pendel",
+      "y": 180
+    },
+    "active=true,facing=south": {
+      "model": "riftverse:block/gravitations_pendel_on",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "riftverse:block/gravitations_pendel",
+      "y": 270
+    },
+    "active=true,facing=west": {
+      "model": "riftverse:block/gravitations_pendel_on",
+      "y": 270
+    }
+  }
+}

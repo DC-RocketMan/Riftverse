@@ -1,0 +1,30 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:basis_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:wires/gold"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:aetzloesung"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/fluxkristall"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:rift_schaltkreis"
+  },
+  "time": 240
+}

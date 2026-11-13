@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:fluxlinse"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "riftverse:compat/stabilisator"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:wires/gold"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:stabilisierte_linse"
+  },
+  "time": 200
+}

@@ -51,7 +51,7 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         GuiKit.panel(g, x, y, imageWidth, imageHeight);
 
         int n = kind.inputs();
-        for (int i = 0; i < n; i++) GuiKit.slot(g, x + ProcessingMenu.inputX(n, i), y + ProcessingMenu.IN_Y);
+        for (int i = 0; i < n; i++) GuiKit.slot(g, x + ProcessingMenu.inputX(n, i), y + ProcessingMenu.inputY(n, i));
         int o = kind.outputs();
         for (int i = 0; i < o; i++) {
             int sx = x + ProcessingMenu.outputX(o, i), sy = y + ProcessingMenu.outputY(o, i);
@@ -76,6 +76,20 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
         }
     }
 
+    /** Präzisions-Montierer: der aktuelle Montageschritt unter dem Pfeil. */
+    @Override
+    protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+        super.renderLabels(g, mouseX, mouseY);
+        MachineKind kind = menu.kind();
+        if (!kind.ordered()) return;
+        int steps = menu.steps();
+        if (steps > 0) {
+            int step = Math.min(steps, 1 + menu.progress() * steps / menu.maxProgress());
+            Component text = Component.translatable("gui.riftverse.schritt", step, steps);
+            g.drawString(font, text, ProcessingMenu.ARROW_X + 11 - font.width(text) / 2, ProcessingMenu.ARROW_Y + 18, 0x404040, false);
+        }
+    }
+
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
         super.render(g, mouseX, mouseY, partialTick);
@@ -88,8 +102,10 @@ public class ProcessingScreen extends AbstractContainerScreen<ProcessingMenu> {
             Component line = menu.kind().electric()
                     ? Component.translatable("tooltip.riftverse.consumption", menu.kind().energyPerTick())
                     : Component.translatable("tooltip.riftverse.crank_hint");
-            g.renderComponentTooltip(font, List.of(Component.translatable("tooltip.riftverse.progress",
-                    menu.progress() * 100 / menu.maxProgress()), line), mouseX, mouseY);
+            List<Component> lines = new java.util.ArrayList<>(List.of(Component.translatable("tooltip.riftverse.progress",
+                    menu.progress() * 100 / menu.maxProgress()), line));
+            if (menu.kind().ordered()) lines.add(Component.translatable("tooltip.riftverse.montierer_reihenfolge"));
+            g.renderComponentTooltip(font, lines, mouseX, mouseY);
         } else if (!menu.kind().electric() && GuiKit.inside(mouseX, mouseY, x + 8, y + 28, 14, 16)) {
             g.renderComponentTooltip(font, List.of(Component.translatable("tooltip.riftverse.crank_hint")), mouseX, mouseY);
         }

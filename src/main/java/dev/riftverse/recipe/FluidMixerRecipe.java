@@ -49,16 +49,29 @@ public class FluidMixerRecipe implements Recipe<FluidMixerRecipe.Input> {
         }
     }
 
+    /** Welche Maschine das Rezept verarbeitet; das JSON-Format ist gleich. */
+    public enum Machine { FLUID_MIXER, RAFFINERIE }
+
+    private final Machine machine;
     private final List<CountedIngredient> ingredients;
     private final SizedFluidIngredient fluid;
     private final FluidStack result;
     private final int time;
 
     public FluidMixerRecipe(List<CountedIngredient> ingredients, SizedFluidIngredient fluid, FluidStack result, int time) {
+        this(Machine.FLUID_MIXER, ingredients, fluid, result, time);
+    }
+
+    public FluidMixerRecipe(Machine machine, List<CountedIngredient> ingredients, SizedFluidIngredient fluid, FluidStack result, int time) {
+        this.machine = machine;
         this.ingredients = List.copyOf(ingredients);
         this.fluid = fluid;
         this.result = result;
         this.time = time;
+    }
+
+    public Machine machine() {
+        return machine;
     }
 
     public List<CountedIngredient> ingredients() {
@@ -115,28 +128,37 @@ public class FluidMixerRecipe implements Recipe<FluidMixerRecipe.Input> {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return ModRecipes.FLUID_MIXER.get();
+        return machine == Machine.RAFFINERIE ? ModRecipes.RAFFINERIE.get() : ModRecipes.FLUID_MIXER.get();
     }
 
     @Override
     public RecipeType<?> getType() {
-        return ModRecipes.FLUID_MIXER_TYPE.get();
+        return machine == Machine.RAFFINERIE ? ModRecipes.RAFFINERIE_TYPE.get() : ModRecipes.FLUID_MIXER_TYPE.get();
     }
 
     public static class Serializer implements RecipeSerializer<FluidMixerRecipe> {
-        private static final MapCodec<FluidMixerRecipe> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-                CountedIngredient.CODEC.listOf().fieldOf("ingredients").forGetter(FluidMixerRecipe::ingredients),
-                SizedFluidIngredient.FLAT_CODEC.fieldOf("fluid").forGetter(FluidMixerRecipe::fluid),
-                FluidStack.CODEC.fieldOf("result").forGetter(FluidMixerRecipe::result),
-                ExtraCodecs.POSITIVE_INT.optionalFieldOf("time", 200).forGetter(FluidMixerRecipe::time)
-        ).apply(i, FluidMixerRecipe::new));
+        private final MapCodec<FluidMixerRecipe> CODEC;
+        private final StreamCodec<RegistryFriendlyByteBuf, FluidMixerRecipe> STREAM_CODEC;
 
-        private static final StreamCodec<RegistryFriendlyByteBuf, FluidMixerRecipe> STREAM_CODEC = StreamCodec.composite(
-                CountedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()), FluidMixerRecipe::ingredients,
-                SizedFluidIngredient.STREAM_CODEC, FluidMixerRecipe::fluid,
-                FluidStack.STREAM_CODEC, FluidMixerRecipe::result,
-                ByteBufCodecs.VAR_INT, FluidMixerRecipe::time,
-                FluidMixerRecipe::new);
+        public Serializer() {
+            this(Machine.FLUID_MIXER);
+        }
+
+        public Serializer(Machine machine) {
+            CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                    CountedIngredient.CODEC.listOf().fieldOf("ingredients").forGetter(FluidMixerRecipe::ingredients),
+                    SizedFluidIngredient.FLAT_CODEC.fieldOf("fluid").forGetter(FluidMixerRecipe::fluid),
+                    FluidStack.CODEC.fieldOf("result").forGetter(FluidMixerRecipe::result),
+                    ExtraCodecs.POSITIVE_INT.optionalFieldOf("time", 200).forGetter(FluidMixerRecipe::time)
+            ).apply(i, (ingredients, fluid, result, time) -> new FluidMixerRecipe(machine, ingredients, fluid, result, time)));
+
+            STREAM_CODEC = StreamCodec.composite(
+                    CountedIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()), FluidMixerRecipe::ingredients,
+                    SizedFluidIngredient.STREAM_CODEC, FluidMixerRecipe::fluid,
+                    FluidStack.STREAM_CODEC, FluidMixerRecipe::result,
+                    ByteBufCodecs.VAR_INT, FluidMixerRecipe::time,
+                    (ingredients, fluid, result, time) -> new FluidMixerRecipe(machine, ingredients, fluid, result, time));
+        }
 
         @Override
         public MapCodec<FluidMixerRecipe> codec() {

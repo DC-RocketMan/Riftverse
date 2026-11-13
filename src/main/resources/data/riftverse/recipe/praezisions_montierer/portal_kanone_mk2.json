@@ -1,0 +1,35 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:portal_kanone_mk1"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:kanonenkern"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_griff"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:verbundplatte"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:portal_kanone_mk2"
+  },
+  "time": 400
+}

@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "AUA",
+    "RLR",
+    "TST"
+  ],
+  "key": {
+    "A": {
+      "item": "riftverse:antigrav_platte"
+    },
+    "U": {
+      "item": "minecraft:clock"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "S": {
+      "tag": "c:plates/steel"
+    }
+  },
+  "result": {
+    "id": "riftverse:gravitations_pendel"
+  },
+  "loetzinn": 3
+}

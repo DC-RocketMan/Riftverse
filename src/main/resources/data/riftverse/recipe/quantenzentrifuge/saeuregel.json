@@ -1,0 +1,22 @@
+{
+  "type": "riftverse:quantenzentrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:saeuregel"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:aetzloesung"
+  },
+  "time": 200,
+  "byproducts": [
+    {
+      "result": {
+        "id": "riftverse:toxinrest"
+      },
+      "chance": 0.5
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "KZK",
+    "ZKZ",
+    "KZK"
+  ],
+  "key": {
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "Z": {
+      "tag": "c:plates/tin"
+    }
+  },
+  "result": {
+    "id": "riftverse:kuehlkoerper",
+    "count": 2
+  },
+  "hammer": 1
+}

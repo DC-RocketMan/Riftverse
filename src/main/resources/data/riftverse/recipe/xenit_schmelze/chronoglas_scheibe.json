@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:xenit_schmelze",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_sand"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:chronoglas_scheibe",
+    "count": 2
+  },
+  "time": 120
+}

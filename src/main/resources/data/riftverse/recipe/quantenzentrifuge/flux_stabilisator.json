@@ -1,0 +1,27 @@
+{
+  "type": "riftverse:quantenzentrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:gems/fluxkristall"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:saeuregel"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:flux_stabilisator"
+  },
+  "time": 300,
+  "byproducts": [
+    {
+      "result": {
+        "id": "riftverse:toxinrest"
+      },
+      "chance": 0.5
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GGG",
+    "FFF",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:wires/gold"
+    },
+    "F": {
+      "tag": "c:dusts/fluxkristall"
+    }
+  },
+  "result": {
+    "id": "riftverse:flux_leitung",
+    "count": 6
+  }
+}

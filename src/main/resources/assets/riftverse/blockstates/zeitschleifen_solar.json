@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    },
+    "active=true,facing=north": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    },
+    "active=false,facing=east": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    },
+    "active=true,facing=east": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    },
+    "active=false,facing=south": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    },
+    "active=true,facing=south": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    },
+    "active=false,facing=west": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    },
+    "active=true,facing=west": {
+      "model": "riftverse:block/zeitschleifen_solar"
+    }
+  }
+}

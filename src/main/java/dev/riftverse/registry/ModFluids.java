@@ -39,6 +39,18 @@ public final class ModFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> ROH_PORTALFLUID_FLOWING = FLUIDS.register("roh_portalfluid_flowing",
             () -> new BaseFlowingFluid.Flowing(rohProperties()));
 
+    // --- Stabilisiertes Portalfluid (Raffinerie, zerfällt nicht) --------------------------
+    public static final DeferredHolder<FluidType, FluidType> PORTALFLUID_TYPE = FLUID_TYPES.register("portalfluid",
+            () -> new FluidType(FluidType.Properties.create().density(1000).viscosity(1500).lightLevel(12)));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PORTALFLUID = FLUIDS.register("portalfluid",
+            () -> new BaseFlowingFluid.Source(portalProperties()));
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> PORTALFLUID_FLOWING = FLUIDS.register("portalfluid_flowing",
+            () -> new BaseFlowingFluid.Flowing(portalProperties()));
+
+    private static BaseFlowingFluid.Properties portalProperties() {
+        return new BaseFlowingFluid.Properties(PORTALFLUID_TYPE, PORTALFLUID, PORTALFLUID_FLOWING);
+    }
+
     private static BaseFlowingFluid.Properties saeureProperties() {
         return new BaseFlowingFluid.Properties(SAEURE_TYPE, SAEURE, SAEURE_FLOWING)
                 .block(ModBlocks.SAEURE).bucket(ModItems.SAEURE_EIMER)

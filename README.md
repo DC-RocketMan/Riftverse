@@ -4,7 +4,74 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
-## Stand: Meilenstein 2 – Spielbarer Prototyp
+## Stand: Meilenstein 3 – T2 Rift-Labor
+
+Mit dem Rift-Labor kommen Stufe II, die sechs T2-Maschinen, vier neue Generatoren, drei neue Universumstypen
+und die Portal-Kanone Mk II mit Koordinatenkarten dazu.
+
+| Bereich | Inhalt |
+|---|---|
+| **Stufe II** | Flux-Leitung (blank mit Schlag, isoliert, färbbar; 1 FE Verlust pro Block, verträgt 1.024 FE/t), Umspanner I ↔ II (Front = Hochspannung, Redstone schaltet von herunter- auf hochspannen) |
+| **Flux-Zelle** | 16 Mio. FE, Stufe II, Füllstand als leuchtendes Kristallband, behält die Ladung beim Abbauen |
+| **Gehäuse** | Labor-Gehäuse (Verbundplatten um ein Xenit-Gehäuse) für alle T2-Maschinen, Labor-Hülle für die Multiblöcke |
+| **T2-Maschinen** | Präzisions-Montierer (sequenzielle Montage, die Reihenfolge der Slots zählt), Quantenzentrifuge, Gravitationspresse, Dimensions-Scanner, Chrono-Beschleuniger (2× / 4× / 8×), Portalfluid-Raffinerie (Multiblock 3 × 3 × 4) |
+| **Generatoren** | Biomasse-Kessel (T1, 80 FE/t, Nährserum als Nebenprodukt), Zeitschleifen-Solarpanel (120 FE/t, Lichtschuld), Fluxkristall-Resonator (wachsendes Raster wie ein IC2-Reaktor, Hitze, Wasserkühlung), Gravitations-Pendel (Multiblock 3 × 5 × 3, 400 FE/t, Gravitation zählt) |
+| **Zwischenprodukte** | Verbundplatte, Flux-Spule, Rift-Schaltkreis, Stabilisierte Linse, Kanonenkern, Chronoglas-Griff, Antigrav-Platte, Ätzlösung, Toxinrest, Flux-Stabilisator, Nährserum |
+| **Stabilisiertes Portalfluid** | Aus der Raffinerie (Roh-Portalfluid + Säuregel + Fluxstaub), zerfällt nicht mehr, kommt in stabile Kartuschen |
+| **Kanone Mk II** | Montiert in 5 Schritten aus Mk I, Kanonenkern, Chronoglas-Griff, 2 Verbundplatten und Flux-Spule; nur stabiles Fluid, 100 mB pro Schuss; Koordinatenkarte in der anderen Hand = gezielter Sprung |
+| **Universen** | Niedriggravitationswelt (0,3 g, Schwebeinseln über dem Nichts, Schwebstein), Zeitdilatationswelt (4× Zufallsticks, Chronoglas-Sand fällt in Zeitlupe, Zeitverzerrungen), organische Welt (Biomasse, Blöcke wachsen nach, fressende Flora) |
+
+### So spielt sich Meilenstein 3
+
+1. **Verbundplatten** in der Garagenpresse pressen (Mischmetall + Xenit-Staub + Fluxstaub), daraus **Labor-Gehäuse** bauen.
+2. Zuerst **Präzisions-Montierer** und **Quantenzentrifuge** bauen – sie kommen mit Basis-Schaltkreisen aus.
+   Die Zentrifuge macht aus Säuregel **Ätzlösung**, der Montierer daraus **Rift-Schaltkreise**
+   (Slot 1 Basis-Schaltkreis, Slot 2 zwei Golddrähte, Slot 3 Ätzlösung, Slot 4 Fluxstaub).
+3. **Flux-Leitungen** und einen **Umspanner** legen: Stufe-II-Generatoren grillen sonst die T1-Maschinen.
+4. Die **Portalfluid-Raffinerie** als Multiblock aufbauen (siehe unten) und mit Roh-Portalfluid aus Kartuschen
+   oder per Rohr direkt aus dem Fluid-Mixer füttern. Sie füllt **stabile Kartuschen**.
+5. Mit stabilem Fluid springt die **Kanone Mk I** zufällig auch in die drei T2-Welten: dort Schwebstein,
+   Chronoglas-Sand und Biomasse holen.
+6. **Antigrav-Platten** in der Gravitationspresse, **Chronoglas-Scheiben** in der Xenit-Schmelze,
+   **Flux-Stabilisator** in der Zentrifuge, dann **Stabilisierte Linse**, **Kanonenkern** und **Kanone Mk II** im Montierer.
+7. **Universumsprobe** in einem Universum füllen, im **Dimensions-Scanner** mit Papier zur **Koordinatenkarte**
+   machen und mit der Mk II gezielt zurückspringen.
+
+### Multiblöcke
+
+Der Steuerblock sitzt unten in der Mitte der Vorderseite, der Bau geht 3 Blöcke breit und 3 tief nach hinten.
+Ein Rechtsklick auf den Steuerblock nennt das erste fehlende Teil mit Koordinaten.
+
+- **Portalfluid-Raffinerie (3 × 3 × 4):** Boden und Deckel ganz aus Labor-Hülle; in den zwei Lagen dazwischen
+  Labor-Hülle an den vier Ecken, Glas an den vier Seitenmitten, die Mitte bleibt frei.
+- **Gravitations-Pendel (3 × 5 × 3):** Boden und Deckel aus Labor-Hülle, vier Eckpfosten aus Labor-Hülle
+  (3 hoch), in der Mitte auf halber Höhe der Schwebstein-Kern.
+- **Fluxkristall-Resonator:** Kern mit 3 Spalten à 3 Plätzen, jede angrenzende Resonator-Kammer (bis 6) gibt eine
+  Spalte dazu. Stäbe schwingen mit ihren Nachbarn (20 FE/t pro Puls, 4 Hitze pro Puls), Kühlkörper führen 12 Hitze/t ab,
+  Wasser bringt 1,5-fache Leistung. Bei 10.000 Hitze explodiert der Kristall; Redstone schaltet ab.
+
+### Entscheidungen in Meilenstein 3
+
+- **Henne-Ei-Problem gelöst:** Kanone Mk II braucht Material aus T2-Welten, die laut Dokument erst Mk II erreicht.
+  Deshalb springt die Mk I mit **stabilisiertem Portalfluid** zufällig auch in die T2-Typen; gezielt geht es erst
+  mit Mk II. Die Raffinerie lässt sich komplett aus T1-Material bauen.
+- **Stabilisator als Kompat-Tag:** Die Stabilisierte Linse fragt `riftverse:compat/stabilisator` ab. Ohne Pack steht
+  dort der Flux-Stabilisator (Quantenzentrifuge: Fluxkristall + Säuregel), im Pack kann KubeJS den Source-Gem eintragen.
+- **Umspanner:** spannt herunter bis zu 4 Pakete à 128 FE/t pro Tick, hoch ein Paket à 1.024 FE/t. Die Seiten haben
+  im Netz feste Rollen, Strom fließt also nie „rückwärts“ durch.
+- **Präzisions-Montierer:** Die Schritte sind die Slots in fester Reihenfolge (oben links beginnend); die GUI zeigt
+  den aktuellen Schritt. Verbraucht wird alles am Ende, abgebrochene Montagen verlieren nichts.
+- **Chrono-Beschleuniger:** Die Rückseite zeigt zur Maschine, Rechtsklick wechselt die Stufe. Generatoren lassen sich
+  nicht beschleunigen, Pflanzen schon. Er hat keine GUI und deshalb keinen Akku-Slot.
+- **Labor-Hülle statt Labor-Gehäuse** in den Multiblöcken, weil 25–29 Labor-Gehäuse pro Bau zu teuer wären.
+- **Schwebeinseln:** Um jede Zellmitte liegt eine große Heimatinsel, auf der die Rifts landen; der Rest sind
+  verstreute Inseln über dem Nichts.
+- **Zeitdilatation:** Drei zusätzliche Runden Zufallsticks rund um jeden Spieler (Radius 3 Chunks). Etwa alle
+  anderthalb Minuten springen Spieler und Kreaturen in der Nähe auf ihre Position von vor bis zu fünf Sekunden zurück.
+- **Organische Welt:** Nur Geländeblöcke (Tag `riftverse:waechst_nach`) wachsen nach 1–2 Minuten nach, die Liste
+  übersteht einen Neustart.
+
+## Meilenstein 2 – Spielbarer Prototyp
 
 Ab jetzt lässt sich Riftverse im Überleben von der Garage bis zum ersten Sprung durchspielen.
 

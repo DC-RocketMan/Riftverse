@@ -27,6 +27,8 @@ public class InsulatedCableBlock extends CableBlock {
 
     /** Farbe der Streifen bei ungefärbten Kabeln (Xenit-Petrol, hell). */
     public static final int DEFAULT_TINT = 0x5AA9B0;
+    /** Streifen der ungefärbten Flux-Leitung (Labor-Weiß). */
+    public static final int DEFAULT_TINT_II = 0xE6EAEC;
 
     public InsulatedCableBlock(Properties properties, VoltageTier tier, double lossPerBlock, int thicknessPx) {
         super(properties, tier, lossPerBlock, thicknessPx, true);
@@ -57,6 +59,7 @@ public class InsulatedCableBlock extends CableBlock {
     /** Tint für Modell und Partikel. */
     public static int tint(BlockState state) {
         int c = color(state);
-        return c == 0 ? DEFAULT_TINT : DyeColor.byId(c - 1).getFireworkColor();
+        if (c != 0) return DyeColor.byId(c - 1).getFireworkColor();
+        return state.getBlock() instanceof CableBlock cable && cable.tier() == VoltageTier.II ? DEFAULT_TINT_II : DEFAULT_TINT;
     }
 }

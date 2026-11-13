@@ -1,6 +1,11 @@
 package dev.riftverse.universe;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -8,6 +13,20 @@ import org.jetbrains.annotations.Nullable;
  * mit eigenem Seed und eigenen Modifikatoren.
  */
 public record UniverseId(UniverseType type, int cellX, int cellZ) {
+
+    /** Für Data Components (Universumsprobe, Koordinatenkarte). */
+    public static final Codec<UniverseId> CODEC = RecordCodecBuilder.create(i -> i.group(
+            UniverseType.CODEC.fieldOf("type").forGetter(UniverseId::type),
+            Codec.INT.fieldOf("x").forGetter(UniverseId::cellX),
+            Codec.INT.fieldOf("z").forGetter(UniverseId::cellZ)
+    ).apply(i, UniverseId::new));
+
+    public static final StreamCodec<ByteBuf, UniverseId> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT.map(o -> UniverseType.values()[Math.floorMod(o, UniverseType.values().length)], UniverseType::ordinal),
+            UniverseId::type,
+            ByteBufCodecs.VAR_INT, UniverseId::cellX,
+            ByteBufCodecs.VAR_INT, UniverseId::cellZ,
+            UniverseId::new);
 
     private static final String LETTERS = "ABCDEFGHJKLMNPRSTVWXZ";
 

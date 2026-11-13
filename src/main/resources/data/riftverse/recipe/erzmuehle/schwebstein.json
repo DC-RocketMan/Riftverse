@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:schwebstein"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:schwebstein_brocken",
+    "count": 4
+  },
+  "time": 120
+}

@@ -41,6 +41,11 @@ public class SpeicherMenu extends AbstractContainerMenu {
         addDataSlots(data);
     }
 
+    /** Spannungsstufe des Speichers (Xenit-Zelle I, Flux-Zelle II). */
+    public dev.riftverse.energy.VoltageTier tier() {
+        return cell != null ? cell.tier() : dev.riftverse.energy.VoltageTier.I;
+    }
+
     public int energy() {
         return MenuHelper.joined(data, XenitZelleBlockEntity.DATA_ENERGY_LO, XenitZelleBlockEntity.DATA_ENERGY_HI);
     }

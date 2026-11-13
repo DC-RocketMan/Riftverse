@@ -625,7 +625,7 @@ EN = {
 
 
 def lang(texture_pack_de=None):
-    for code, entries in (('de_de', {**DE, **M2_DE}), ('en_us', {**EN, **M2_EN})):
+    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE}), ('en_us', {**EN, **M2_EN, **M3_EN})):
         p = os.path.join(ASSETS, 'lang', code + '.json')
         data = {}
         if os.path.exists(p):
@@ -1151,6 +1151,425 @@ M2_REMOVE = [
 ]
 
 
+# =============================================================================
+# Meilenstein 3 – T2 Rift-Labor
+# =============================================================================
+M3_T2_MACHINES = ('praezisions_montierer', 'quantenzentrifuge', 'gravitationspresse', 'chrono_beschleuniger',
+                  'portalfluid_raffinerie', 'fluxkristall_resonator', 'gravitations_pendel')
+M3_BLOCKS_SELF = M3_T2_MACHINES + ('dimensions_scanner', 'biomasse_kessel', 'zeitschleifen_solar', 'umspanner',
+                                   'labor_gehaeuse', 'labor_huelle', 'resonator_kammer', 'schwebstein_kern',
+                                   'flux_leitung', 'flux_leitung_isoliert', 'chronoglas_sand', 'chronoglas')
+M3_ITEMS = ['verbundplatte', 'flux_spule', 'rift_schaltkreis', 'stabilisierte_linse', 'kanonenkern', 'chronoglas_griff',
+            'chronoglas_scheibe', 'antigrav_platte', 'aetzloesung', 'toxinrest', 'flux_stabilisator', 'naehrserum',
+            'fluxkristall_stab', 'kuehlkoerper', 'schwebstein_brocken', 'biomasse_pulpe', 'fluid_kartusche_stabil',
+            'universumsprobe', 'koordinatenkarte']
+
+
+def m3_models():
+    cable('flux_leitung', 4, False)
+    cable('flux_leitung_isoliert', 6, True)
+
+    # Umspanner: Front = Hochspannungsseite, mit Redstone (hochspannen) leuchtet die Front anders
+    for suffix in ('', '_hoch'):
+        side = tex('umspanner_side')
+        block_model('umspanner' + suffix, 'minecraft:block/cube', {
+            'particle': side, 'north': tex('umspanner_front' + suffix), 'south': side, 'east': side, 'west': side,
+            'up': side, 'down': side})
+    variants = {}
+    for facing, (x, y) in ALL_DIRS.items():
+        for powered in ('false', 'true'):
+            for active in ('false', 'true'):
+                variants[f'active={active},facing={facing},powered={powered}'] = variant(
+                    'umspanner' + ('_hoch' if powered == 'true' else ''), x=x, y=y)
+    blockstate('umspanner', variants)
+    item_from_block('umspanner')
+
+    # Flux-Zelle: leuchtendes Füllstandsband an den Seiten (fuellung 0–4)
+    for n in range(5):
+        block_model(f'flux_zelle_{n}', 'minecraft:block/cube_bottom_top', {
+            'top': tex('casing_t2_top'), 'bottom': tex('casing_t2_top'), 'side': tex(f'flux_zelle_side_{n}')})
+    variants = {}
+    for facing in HORIZONTAL:
+        for active in ('false', 'true'):
+            for n in range(5):
+                variants[f'active={active},facing={facing},fuellung={n}'] = variant(f'flux_zelle_{n}')
+    blockstate('flux_zelle', variants)
+    item_from_block('flux_zelle', 'flux_zelle_2')
+
+    casing_block('labor_gehaeuse', 2)
+    for n in ('labor_huelle', 'resonator_kammer', 'schwebstein_kern', 'schwebstein', 'chronoglas_sand', 'biomasse_block'):
+        cube_all(n)
+    block_model('chronoglas', 'minecraft:block/cube_all', {'all': tex('chronoglas')}, render_type='minecraft:translucent')
+    blockstate('chronoglas', {'': variant('chronoglas')})
+    item_from_block('chronoglas')
+
+    for n in M3_T2_MACHINES:
+        machine(n, 2)
+    machine('biomasse_kessel', 1)
+    # Dimensions-Scanner: eigener Deckel mit Antenne
+    for suffix in ('', '_on'):
+        block_model('dimensions_scanner' + suffix, 'minecraft:block/orientable', {
+            'top': tex('dimensions_scanner_top'), 'side': tex('casing_t2'), 'front': tex('dimensions_scanner_front' + suffix)})
+    blockstate('dimensions_scanner', {f'active={a},facing={f}': variant('dimensions_scanner' + ('_on' if a == 'true' else ''), y=y)
+                                      for f, y in HORIZONTAL.items() for a in ('false', 'true')})
+    item_from_block('dimensions_scanner')
+    # Zeitschleifen-Solarpanel: Panel oben, Labor-Gehäuse an den Seiten
+    block_model('zeitschleifen_solar', 'minecraft:block/cube_bottom_top', {
+        'top': tex('zeitschleifen_solar_top'), 'bottom': tex('casing_t2_top'), 'side': tex('casing_t2')})
+    blockstate('zeitschleifen_solar', {f'active={a},facing={f}': variant('zeitschleifen_solar')
+                                       for f in HORIZONTAL for a in ('false', 'true')})
+    item_from_block('zeitschleifen_solar')
+
+    # Fressende Flora: Kreuzmodell
+    block_model('fressende_flora', 'minecraft:block/cross', {'cross': tex('fressende_flora')}, render_type='minecraft:cutout')
+    blockstate('fressende_flora', {'': variant('fressende_flora')})
+    write(os.path.join(ASSETS, 'models', 'item', 'fressende_flora.json'), {
+        'parent': 'minecraft:item/generated', 'textures': {'layer0': tex('fressende_flora')}})
+
+    for n in M3_ITEMS:
+        item_generated(n)
+    item_generated('portal_kanone_mk2', handheld=True)
+
+
+def m3_loot():
+    for n in M3_BLOCKS_SELF:
+        loot_self(n)
+    write(os.path.join(DATA, NS, 'loot_table', 'blocks', 'flux_zelle.json'), {
+        'type': 'minecraft:block',
+        'pools': [{'rolls': 1, 'bonus_rolls': 0,
+                   'entries': [{'type': 'minecraft:item', 'name': rl('flux_zelle'), 'functions': [
+                       {'function': 'minecraft:copy_components', 'source': 'block_entity', 'include': [f'{NS}:energy']}]}],
+                   'conditions': [{'condition': 'minecraft:survives_explosion'}]}],
+        'random_sequence': f'{NS}:blocks/flux_zelle'})
+    loot_drop('schwebstein', 'schwebstein_brocken', 2, 3)
+    loot_drop('biomasse_block', 'biomasse_pulpe', 1, 3)
+    write(os.path.join(DATA, NS, 'loot_table', 'blocks', 'fressende_flora.json'),
+          {'type': 'minecraft:block', 'pools': [], 'random_sequence': f'{NS}:blocks/fressende_flora'})
+
+
+def m3_tags():
+    labor = [*M3_T2_MACHINES, 'dimensions_scanner', 'zeitschleifen_solar', 'umspanner', 'flux_zelle', 'labor_gehaeuse',
+             'labor_huelle', 'resonator_kammer', 'schwebstein_kern']
+    tag('block', 'minecraft:mineable/pickaxe', [*labor, 'biomasse_kessel', 'schwebstein', 'flux_leitung', 'flux_leitung_isoliert'])
+    tag('block', 'minecraft:needs_iron_tool', labor)
+    tag('block', 'minecraft:needs_stone_tool', ['biomasse_kessel', 'schwebstein'])
+    tag('block', 'minecraft:mineable/shovel', ['chronoglas_sand'])
+    tag('block', 'minecraft:mineable/hoe', ['biomasse_block'])
+    tag('block', 'minecraft:impermeable', ['chronoglas'])
+    tag('block', f'{NS}:waechst_nach', ['biomasse_block', 'minecraft:nether_wart_block', 'minecraft:moss_block',
+                                        'minecraft:mud', 'minecraft:packed_mud', 'minecraft:mycelium', 'minecraft:rooted_dirt',
+                                        'minecraft:dirt', 'minecraft:dripstone_block', 'minecraft:stone', 'minecraft:deepslate',
+                                        'minecraft:clay', 'minecraft:shroomlight', 'minecraft:bone_block'])
+    tag('item', f'{NS}:biomasse', ['biomasse_pulpe', '#minecraft:saplings', '#minecraft:leaves', '#minecraft:flowers',
+                                   'minecraft:wheat', 'minecraft:carrot', 'minecraft:potato', 'minecraft:beetroot',
+                                   'minecraft:kelp', 'minecraft:sugar_cane', 'minecraft:short_grass', 'minecraft:fern',
+                                   'minecraft:vine', 'minecraft:melon_slice', 'minecraft:pumpkin', 'minecraft:cactus',
+                                   'minecraft:bamboo', 'minecraft:sweet_berries'])
+    # Kompat-Zutat: Im Pack trägt KubeJS z. B. den Source-Gem aus Ars Nouveau ein
+    tag('item', f'{NS}:compat/stabilisator', ['flux_stabilisator'])
+    tag('item', 'c:glass_blocks', ['chronoglas'])
+    tag('block', 'c:glass_blocks', ['chronoglas'])
+    tag('damage_type', 'minecraft:no_knockback', [f'{NS}:fressende_flora'])
+
+
+def montierer(path, steps, out, count=1, time=200):
+    """Präzisions-Montierer: Schritt i gehört in Slot i (Reihenfolge zählt)."""
+    machine_recipe2('praezisions_montierer', path, steps, out, count, time=time)
+
+
+def m3_recipes():
+    # --- Garagen-Werkbank: Netz, Gehäuse, Bauteile -----------------------------------
+    werkbank_shaped('flux_leitung', ['GGG', 'FFF', 'GGG'], {'G': '#c:wires/gold', 'F': '#c:dusts/fluxkristall'}, 'flux_leitung', 6)
+    werkbank_shapeless('flux_leitung_isoliert', ['flux_leitung', 'isolierfolie'], 'flux_leitung_isoliert')
+    werkbank_shaped('labor_huelle', ['ISI', 'S S', 'ISI'], {'I': '#c:plates/iron', 'S': '#c:plates/steel'}, 'labor_huelle', 4, hammer=1)
+    werkbank_shaped('labor_gehaeuse', ['SVS', 'VXV', 'SVS'],
+                    {'S': '#c:plates/steel', 'V': 'verbundplatte', 'X': 'xenit_gehaeuse'}, 'labor_gehaeuse', hammer=1)
+    werkbank_shaped('flux_spule', ['GFG', 'GXG', 'GFG'],
+                    {'G': '#c:wires/gold', 'F': '#c:dusts/fluxkristall', 'X': '#c:rods/xenit'}, 'flux_spule', loetzinn=1)
+    werkbank_shaped('umspanner', ['IKI', 'SXT', 'IFI'],
+                    {'I': '#c:plates/iron', 'K': 'kupferkabel_isoliert', 'F': 'flux_leitung_isoliert', 'S': 'xenit_spule',
+                     'T': 'flux_spule', 'X': 'xenit_gehaeuse'}, 'umspanner', loetzinn=2)
+    werkbank_shaped('flux_zelle', ['FTF', 'XLX', 'FRF'],
+                    {'F': '#c:gems/fluxkristall', 'T': 'flux_spule', 'X': 'xenit_zelle', 'L': 'labor_gehaeuse',
+                     'R': 'rift_schaltkreis'}, 'flux_zelle', loetzinn=2)
+    werkbank_shaped('fluxkristall_stab', [' F ', 'HXH', ' F '],
+                    {'F': '#c:gems/fluxkristall', 'H': 'zinn_huelse', 'X': '#c:rods/xenit'}, 'fluxkristall_stab', loetzinn=1)
+    werkbank_shaped('kuehlkoerper', ['KZK', 'ZKZ', 'KZK'], {'K': '#c:plates/copper', 'Z': '#c:plates/tin'}, 'kuehlkoerper', 2, hammer=1)
+    werkbank_shaped('universumsprobe', [' G ', 'GFG', ' X '],
+                    {'G': '#c:glass_panes', 'F': '#c:dusts/fluxkristall', 'X': '#c:plates/xenit'}, 'universumsprobe', 4)
+    werkbank_shaped('chronoglas_griff', ['CXC', ' X ', ' P '],
+                    {'C': 'chronoglas_scheibe', 'X': '#c:rods/xenit', 'P': 'polymerfetzen'}, 'chronoglas_griff', hammer=1)
+    werkbank_shaped('schwebstein_kern', ['SAS', 'AXA', 'SAS'],
+                    {'S': 'schwebstein', 'A': 'antigrav_platte', 'X': '#c:storage_blocks/iron'}, 'schwebstein_kern', hammer=2)
+    werkbank_shaped('resonator_kammer', ['PHP', 'HKH', 'PHP'],
+                    {'P': '#c:plates/steel', 'H': 'labor_huelle', 'K': 'kuehlkoerper'}, 'resonator_kammer', hammer=1)
+
+    # --- Garagen-Werkbank: Maschinen und Generatoren -------------------------------------
+    # Montierer und Zentrifuge stellen die Rift-Schaltkreise erst her, also kommen sie mit Basis-Schaltkreisen aus
+    werkbank_shaped('praezisions_montierer', ['PMP', 'BLB', 'TXT'],
+                    {'P': '#c:plates/steel', 'M': 'mini_motor', 'B': 'basis_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule', 'X': 'minecraft:piston'}, 'praezisions_montierer', loetzinn=3)
+    werkbank_shaped('quantenzentrifuge', ['GMG', 'BLB', 'TFT'],
+                    {'G': '#c:glass_blocks', 'M': 'mini_motor', 'B': 'basis_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule', 'F': 'fluxlinse'}, 'quantenzentrifuge', loetzinn=3)
+    werkbank_shaped('gravitationspresse', ['SAS', 'RLR', 'TPT'],
+                    {'S': '#c:plates/steel', 'A': 'minecraft:anvil', 'R': 'rift_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule', 'P': 'minecraft:piston'}, 'gravitationspresse', loetzinn=3)
+    werkbank_shaped('dimensions_scanner', ['KUK', 'RLR', 'TCT'],
+                    {'K': 'stabilisierte_linse', 'U': 'universe_scanner', 'R': 'rift_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule', 'C': 'minecraft:cartography_table'}, 'dimensions_scanner', loetzinn=3)
+    werkbank_shaped('chrono_beschleuniger', ['CUC', 'RLR', 'TCT'],
+                    {'C': 'chronoglas_scheibe', 'U': 'minecraft:clock', 'R': 'rift_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule'}, 'chrono_beschleuniger', loetzinn=3)
+    werkbank_shaped('portalfluid_raffinerie', ['GKG', 'RLR', 'TMT'],
+                    {'G': '#c:glass_blocks', 'K': 'minecraft:cauldron', 'R': 'rift_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule', 'M': 'fluid_mixer'}, 'portalfluid_raffinerie', loetzinn=3)
+    werkbank_shaped('biomasse_kessel', ['ICI', 'FXF', 'BSB'],
+                    {'I': '#c:plates/iron', 'C': 'minecraft:composter', 'F': 'minecraft:furnace', 'X': 'xenit_gehaeuse',
+                     'B': 'basis_schaltkreis', 'S': 'xenit_spule'}, 'biomasse_kessel', loetzinn=2)
+    werkbank_shaped('zeitschleifen_solar', ['CCC', 'RLR', 'TDT'],
+                    {'C': 'chronoglas_scheibe', 'R': 'rift_schaltkreis', 'L': 'labor_gehaeuse', 'T': 'flux_spule',
+                     'D': 'minecraft:daylight_detector'}, 'zeitschleifen_solar', loetzinn=2)
+    werkbank_shaped('fluxkristall_resonator', ['FKF', 'RLR', 'TBT'],
+                    {'F': 'fluxkristall_block', 'K': 'stabilisierte_linse', 'R': 'rift_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule', 'B': 'minecraft:bucket'}, 'fluxkristall_resonator', loetzinn=3)
+    werkbank_shaped('gravitations_pendel', ['AUA', 'RLR', 'TST'],
+                    {'A': 'antigrav_platte', 'U': 'minecraft:clock', 'R': 'rift_schaltkreis', 'L': 'labor_gehaeuse',
+                     'T': 'flux_spule', 'S': '#c:plates/steel'}, 'gravitations_pendel', loetzinn=3)
+
+    # --- Normale Werkbank ---------------------------------------------------------------
+    shaped_vanilla('chronoglas', ['CC', 'CC'], {'C': 'chronoglas_scheibe'}, 'chronoglas')
+
+    # --- Maschinen ------------------------------------------------------------------------
+    machine_recipe('garagenpresse', 'verbundplatte',
+                   [('mischmetall', 1), ('#c:dusts/xenit', 1), ('#c:dusts/fluxkristall', 1)], 'verbundplatte', time=60)
+    machine_recipe2('xenit_schmelze', 'chronoglas_scheibe', [('chronoglas_sand', 1)], 'chronoglas_scheibe', 2, time=120)
+    machine_recipe2('erzmuehle', 'schwebstein', [('schwebstein', 1)], 'schwebstein_brocken', 4, time=120)
+    machine_recipe2('quantenzentrifuge', 'saeuregel', [('saeuregel', 1)], 'aetzloesung', 1, time=200,
+                    byproducts=[('toxinrest', 1, 0.5)])
+    machine_recipe2('quantenzentrifuge', 'biomasse_pulpe', [('biomasse_pulpe', 2)], 'naehrserum', 1, time=160,
+                    byproducts=[('polymerfetzen', 1, 0.3), ('minecraft:bone_meal', 1, 0.5)])
+    machine_recipe2('quantenzentrifuge', 'flux_stabilisator', [('#c:gems/fluxkristall', 1), ('saeuregel', 1)],
+                    'flux_stabilisator', 1, time=300, byproducts=[('toxinrest', 1, 0.5)])
+    machine_recipe2('quantenzentrifuge', 'toxinrest', [('toxinrest', 4)], 'minecraft:slime_ball', 1, time=200,
+                    byproducts=[('saeuregel', 1, 0.25)])
+    machine_recipe2('gravitationspresse', 'antigrav_platte', [('schwebstein_brocken', 2)], 'antigrav_platte', 1, time=200)
+    machine_recipe2('dimensions_scanner', 'koordinatenkarte', [('universumsprobe', 1), ('minecraft:paper', 1)],
+                    'koordinatenkarte', 1, time=300)
+    # Präzisions-Montierer: die Reihenfolge der Zutaten ist die Reihenfolge der Slots
+    montierer('rift_schaltkreis', [('basis_schaltkreis', 1), ('#c:wires/gold', 2), ('aetzloesung', 1),
+                                   ('#c:dusts/fluxkristall', 1)], 'rift_schaltkreis', time=240)
+    montierer('stabilisierte_linse', [('fluxlinse', 1), (f'#{NS}:compat/stabilisator', 1), ('#c:wires/gold', 2)],
+              'stabilisierte_linse', time=200)
+    montierer('kanonenkern', [('rift_schaltkreis', 2), ('antigrav_platte', 1), ('stabilisierte_linse', 1)], 'kanonenkern', time=300)
+    montierer('portal_kanone_mk2', [('portal_kanone_mk1', 1), ('kanonenkern', 1), ('chronoglas_griff', 1),
+                                    ('verbundplatte', 2), ('flux_spule', 1)], 'portal_kanone_mk2', time=400)
+    recipe('raffinerie/portalfluid', {
+        'type': f'{NS}:raffinerie',
+        'ingredients': [{'ingredient': ing('saeuregel')}, {'ingredient': ing('#c:dusts/fluxkristall')}],
+        'fluid': {'fluid': rl('roh_portalfluid'), 'amount': 1000},
+        'result': {'id': rl('portalfluid'), 'amount': 1000},
+        'time': 300})
+
+
+M3_UNIVERSES = {
+    'niedriggravitation': (['schwebe_himmel', 'schwebe_daemmerung'], None, 0.0),
+    'zeitdilatation': (['zeit_bernstein', 'zeit_violett'], None, 0.05),
+    'organische_welt': (['organisch_rosa', 'organisch_purpur'], None, 0.0),
+}
+
+
+def m3_universes():
+    sky_monsters = [spawn('minecraft:phantom', 20, 1, 2), spawn('minecraft:skeleton', 40, 1, 2), spawn('minecraft:spider', 30, 1, 2)]
+    time_monsters = [spawn('minecraft:zombie', 40, 2, 3), spawn('minecraft:husk', 30, 1, 2), spawn('minecraft:stray', 20, 1, 2)]
+    flesh_monsters = [spawn('minecraft:slime', 50, 1, 3), spawn('minecraft:silverfish', 20, 2, 4), spawn('minecraft:zombie', 30, 2, 3)]
+    sky_animals = [spawn('minecraft:sheep', 8, 2, 3), spawn('minecraft:chicken', 8, 2, 4)]
+    time_animals = [spawn('minecraft:rabbit', 8, 2, 3), spawn('minecraft:bee', 4, 1, 2), spawn('minecraft:cow', 6, 2, 3)]
+    flesh_animals = [spawn('minecraft:pig', 6, 2, 3), spawn('minecraft:mooshroom', 4, 1, 2)]
+    biome('schwebe_himmel', True, {'sky_color': 0x9AD0FF, 'fog_color': 0xE6F4FF, 'water_color': 0x6AB8FF,
+                                   'water_fog_color': 0x2A6AB0, 'grass_color': 0x9ADC8A, 'foliage_color': 0x7AC070},
+          sky_monsters, sky_animals)
+    biome('schwebe_daemmerung', True, {'sky_color': 0xC8A8E8, 'fog_color': 0xF0DCF4, 'water_color': 0x8A9AE0,
+                                       'water_fog_color': 0x4A50A0, 'grass_color': 0xA8D0A0, 'foliage_color': 0x88B088},
+          sky_monsters, sky_animals)
+    biome('zeit_bernstein', False, {'sky_color': 0xE8C080, 'fog_color': 0xF0D8A8, 'water_color': 0xC8A060,
+                                    'water_fog_color': 0x806030, 'grass_color': 0xC8C060, 'foliage_color': 0xB0A048},
+          time_monsters, time_animals, temperature=1.2)
+    biome('zeit_violett', False, {'sky_color': 0xA890E8, 'fog_color': 0xD8C8F8, 'water_color': 0x9A6BFF,
+                                  'water_fog_color': 0x5A3AA8, 'grass_color': 0x9AB0D0, 'foliage_color': 0x8A90C0},
+          time_monsters, time_animals)
+    biome('organisch_rosa', True, {'sky_color': 0xE8A0A8, 'fog_color': 0xE8B8B8, 'water_color': 0xD87080,
+                                   'water_fog_color': 0x803040, 'grass_color': 0xC07070, 'foliage_color': 0xA05060},
+          flesh_monsters, flesh_animals)
+    biome('organisch_purpur', True, {'sky_color': 0xB878A8, 'fog_color': 0xC890B0, 'water_color': 0xA05080,
+                                     'water_fog_color': 0x602040, 'grass_color': 0x985878, 'foliage_color': 0x804060},
+          flesh_monsters, flesh_animals)
+
+    for dim, (biomes, fixed_time, ambient) in M3_UNIVERSES.items():
+        dt = {'ultrawarm': False, 'natural': True, 'piglin_safe': False, 'respawn_anchor_works': False, 'bed_works': True,
+              'has_raids': False, 'has_skylight': True, 'has_ceiling': False, 'coordinate_scale': 1.0,
+              'ambient_light': ambient, 'logical_height': 384, 'effects': 'minecraft:overworld',
+              'infiniburn': '#minecraft:infiniburn_overworld', 'min_y': -64, 'height': 384,
+              'monster_spawn_light_level': 7, 'monster_spawn_block_light_limit': 0}
+        if fixed_time is not None:
+            dt['fixed_time'] = fixed_time
+        write(os.path.join(DATA, NS, 'dimension_type', dim + '.json'), dt)
+        write(os.path.join(DATA, NS, 'dimension', dim + '.json'), {
+            'type': rl(dim),
+            'generator': {'type': rl('multiverse'), 'universe': dim,
+                          'biome_source': {'type': rl('universe'), 'universe': dim, 'biomes': [rl(b) for b in biomes]}}})
+
+    write(os.path.join(DATA, NS, 'damage_type', 'fressende_flora.json'), {
+        'exhaustion': 0.1, 'message_id': f'{NS}.fressende_flora', 'scaling': 'never'})
+
+
+M3_DE = {
+    'block.riftverse.flux_leitung': 'Flux-Leitung', 'block.riftverse.flux_leitung_isoliert': 'Isolierte Flux-Leitung',
+    'block.riftverse.umspanner': 'Umspanner (I ↔ II)', 'block.riftverse.flux_zelle': 'Flux-Zelle',
+    'block.riftverse.labor_gehaeuse': 'Labor-Gehäuse', 'block.riftverse.labor_huelle': 'Labor-Hülle',
+    'block.riftverse.praezisions_montierer': 'Präzisions-Montierer', 'block.riftverse.quantenzentrifuge': 'Quantenzentrifuge',
+    'block.riftverse.gravitationspresse': 'Gravitationspresse', 'block.riftverse.dimensions_scanner': 'Dimensions-Scanner',
+    'block.riftverse.chrono_beschleuniger': 'Chrono-Beschleuniger', 'block.riftverse.portalfluid_raffinerie': 'Portalfluid-Raffinerie',
+    'block.riftverse.biomasse_kessel': 'Biomasse-Kessel', 'block.riftverse.zeitschleifen_solar': 'Zeitschleifen-Solarpanel',
+    'block.riftverse.fluxkristall_resonator': 'Fluxkristall-Resonator', 'block.riftverse.resonator_kammer': 'Resonator-Kammer',
+    'block.riftverse.gravitations_pendel': 'Gravitations-Pendel', 'block.riftverse.schwebstein_kern': 'Schwebstein-Kern',
+    'block.riftverse.schwebstein': 'Schwebstein', 'block.riftverse.chronoglas_sand': 'Chronoglas-Sand',
+    'block.riftverse.chronoglas': 'Chronoglas', 'block.riftverse.biomasse_block': 'Biomasse',
+    'block.riftverse.fressende_flora': 'Fressende Flora',
+    'item.riftverse.portal_kanone_mk2': 'Portal-Kanone Mk II',
+    'item.riftverse.fluid_kartusche_stabil': 'Fluid-Kartusche (stabil)',
+    'item.riftverse.fluid_kartusche_stabil.lore': '1.000 mB stabilisiertes Portalfluid – zerfällt nicht',
+    'item.riftverse.universumsprobe': 'Universumsprobe', 'item.riftverse.koordinatenkarte': 'Koordinatenkarte',
+    'item.riftverse.verbundplatte': 'Verbundplatte', 'item.riftverse.flux_spule': 'Flux-Spule',
+    'item.riftverse.rift_schaltkreis': 'Rift-Schaltkreis', 'item.riftverse.stabilisierte_linse': 'Stabilisierte Linse',
+    'item.riftverse.kanonenkern': 'Kanonenkern', 'item.riftverse.chronoglas_griff': 'Chronoglas-Griff',
+    'item.riftverse.chronoglas_scheibe': 'Chronoglas-Scheibe', 'item.riftverse.antigrav_platte': 'Antigrav-Platte',
+    'item.riftverse.aetzloesung': 'Ätzlösung', 'item.riftverse.toxinrest': 'Toxinrest',
+    'item.riftverse.flux_stabilisator': 'Flux-Stabilisator',
+    'item.riftverse.flux_stabilisator.lore': 'Stabilisierungszutat für Linsen (im Pack auch Source-Gem)',
+    'item.riftverse.naehrserum': 'Nährserum', 'item.riftverse.naehrserum.lore': 'Wird später im Klon-Tank gebraucht.',
+    'item.riftverse.fluxkristall_stab': 'Fluxkristall-Stab', 'item.riftverse.kuehlkoerper': 'Kühlkörper',
+    'item.riftverse.schwebstein_brocken': 'Schwebstein-Brocken', 'item.riftverse.biomasse_pulpe': 'Biomasse-Pulpe',
+    'fluid_type.riftverse.portalfluid': 'Stabilisiertes Portalfluid',
+    'universe.riftverse.niedriggravitation': 'Niedriggravitationswelt', 'universe.riftverse.zeitdilatation': 'Zeitdilatationswelt',
+    'universe.riftverse.organische_welt': 'Organische Welt',
+    'dimension.riftverse.niedriggravitation': 'Niedriggravitationswelten', 'dimension.riftverse.zeitdilatation': 'Zeitdilatationswelten',
+    'dimension.riftverse.organische_welt': 'Organische Welten',
+    'biome.riftverse.schwebe_himmel': 'Schwebehimmel', 'biome.riftverse.schwebe_daemmerung': 'Schwebedämmerung',
+    'biome.riftverse.zeit_bernstein': 'Bernsteinzeit', 'biome.riftverse.zeit_violett': 'Violette Ewigkeit',
+    'biome.riftverse.organisch_rosa': 'Fleischgarten', 'biome.riftverse.organisch_purpur': 'Purpurgewebe',
+    'gui.riftverse.serum': 'Nährserum', 'gui.riftverse.lichtschuld': 'Lichtschuld', 'gui.riftverse.pendel': 'Pendel',
+    'gui.riftverse.struktur_unvollstaendig': 'Struktur unvollständig!', 'gui.riftverse.schritt': 'Schritt %s/%s',
+    'tooltip.riftverse.kanone_mk1': 'Mk I: zufällige Sprünge – Roh-Portalfluid: T1-Welten, stabiles Portalfluid: auch T2-Welten',
+    'tooltip.riftverse.kanone_mk2': 'Mk II: nur stabiles Portalfluid, alle T1- und T2-Welten',
+    'tooltip.riftverse.kanone_karte': 'Koordinatenkarte in der anderen Hand: gezielter Sprung',
+    'tooltip.riftverse.kanone_tank_stabil': 'Stabiles Portalfluid: %s / %s mB (%s mB pro Schuss)',
+    'tooltip.riftverse.flux_zelle': 'Stufe II · behält die Ladung beim Abbauen',
+    'tooltip.riftverse.kessel_fuel': 'Verbrennt Biomasse-Pulpe (lange) oder Pflanzen',
+    'tooltip.riftverse.solar_kein_himmel': 'Kein freier Himmel über dem Panel!',
+    'tooltip.riftverse.solar_schuld': 'Lichtschuld: %s %% einer Nacht',
+    'tooltip.riftverse.solar_regel': 'Nachts volle Leistung auf Pump, tagsüber halbe Leistung, bis die Schuld bezahlt ist',
+    'tooltip.riftverse.multiblock_unvollstaendig': 'Struktur unvollständig',
+    'tooltip.riftverse.multiblock_rechtsklick': 'Rechtsklick auf den Steuerblock nennt das fehlende Teil',
+    'tooltip.riftverse.pendel_faktor': 'Gravitationsfaktor: %s×',
+    'tooltip.riftverse.hitze': 'Hitze: %s / %s', 'tooltip.riftverse.hitze_delta': 'Änderung: %s pro Tick',
+    'tooltip.riftverse.resonator_regel': 'Nachbarstäbe schwingen mit; Kühlkörper führen 12 Hitze/t ab; Redstone = Notabschaltung',
+    'tooltip.riftverse.resonator_wasser': 'Mit Wasser gekühlt: 1,5-fache Leistung',
+    'tooltip.riftverse.montierer_reihenfolge': 'Schritt 1 links oben, dann zeilenweise – die Reihenfolge zählt',
+    'tooltip.riftverse.probe_leer': 'Rechtsklick in einem Universum füllt die Probe',
+    'tooltip.riftverse.probe_scanner': 'Der Dimensions-Scanner macht daraus eine Koordinatenkarte',
+    'tooltip.riftverse.karte_leer': 'Leer',
+    'tooltip.riftverse.karte_benutzen': 'In die andere Hand nehmen und mit der Kanone ab Mk II schießen',
+    'message.riftverse.umspanner.runter': 'Umspanner: %s / %s FE · spannt herunter: Front %4$s → Seiten %3$s',
+    'message.riftverse.umspanner.hoch': 'Umspanner: %s / %s FE · spannt hoch (Redstone): Seiten %3$s → Front %4$s',
+    'message.riftverse.multiblock.fehlt': 'Es fehlt: %s bei %s %s %s',
+    'message.riftverse.chrono.aktiv': 'Chrono-Beschleuniger: %s× · %s FE/t · Puffer %s FE',
+    'message.riftverse.chrono.leerlauf': 'Chrono-Beschleuniger: %s× · %s FE/t · Puffer %s FE · keine Maschine dahinter oder zu wenig Strom',
+    'message.riftverse.schon_dort': 'Du bist schon in diesem Universum.',
+    'message.riftverse.rift_ziel': 'Rift geöffnet → %s (%s)',
+    'message.riftverse.karte_zu_weit': 'Diese Kanone erreicht keine %s.',
+    'message.riftverse.kein_fluid_stabil': 'Kein stabilisiertes Portalfluid! Fülle Kartuschen in der Portalfluid-Raffinerie.',
+    'message.riftverse.zeitverzerrung': '⌛ Zeitverzerrung!',
+    'message.riftverse.probe_heimat': 'Hier gibt es keine Universums-Signatur – nur in fremden Universen.',
+    'message.riftverse.probe_gefuellt': 'Probe gefüllt: %s',
+    'death.attack.riftverse.fressende_flora': '%1$s wurde von fressender Flora verdaut',
+    'death.attack.riftverse.fressende_flora.player': '%1$s wurde auf der Flucht vor %2$s von fressender Flora verdaut',
+}
+
+M3_EN = {
+    'block.riftverse.flux_leitung': 'Flux Line', 'block.riftverse.flux_leitung_isoliert': 'Insulated Flux Line',
+    'block.riftverse.umspanner': 'Transformer (I ↔ II)', 'block.riftverse.flux_zelle': 'Flux Cell',
+    'block.riftverse.labor_gehaeuse': 'Lab Casing', 'block.riftverse.labor_huelle': 'Lab Hull',
+    'block.riftverse.praezisions_montierer': 'Precision Assembler', 'block.riftverse.quantenzentrifuge': 'Quantum Centrifuge',
+    'block.riftverse.gravitationspresse': 'Gravity Press', 'block.riftverse.dimensions_scanner': 'Dimension Scanner',
+    'block.riftverse.chrono_beschleuniger': 'Chrono Accelerator', 'block.riftverse.portalfluid_raffinerie': 'Portal Fluid Refinery',
+    'block.riftverse.biomasse_kessel': 'Biomass Boiler', 'block.riftverse.zeitschleifen_solar': 'Time Loop Solar Panel',
+    'block.riftverse.fluxkristall_resonator': 'Flux Crystal Resonator', 'block.riftverse.resonator_kammer': 'Resonator Chamber',
+    'block.riftverse.gravitations_pendel': 'Gravity Pendulum', 'block.riftverse.schwebstein_kern': 'Floatstone Core',
+    'block.riftverse.schwebstein': 'Floatstone', 'block.riftverse.chronoglas_sand': 'Chronoglass Sand',
+    'block.riftverse.chronoglas': 'Chronoglass', 'block.riftverse.biomasse_block': 'Biomass',
+    'block.riftverse.fressende_flora': 'Devouring Flora',
+    'item.riftverse.portal_kanone_mk2': 'Portal Gun Mk II',
+    'item.riftverse.fluid_kartusche_stabil': 'Fluid Cartridge (stable)',
+    'item.riftverse.fluid_kartusche_stabil.lore': '1,000 mB stabilized portal fluid – does not decay',
+    'item.riftverse.universumsprobe': 'Universe Sample', 'item.riftverse.koordinatenkarte': 'Coordinate Map',
+    'item.riftverse.verbundplatte': 'Composite Plate', 'item.riftverse.flux_spule': 'Flux Coil',
+    'item.riftverse.rift_schaltkreis': 'Rift Circuit', 'item.riftverse.stabilisierte_linse': 'Stabilized Lens',
+    'item.riftverse.kanonenkern': 'Gun Core', 'item.riftverse.chronoglas_griff': 'Chronoglass Grip',
+    'item.riftverse.chronoglas_scheibe': 'Chronoglass Pane', 'item.riftverse.antigrav_platte': 'Antigrav Plate',
+    'item.riftverse.aetzloesung': 'Etching Solution', 'item.riftverse.toxinrest': 'Toxin Residue',
+    'item.riftverse.flux_stabilisator': 'Flux Stabilizer',
+    'item.riftverse.flux_stabilisator.lore': 'Stabilizing ingredient for lenses (in the pack also Source Gems)',
+    'item.riftverse.naehrserum': 'Nutrient Serum', 'item.riftverse.naehrserum.lore': 'Needed later for the clone tank.',
+    'item.riftverse.fluxkristall_stab': 'Flux Crystal Rod', 'item.riftverse.kuehlkoerper': 'Heat Sink',
+    'item.riftverse.schwebstein_brocken': 'Floatstone Chunk', 'item.riftverse.biomasse_pulpe': 'Biomass Pulp',
+    'fluid_type.riftverse.portalfluid': 'Stabilized Portal Fluid',
+    'universe.riftverse.niedriggravitation': 'Low Gravity World', 'universe.riftverse.zeitdilatation': 'Time Dilation World',
+    'universe.riftverse.organische_welt': 'Organic World',
+    'dimension.riftverse.niedriggravitation': 'Low Gravity Worlds', 'dimension.riftverse.zeitdilatation': 'Time Dilation Worlds',
+    'dimension.riftverse.organische_welt': 'Organic Worlds',
+    'biome.riftverse.schwebe_himmel': 'Floating Sky', 'biome.riftverse.schwebe_daemmerung': 'Floating Dusk',
+    'biome.riftverse.zeit_bernstein': 'Amber Time', 'biome.riftverse.zeit_violett': 'Violet Eternity',
+    'biome.riftverse.organisch_rosa': 'Flesh Garden', 'biome.riftverse.organisch_purpur': 'Purple Tissue',
+    'gui.riftverse.serum': 'Nutrient serum', 'gui.riftverse.lichtschuld': 'Light debt', 'gui.riftverse.pendel': 'Pendulum',
+    'gui.riftverse.struktur_unvollstaendig': 'Structure incomplete!', 'gui.riftverse.schritt': 'Step %s/%s',
+    'tooltip.riftverse.kanone_mk1': 'Mk I: random jumps – raw portal fluid: T1 worlds, stable portal fluid: T2 worlds too',
+    'tooltip.riftverse.kanone_mk2': 'Mk II: stable portal fluid only, all T1 and T2 worlds',
+    'tooltip.riftverse.kanone_karte': 'Coordinate map in the other hand: targeted jump',
+    'tooltip.riftverse.kanone_tank_stabil': 'Stable portal fluid: %s / %s mB (%s mB per shot)',
+    'tooltip.riftverse.flux_zelle': 'Tier II · keeps its charge when mined',
+    'tooltip.riftverse.kessel_fuel': 'Burns biomass pulp (long) or plants',
+    'tooltip.riftverse.solar_kein_himmel': 'No open sky above the panel!',
+    'tooltip.riftverse.solar_schuld': 'Light debt: %s %% of a night',
+    'tooltip.riftverse.solar_regel': 'Full output at night on credit, half output by day until the debt is paid',
+    'tooltip.riftverse.multiblock_unvollstaendig': 'Structure incomplete',
+    'tooltip.riftverse.multiblock_rechtsklick': 'Right-click the controller to see the missing part',
+    'tooltip.riftverse.pendel_faktor': 'Gravity factor: %s×',
+    'tooltip.riftverse.hitze': 'Heat: %s / %s', 'tooltip.riftverse.hitze_delta': 'Change: %s per tick',
+    'tooltip.riftverse.resonator_regel': 'Neighbouring rods resonate; heat sinks remove 12 heat/t; redstone = emergency stop',
+    'tooltip.riftverse.resonator_wasser': 'Water cooled: 1.5× output',
+    'tooltip.riftverse.montierer_reihenfolge': 'Step 1 top left, then row by row – order matters',
+    'tooltip.riftverse.probe_leer': 'Right-click inside a universe to fill the sample',
+    'tooltip.riftverse.probe_scanner': 'The Dimension Scanner turns it into a coordinate map',
+    'tooltip.riftverse.karte_leer': 'Empty',
+    'tooltip.riftverse.karte_benutzen': 'Hold it in your other hand and fire a Mk II gun or better',
+    'message.riftverse.umspanner.runter': 'Transformer: %s / %s FE · stepping down: front %4$s → sides %3$s',
+    'message.riftverse.umspanner.hoch': 'Transformer: %s / %s FE · stepping up (redstone): sides %3$s → front %4$s',
+    'message.riftverse.multiblock.fehlt': 'Missing: %s at %s %s %s',
+    'message.riftverse.chrono.aktiv': 'Chrono Accelerator: %s× · %s FE/t · buffer %s FE',
+    'message.riftverse.chrono.leerlauf': 'Chrono Accelerator: %s× · %s FE/t · buffer %s FE · no machine behind it or not enough power',
+    'message.riftverse.schon_dort': 'You are already in this universe.',
+    'message.riftverse.rift_ziel': 'Rift opened → %s (%s)',
+    'message.riftverse.karte_zu_weit': 'This gun cannot reach a %s.',
+    'message.riftverse.kein_fluid_stabil': 'No stabilized portal fluid! Fill cartridges in the Portal Fluid Refinery.',
+    'message.riftverse.zeitverzerrung': '⌛ Time distortion!',
+    'message.riftverse.probe_heimat': 'No universe signature here – only in foreign universes.',
+    'message.riftverse.probe_gefuellt': 'Sample filled: %s',
+    'death.attack.riftverse.fressende_flora': '%1$s was digested by devouring flora',
+    'death.attack.riftverse.fressende_flora.player': '%1$s was digested by devouring flora while fleeing %2$s',
+}
+
+
 if __name__ == '__main__':
     import sys
     pack_de = None
@@ -1168,5 +1587,10 @@ if __name__ == '__main__':
     m2_recipes()
     m2_worldgen()
     m2_universes()
+    m3_models()
+    m3_loot()
+    m3_tags()
+    m3_recipes()
+    m3_universes()
     lang(pack_de)
     print('fertig')

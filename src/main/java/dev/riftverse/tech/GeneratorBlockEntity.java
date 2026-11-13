@@ -30,7 +30,7 @@ public abstract class GeneratorBlockEntity extends RiftEnergyBlockEntity
         implements RiftEnergySource, MenuProvider, ServerTickable, DropsContents {
 
     public static final int DATA_ENERGY_LO = 0, DATA_ENERGY_HI = 1, DATA_CAP_LO = 2, DATA_CAP_HI = 3,
-            DATA_WORK = 4, DATA_WORK_MAX = 5, DATA_COUNT = 6;
+            DATA_WORK = 4, DATA_WORK_MAX = 5, DATA_OUTPUT = 6, DATA_STATUS = 7, DATA_COUNT = 8;
 
     protected final ItemStackHandler items;
     protected final ContainerData data;
@@ -58,6 +58,8 @@ public abstract class GeneratorBlockEntity extends RiftEnergyBlockEntity
                     case DATA_CAP_HI -> energy.capacity() >>> 16;
                     case DATA_WORK -> work();
                     case DATA_WORK_MAX -> workMax();
+                    case DATA_OUTPUT -> currentOutput();
+                    case DATA_STATUS -> status();
                     default -> 0;
                 };
             }
@@ -76,6 +78,33 @@ public abstract class GeneratorBlockEntity extends RiftEnergyBlockEntity
     /** Erzeugung in FE/t (= Paketgröße). */
     public abstract int outputPerTick();
 
+    /** Was der Generator gerade erzeugt (für die GUI); Standard ist die Nennleistung. */
+    protected int currentOutput() {
+        return outputPerTick();
+    }
+
+    /** Zustand für die GUI, z. B. 1 = Multiblock unvollständig. 0 = alles in Ordnung. */
+    protected int status() {
+        return 0;
+    }
+
+    /** Spannungsstufe der Pakete; Generatoren ab T2 legen sie selbst fest. */
+    public VoltageTier tier() {
+        return VoltageTier.forPacket(outputPerTick());
+    }
+
+    /** Beschriftung des Balkens in der GUI (Schwung, Lichtschuld …), wenn der Generator keinen Brennstoff-Slot hat. */
+    public String barLabelKey() {
+        return "gui.riftverse.momentum";
+    }
+
+    /**
+     * Tooltip über dem Balken. Läuft auf dem Client, daher nur aus den synchronisierten Werten.
+     */
+    public java.util.List<Component> barTooltip(int work, int workMax, int output, int status) {
+        return java.util.List.of(Component.translatable("tooltip.riftverse.crank_hint"),
+                Component.translatable("tooltip.riftverse.output", output));
+    }
     public abstract int batterySlot();
 
     protected abstract boolean isItemValid(int slot, ItemStack stack);
@@ -96,7 +125,7 @@ public abstract class GeneratorBlockEntity extends RiftEnergyBlockEntity
     public void serverTick() {
         if (level == null) return;
         boolean running = generate();
-        ItemEnergy.charge(items.getStackInSlot(batterySlot()), energy, outputPerTick());
+        ItemEnergy.charge(items.getStackInSlot(batterySlot()), energy, Math.max(outputPerTick(), tier().maxPacket() / 4));
         BlockState state = level.getBlockState(worldPosition);
         if (state.hasProperty(TechBlock.ACTIVE) && state.getValue(TechBlock.ACTIVE) != running) {
             level.setBlock(worldPosition, state.setValue(TechBlock.ACTIVE, running), Block.UPDATE_ALL);
@@ -112,7 +141,7 @@ public abstract class GeneratorBlockEntity extends RiftEnergyBlockEntity
 
     @Override
     public VoltageTier getSourceTier() {
-        return VoltageTier.forPacket(outputPerTick());
+        return tier();
     }
 
     @Override

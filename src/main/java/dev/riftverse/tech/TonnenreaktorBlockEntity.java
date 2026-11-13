@@ -21,9 +21,8 @@ import java.util.function.Supplier;
  * Tonnenreaktor (T1): 40 FE/t, Stufe I. Verbrennt jedes Item, Schrott zählt doppelt.
  * Wirft gelegentlich ein zufälliges nützliches Kleinteil aus.
  */
-public class TonnenreaktorBlockEntity extends GeneratorBlockEntity {
+public class TonnenreaktorBlockEntity extends GeneratorBlockEntity implements BrennstoffGenerator {
     public static final int OUTPUT = 40;
-    public static final int SLOT_FUEL = 0, SLOT_OUT = 1, SLOT_BATTERY = 2;
     /** Brenndauer eines beliebigen Items in Ticks; Brennstoffe halten länger. */
     public static final int BASE_BURN = 50;
     /** Chance auf ein Kleinteil pro verbranntem Item (1 zu n). */
@@ -118,6 +117,21 @@ public class TonnenreaktorBlockEntity extends GeneratorBlockEntity {
             grown.grow(1);
             items.setStackInSlot(SLOT_OUT, grown);
         }
+    }
+
+    @Override
+    public boolean isFuel(ItemStack stack) {
+        return burnDuration(stack) > 0;
+    }
+
+    @Override
+    public String fuelTooltipKey() {
+        return "tooltip.riftverse.reactor_fuel";
+    }
+
+    @Override
+    public String outputLabelKey() {
+        return "gui.riftverse.parts";
     }
 
     @Override

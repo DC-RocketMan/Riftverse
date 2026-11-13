@@ -1,0 +1,19 @@
+{
+  "type": "riftverse:dimensions_scanner",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:universumsprobe"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:paper"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:koordinatenkarte"
+  },
+  "time": 300
+}

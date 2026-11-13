@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GMG",
+    "BLB",
+    "TFT"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "M": {
+      "item": "riftverse:mini_motor"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "F": {
+      "item": "riftverse:fluxlinse"
+    }
+  },
+  "result": {
+    "id": "riftverse:quantenzentrifuge"
+  },
+  "loetzinn": 3
+}

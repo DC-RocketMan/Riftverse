@@ -111,6 +111,10 @@ public class TechBlock extends BaseEntityBlock implements RiftEnergyConnector {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof dev.riftverse.tech.multiblock.MultiblockController mb) {
+            net.minecraft.network.chat.Component missing = mb.checkStructure();
+            if (missing != null) player.displayClientMessage(missing.copy().withStyle(net.minecraft.ChatFormatting.GOLD), false);
+        }
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof MenuProvider provider) {
             player.openMenu(provider, buf -> buf.writeBlockPos(pos));
         }

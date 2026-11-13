@@ -4,6 +4,7 @@ import dev.riftverse.Config;
 import dev.riftverse.cable.CableBlock;
 import dev.riftverse.universe.Multiverse;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,12 +55,22 @@ public final class EnergyNetwork {
     EnergyNetwork(ServerLevel level, Map<BlockPos, EnergyNet.Kind> kinds, Map<BlockPos, BlockState> states,
                   Map<BlockPos, List<BlockPos>> adjacency) {
         Set<BlockPos> sinkSet = new HashSet<>();
+        // Seiten von Umspannern: Bit d.ordinal() in [0] = gibt dorthin ab, in [1] = nimmt von dort an
+        Map<BlockPos, int[]> faces = new HashMap<>();
         for (Map.Entry<BlockPos, EnergyNet.Kind> e : kinds.entrySet()) {
             if (e.getValue() == EnergyNet.Kind.CABLE) {
                 cables++;
                 continue;
             }
             BlockEntity be = level.getBlockEntity(e.getKey());
+            if (be instanceof RiftEnergyFaces f) {
+                int emit = 0, accept = 0;
+                for (Direction d : Direction.values()) {
+                    if (f.emitsTo(d)) emit |= 1 << d.ordinal();
+                    if (f.acceptsFrom(d)) accept |= 1 << d.ordinal();
+                }
+                faces.put(e.getKey(), new int[]{emit, accept});
+            }
             if (be instanceof RiftEnergySource) sources.add(e.getKey());
             if (be instanceof RiftEnergySink) {
                 sinks.add(e.getKey());
@@ -74,12 +85,13 @@ public final class EnergyNetwork {
         // Universums-Modifikatoren: supraleitend (kein Verlust) oder hochohmig (doppelter Verlust)
         double lossFactor = sources.isEmpty() ? 1.0 : Multiverse.cableLossFactor(level, sources.get(0));
         for (BlockPos source : sources) {
-            paths.put(source, findPaths(source, kinds, states, adjacency, sinkSet, lossFactor));
+            paths.put(source, findPaths(source, kinds, states, adjacency, sinkSet, faces, lossFactor));
         }
     }
 
     private static List<Path> findPaths(BlockPos source, Map<BlockPos, EnergyNet.Kind> kinds, Map<BlockPos, BlockState> states,
-                                        Map<BlockPos, List<BlockPos>> adjacency, Set<BlockPos> sinkSet, double lossFactor) {
+                                        Map<BlockPos, List<BlockPos>> adjacency, Set<BlockPos> sinkSet,
+                                        Map<BlockPos, int[]> faces, double lossFactor) {
         Map<BlockPos, Double> dist = new HashMap<>();
         Map<BlockPos, BlockPos> prev = new HashMap<>();
         PriorityQueue<Entry> queue = new PriorityQueue<>(Comparator.comparingDouble(Entry::dist));
@@ -98,6 +110,10 @@ public final class EnergyNetwork {
                 continue;
             }
             for (BlockPos v : adjacency.getOrDefault(u, List.of())) {
+                Direction d = direction(u, v);
+                // Umspanner: Pakete nur über die abgebenden Seiten hinaus und nur über die annehmenden herein
+                if (u.equals(source) && !hasFace(faces, source, d, 0)) continue;
+                if (kinds.get(v) == EnergyNet.Kind.NODE && !v.equals(source) && !hasFace(faces, v, d.getOpposite(), 1)) continue;
                 double cost = kinds.get(v) == EnergyNet.Kind.CABLE
                         ? ((CableBlock) states.get(v).getBlock()).lossPerBlock() * lossFactor : 0.0;
                 double nd = e.dist() + cost;
@@ -110,6 +126,19 @@ public final class EnergyNetwork {
         }
         result.sort(Comparator.comparingDouble(Path::loss));
         return result;
+    }
+
+    private static Direction direction(BlockPos from, BlockPos to) {
+        for (Direction d : Direction.values()) {
+            if (from.relative(d).equals(to)) return d;
+        }
+        return Direction.UP;
+    }
+
+    /** Blöcke ohne eigene Seitenregeln geben und nehmen überall. */
+    private static boolean hasFace(Map<BlockPos, int[]> faces, BlockPos pos, Direction side, int which) {
+        int[] f = faces.get(pos);
+        return f == null || (f[which] & (1 << side.ordinal())) != 0;
     }
 
     private static Path makePath(BlockPos source, BlockPos sink, double loss, Map<BlockPos, BlockPos> prev,

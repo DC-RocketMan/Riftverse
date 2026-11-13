@@ -1,0 +1,22 @@
+{
+  "values": [
+    "riftverse:biomasse_pulpe",
+    "#minecraft:saplings",
+    "#minecraft:leaves",
+    "#minecraft:flowers",
+    "minecraft:wheat",
+    "minecraft:carrot",
+    "minecraft:potato",
+    "minecraft:beetroot",
+    "minecraft:kelp",
+    "minecraft:sugar_cane",
+    "minecraft:short_grass",
+    "minecraft:fern",
+    "minecraft:vine",
+    "minecraft:melon_slice",
+    "minecraft:pumpkin",
+    "minecraft:cactus",
+    "minecraft:bamboo",
+    "minecraft:sweet_berries"
+  ]
+}

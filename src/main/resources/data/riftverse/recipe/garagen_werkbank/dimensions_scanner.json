@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "KUK",
+    "RLR",
+    "TCT"
+  ],
+  "key": {
+    "K": {
+      "item": "riftverse:stabilisierte_linse"
+    },
+    "U": {
+      "item": "riftverse:universe_scanner"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "C": {
+      "item": "minecraft:cartography_table"
+    }
+  },
+  "result": {
+    "id": "riftverse:dimensions_scanner"
+  },
+  "loetzinn": 3
+}

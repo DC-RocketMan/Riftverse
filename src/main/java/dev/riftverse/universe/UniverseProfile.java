@@ -32,7 +32,9 @@ public final class UniverseProfile {
 
     public enum Terrain {
         ROLLING("Hügelland"), TERRACED("Tafelberge"), CANYON("Schluchtenland"), SPIKES("Nadelfelsen"),
-        ARCHIPELAGO("Seenplatte"), CRATERED("Kraterfeld"), HALDEN("Müllberge");
+        ARCHIPELAGO("Seenplatte"), CRATERED("Kraterfeld"), HALDEN("Müllberge"),
+        // Meilenstein 3 (immer hinten anhängen, die Gewichte zählen nach Position)
+        SCHWEBEINSELN("Schwebeinseln");
         public final String label;
         Terrain(String label) { this.label = label; }
     }
@@ -66,7 +68,22 @@ public final class UniverseProfile {
                     new Palette("Giftsumpf", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.MUD),
                     new Palette("Moderschlamm", Blocks.MUD, Blocks.PACKED_MUD, Blocks.DEEPSLATE, Blocks.CLAY),
                     new Palette("Myzelfäule", Blocks.MYCELIUM, Blocks.DIRT, Blocks.STONE, Blocks.MUD),
-                    new Palette("Moosteppich", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.MUD)));
+                    new Palette("Moosteppich", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.MUD)),
+            UniverseType.NIEDRIGGRAVITATION, List.of(
+                    new Palette("Wolkenweide", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.GRAVEL),
+                    new Palette("Kalkschollen", Blocks.CALCITE, Blocks.CALCITE, Blocks.STONE, Blocks.CALCITE),
+                    new Palette("Mondgeröll", Blocks.ANDESITE, Blocks.ANDESITE, Blocks.TUFF, Blocks.GRAVEL),
+                    new Palette("Moosinseln", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.CLAY)),
+            UniverseType.ZEITDILATATION, List.of(
+                    new Palette("Zeitsandwüste", Blocks.SAND, Blocks.SANDSTONE, Blocks.STONE, Blocks.SAND),
+                    new Palette("Uhrwerkwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.GRAVEL),
+                    new Palette("Violette Steppe", Blocks.PODZOL, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.MUD),
+                    new Palette("Bernsteinheide", Blocks.ROOTED_DIRT, Blocks.DIRT, Blocks.TUFF, Blocks.SAND)),
+            UniverseType.ORGANISCH, List.of(
+                    new Palette("Fleischsteppe", ModBlocks.BIOMASSE_BLOCK.get(), Blocks.NETHER_WART_BLOCK, Blocks.DRIPSTONE_BLOCK, Blocks.MUD),
+                    new Palette("Pilzgewebe", Blocks.MYCELIUM, ModBlocks.BIOMASSE_BLOCK.get(), Blocks.DEEPSLATE, Blocks.MUD),
+                    new Palette("Moosfleisch", Blocks.MOSS_BLOCK, ModBlocks.BIOMASSE_BLOCK.get(), Blocks.STONE, Blocks.CLAY),
+                    new Palette("Wurzelgeflecht", Blocks.ROOTED_DIRT, Blocks.NETHER_WART_BLOCK, Blocks.DEEPSLATE, Blocks.MUD)));
 
     // ------------------------------------------------------------------ Cache
 
@@ -124,6 +141,9 @@ public final class UniverseProfile {
             case SCHROTT -> weighted(r, Terrain.values(), 15, 0, 0, 0, 0, 25, 60);
             case KRISTALL -> weighted(r, Terrain.values(), 30, 15, 20, 35, 0, 0, 0);
             case TOXISCH -> weighted(r, Terrain.values(), 35, 0, 15, 0, 35, 15, 0);
+            case NIEDRIGGRAVITATION -> weighted(r, Terrain.values(), 0, 0, 0, 0, 0, 0, 0, 1);
+            case ZEITDILATATION -> weighted(r, Terrain.values(), 40, 25, 15, 0, 10, 10, 0);
+            case ORGANISCH -> weighted(r, Terrain.values(), 45, 0, 15, 10, 30, 0, 0);
         };
         List<Palette> palettes = PALETTES.get(type);
         this.palette = palettes.get(r.nextInt(palettes.size()));
@@ -131,11 +151,17 @@ public final class UniverseProfile {
             case SCHROTT -> 0.15f + r.nextFloat() * 0.2f;
             case KRISTALL -> 0.006f + r.nextFloat() * 0.012f;
             case TOXISCH -> 0.004f + r.nextFloat() * 0.012f;
+            case NIEDRIGGRAVITATION -> 0.004f + r.nextFloat() * 0.008f;
+            case ZEITDILATATION -> 0.003f + r.nextFloat() * 0.006f;
+            case ORGANISCH -> 0.006f + r.nextFloat() * 0.01f;
         };
         this.plantDensity = switch (type) {
             case SCHROTT -> 0.01f + r.nextFloat() * 0.03f;
             case KRISTALL -> 0.02f + r.nextFloat() * 0.05f;
             case TOXISCH -> 0.08f + r.nextFloat() * 0.2f;
+            case NIEDRIGGRAVITATION -> 0.05f + r.nextFloat() * 0.1f;
+            case ZEITDILATATION -> 0.1f + r.nextFloat() * 0.2f;
+            case ORGANISCH -> 0.03f + r.nextFloat() * 0.05f;
         };
 
         double richness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
@@ -144,7 +170,8 @@ public final class UniverseProfile {
         this.biomeRoll = r.nextInt(1 << 20);
         this.caves = r.nextFloat() < 0.75f;
 
-        boolean dry = palette.surface() == Blocks.RED_SAND;
+        // Schwebeinseln haben keine Seen: unter ihnen ist nur das Nichts
+        boolean dry = palette.surface() == Blocks.RED_SAND || type == UniverseType.NIEDRIGGRAVITATION;
         this.fluidLevel = dry ? Integer.MIN_VALUE : (terrain == Terrain.ARCHIPELAGO ? 63 : 50 + r.nextInt(18));
 
         switch (terrain) {
@@ -154,6 +181,7 @@ public final class UniverseProfile {
             case SPIKES -> { base = 68 + r.nextInt(14); amplitude = 8 + r.nextInt(16); frequency = 1.0 / (100 + r.nextInt(100)); }
             case ARCHIPELAGO -> { base = 52; amplitude = 18 + r.nextInt(14); frequency = 1.0 / (120 + r.nextInt(100)); }
             case CRATERED -> { base = 70 + r.nextInt(16); amplitude = 4 + r.nextInt(9); frequency = 1.0 / (160 + r.nextInt(120)); }
+            case SCHWEBEINSELN -> { base = 96 + r.nextInt(24); amplitude = 26 + r.nextInt(26); frequency = 1.0 / (70 + r.nextInt(50)); }
             default -> { base = 66 + r.nextInt(10); amplitude = 6 + r.nextInt(10); frequency = 1.0 / (110 + r.nextInt(90)); }
         }
         this.stepHeight = 5 + r.nextInt(8);
@@ -234,10 +262,32 @@ public final class UniverseProfile {
                 double m = Math.max(0, halde(x, z));
                 h = base + amplitude * n + m * m * haldenHeight + detail;
             }
+            case SCHWEBEINSELN -> {
+                return island(x, z, n, detail, out);
+            }
             default -> h = base + amplitude * n + detail;
         }
         out[0] = minY;
         out[1] = Mth.clamp((int) h, minY + 6, 300);
+        return true;
+    }
+
+    /**
+     * Schwebeinseln der Niedriggravitationswelt: Inseln in verschiedenen Höhen über dem Nichts, unten spitz
+     * zulaufend. Um die Zellmitte liegt immer eine große Heimatinsel, auf der die Rifts landen.
+     */
+    private boolean island(int x, int z, double n, double detail, int[] out) {
+        double m = fbm(featureNoise, x * frequency * 1.3, z * frequency * 1.3, 3);
+        double cx = x - Multiverse.cellCenter(id.cellX()), cz = z - Multiverse.cellCenter(id.cellZ());
+        double home = Math.max(0, 1.0 - Math.sqrt(cx * cx + cz * cz) / 190.0);
+        m = Math.max(m, home * 1.4 - 0.3);
+        if (m < 0.08) return false;
+        double k = Math.min(1.0, (m - 0.08) / 0.6);
+        double layer = fbm(fieldNoise, x / 400.0, z / 400.0, 2) * 40 * (1.0 - home);
+        int top = (int) (base + layer + amplitude * 0.25 * n + k * 6 + detail);
+        int depth = (int) (3 + k * k * 34 + Math.abs(detail) * 2);
+        out[0] = Mth.clamp(top - depth, -60, 300);
+        out[1] = Mth.clamp(top, out[0] + 1, 300);
         return true;
     }
 
@@ -314,6 +364,9 @@ public final class UniverseProfile {
         if (type == UniverseType.SCHROTT && roll < 60) {
             return (deep ? ModBlocks.DEEPSLATE_XENIT_ORE : ModBlocks.XENIT_ORE).get().defaultBlockState();
         }
+        // T2: Schwebstein-Adern in den Inseln, Biomasse-Nester in der organischen Welt
+        if (type == UniverseType.NIEDRIGGRAVITATION && roll < 180) return ModBlocks.SCHWEBSTEIN.get().defaultBlockState();
+        if (type == UniverseType.ORGANISCH && roll < 120) return ModBlocks.BIOMASSE_BLOCK.get().defaultBlockState();
         if (roll < 300) return (deep ? Blocks.DEEPSLATE_COAL_ORE : Blocks.COAL_ORE).defaultBlockState();
         if (roll < 470) return (deep ? Blocks.DEEPSLATE_IRON_ORE : Blocks.IRON_ORE).defaultBlockState();
         if (roll < 590) return (deep ? Blocks.DEEPSLATE_COPPER_ORE : Blocks.COPPER_ORE).defaultBlockState();

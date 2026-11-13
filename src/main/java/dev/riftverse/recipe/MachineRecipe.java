@@ -115,9 +115,29 @@ public class MachineRecipe implements Recipe<MachineRecipeInput> {
         return mode;
     }
 
-    /** Slot je Zutat, oder null. */
+    /** Slot je Zutat, oder null. Beim Präzisions-Montierer gehört Zutat i in Slot i. */
     public int[] assignment(MachineRecipeInput input) {
+        if (kind.ordered()) return orderedAssignment(input.stacks());
         return IngredientMatcher.match(ingredients, input.stacks(), CountedIngredient::test);
+    }
+
+    private int[] orderedAssignment(List<ItemStack> stacks) {
+        if (stacks.size() < ingredients.size()) return null;
+        int[] slots = new int[ingredients.size()];
+        for (int i = 0; i < stacks.size(); i++) {
+            if (i < ingredients.size()) {
+                if (!ingredients.get(i).test(stacks.get(i))) return null;
+                slots[i] = i;
+            } else if (!stacks.get(i).isEmpty()) {
+                return null;
+            }
+        }
+        return slots;
+    }
+
+    /** Anzahl der Montageschritte (Präzisions-Montierer). */
+    public int steps() {
+        return ingredients.size();
     }
 
     @Override

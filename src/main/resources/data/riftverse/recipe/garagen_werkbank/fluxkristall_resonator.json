@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "FKF",
+    "RLR",
+    "TBT"
+  ],
+  "key": {
+    "F": {
+      "item": "riftverse:fluxkristall_block"
+    },
+    "K": {
+      "item": "riftverse:stabilisierte_linse"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "B": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "result": {
+    "id": "riftverse:fluxkristall_resonator"
+  },
+  "loetzinn": 3
+}

@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "item": "riftverse:flux_leitung"
+    },
+    {
+      "item": "riftverse:isolierfolie"
+    }
+  ],
+  "result": {
+    "id": "riftverse:flux_leitung_isoliert"
+  }
+}

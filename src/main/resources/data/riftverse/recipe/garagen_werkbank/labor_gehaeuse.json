@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SVS",
+    "VXV",
+    "SVS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "V": {
+      "item": "riftverse:verbundplatte"
+    },
+    "X": {
+      "item": "riftverse:xenit_gehaeuse"
+    }
+  },
+  "result": {
+    "id": "riftverse:labor_gehaeuse"
+  },
+  "hammer": 1
+}

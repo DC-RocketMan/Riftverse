@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " G ",
+    "GFG",
+    " X "
+  ],
+  "key": {
+    "G": {
+      "tag": "c:glass_panes"
+    },
+    "F": {
+      "tag": "c:dusts/fluxkristall"
+    },
+    "X": {
+      "tag": "c:plates/xenit"
+    }
+  },
+  "result": {
+    "id": "riftverse:universumsprobe",
+    "count": 4
+  }
+}

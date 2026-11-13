@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "CUC",
+    "RLR",
+    "TCT"
+  ],
+  "key": {
+    "C": {
+      "item": "riftverse:chronoglas_scheibe"
+    },
+    "U": {
+      "item": "minecraft:clock"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:chrono_beschleuniger"
+  },
+  "loetzinn": 3
+}

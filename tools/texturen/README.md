@@ -41,5 +41,7 @@ python3 generator/main.py <zielordner>
 
 Farben änderst du zentral in `generator/lib.py` (`_RAMPS`), einzelne Texturen in `materials.py`, `machines.py`, `gadgets.py` und `armor.py`.
 Was in den Meilensteinen dazukam, steht in `meilenstein1.py` (Erdmetalle, T1-Maschinen, Kabel) und `meilenstein2.py`
-(Meteoritenkern, Meteoritenpeiler mit 16 Nadelstellungen, Fluxkristall-Cluster, Säure, Rift-Anker, Schrott-Golem).
+(Meteoritenkern, Meteoritenpeiler mit 16 Nadelstellungen, Fluxkristall-Cluster, Säure, Rift-Anker, Schrott-Golem)
+und `meilenstein3.py` (Flux-Leitung, Umspanner, Flux-Zelle mit Füllstandsband, Labor-Hülle, Resonator-Kammer,
+Schwebstein-Kern, Chronoglas-Sand, atmende Biomasse, fressende Flora, stabile Kartusche und neue Bauteile).
 Ein einzelnes Modul erzeugst du mit `python3 main.py <zielordner> meilenstein2`; die Vorschaubögen landen in `vorschau/`.

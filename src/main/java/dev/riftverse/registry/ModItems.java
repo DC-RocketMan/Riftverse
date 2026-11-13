@@ -3,6 +3,9 @@ package dev.riftverse.registry;
 import dev.riftverse.Riftverse;
 import dev.riftverse.item.EnergiezelleItem;
 import dev.riftverse.item.HandkurbelItem;
+import dev.riftverse.item.KoordinatenkarteItem;
+import dev.riftverse.item.UniversumsprobeItem;
+import dev.riftverse.tech.FluxZelleBlockEntity;
 import dev.riftverse.item.FluidKartuscheItem;
 import dev.riftverse.item.LoreItem;
 import dev.riftverse.item.MeteoritenpeilerItem;
@@ -156,6 +159,70 @@ public final class ModItems {
     // --- Kreaturen ---
     public static final DeferredItem<DeferredSpawnEggItem> SCHROTT_GOLEM_SPAWN_EGG = ITEMS.register("schrott_golem_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.SCHROTT_GOLEM, 0x5C2F1A, 0x39FF6A, new Item.Properties()));
+
+    // =====================================================================
+    // Meilenstein 3 – T2 Rift-Labor
+    // =====================================================================
+
+    // --- Netz, Speicher, Maschinen, Generatoren ---
+    public static final DeferredItem<BlockItem> FLUX_LEITUNG = blockItem("flux_leitung", ModBlocks.FLUX_LEITUNG);
+    public static final DeferredItem<BlockItem> FLUX_LEITUNG_ISOLIERT = blockItem("flux_leitung_isoliert", ModBlocks.FLUX_LEITUNG_ISOLIERT);
+    public static final DeferredItem<BlockItem> UMSPANNER = blockItem("umspanner", ModBlocks.UMSPANNER);
+    public static final DeferredItem<XenitZelleItem> FLUX_ZELLE = ITEMS.register("flux_zelle",
+            () -> new XenitZelleItem(ModBlocks.FLUX_ZELLE.get(), new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON),
+                    FluxZelleBlockEntity.FLUX_CAPACITY, "tooltip.riftverse.flux_zelle"));
+    public static final DeferredItem<BlockItem> LABOR_GEHAEUSE = blockItem("labor_gehaeuse", ModBlocks.LABOR_GEHAEUSE);
+    public static final DeferredItem<BlockItem> LABOR_HUELLE = blockItem("labor_huelle", ModBlocks.LABOR_HUELLE);
+    public static final DeferredItem<BlockItem> PRAEZISIONS_MONTIERER = blockItem("praezisions_montierer", ModBlocks.PRAEZISIONS_MONTIERER);
+    public static final DeferredItem<BlockItem> QUANTENZENTRIFUGE = blockItem("quantenzentrifuge", ModBlocks.QUANTENZENTRIFUGE);
+    public static final DeferredItem<BlockItem> GRAVITATIONSPRESSE = blockItem("gravitationspresse", ModBlocks.GRAVITATIONSPRESSE);
+    public static final DeferredItem<BlockItem> DIMENSIONS_SCANNER = blockItem("dimensions_scanner", ModBlocks.DIMENSIONS_SCANNER);
+    public static final DeferredItem<BlockItem> CHRONO_BESCHLEUNIGER = blockItem("chrono_beschleuniger", ModBlocks.CHRONO_BESCHLEUNIGER);
+    public static final DeferredItem<BlockItem> PORTALFLUID_RAFFINERIE = blockItem("portalfluid_raffinerie", ModBlocks.PORTALFLUID_RAFFINERIE);
+    public static final DeferredItem<BlockItem> BIOMASSE_KESSEL = blockItem("biomasse_kessel", ModBlocks.BIOMASSE_KESSEL);
+    public static final DeferredItem<BlockItem> ZEITSCHLEIFEN_SOLAR = blockItem("zeitschleifen_solar", ModBlocks.ZEITSCHLEIFEN_SOLAR);
+    public static final DeferredItem<BlockItem> FLUXKRISTALL_RESONATOR = blockItem("fluxkristall_resonator", ModBlocks.FLUXKRISTALL_RESONATOR);
+    public static final DeferredItem<BlockItem> RESONATOR_KAMMER = blockItem("resonator_kammer", ModBlocks.RESONATOR_KAMMER);
+    public static final DeferredItem<BlockItem> GRAVITATIONS_PENDEL = blockItem("gravitations_pendel", ModBlocks.GRAVITATIONS_PENDEL);
+    public static final DeferredItem<BlockItem> SCHWEBSTEIN_KERN = blockItem("schwebstein_kern", ModBlocks.SCHWEBSTEIN_KERN);
+
+    // --- Kanone und Fluid ---
+    public static final DeferredItem<PortalKanoneItem> PORTAL_KANONE_MK2 = ITEMS.register("portal_kanone_mk2",
+            () -> new PortalKanoneItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 2));
+    public static final DeferredItem<Item> FLUID_KARTUSCHE_STABIL = ITEMS.register("fluid_kartusche_stabil",
+            () -> new LoreItem(new Item.Properties().stacksTo(16), "item.riftverse.fluid_kartusche_stabil.lore"));
+    public static final DeferredItem<UniversumsprobeItem> UNIVERSUMSPROBE = ITEMS.register("universumsprobe",
+            () -> new UniversumsprobeItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<KoordinatenkarteItem> KOORDINATENKARTE = ITEMS.register("koordinatenkarte",
+            () -> new KoordinatenkarteItem(new Item.Properties().stacksTo(1)));
+
+    // --- Zwischenprodukte ---
+    public static final DeferredItem<Item> VERBUNDPLATTE = simple("verbundplatte");
+    public static final DeferredItem<Item> FLUX_SPULE = simple("flux_spule");
+    public static final DeferredItem<Item> RIFT_SCHALTKREIS = simple("rift_schaltkreis");
+    public static final DeferredItem<Item> STABILISIERTE_LINSE = simple("stabilisierte_linse");
+    public static final DeferredItem<Item> KANONENKERN = simple("kanonenkern");
+    public static final DeferredItem<Item> CHRONOGLAS_GRIFF = simple("chronoglas_griff");
+    public static final DeferredItem<Item> CHRONOGLAS_SCHEIBE = simple("chronoglas_scheibe");
+    public static final DeferredItem<Item> ANTIGRAV_PLATTE = simple("antigrav_platte");
+    public static final DeferredItem<Item> AETZLOESUNG = simple("aetzloesung");
+    public static final DeferredItem<Item> TOXINREST = simple("toxinrest");
+    public static final DeferredItem<Item> FLUX_STABILISATOR = ITEMS.register("flux_stabilisator",
+            () -> new LoreItem(new Item.Properties(), "item.riftverse.flux_stabilisator.lore"));
+    public static final DeferredItem<Item> NAEHRSERUM = ITEMS.register("naehrserum",
+            () -> new LoreItem(new Item.Properties(), "item.riftverse.naehrserum.lore"));
+    public static final DeferredItem<Item> FLUXKRISTALL_STAB = ITEMS.register("fluxkristall_stab",
+            () -> new Item(new Item.Properties().durability(20_000)));
+    public static final DeferredItem<Item> KUEHLKOERPER = simple("kuehlkoerper");
+
+    // --- Rohstoffe aus den T2-Universen ---
+    public static final DeferredItem<BlockItem> SCHWEBSTEIN = blockItem("schwebstein", ModBlocks.SCHWEBSTEIN);
+    public static final DeferredItem<Item> SCHWEBSTEIN_BROCKEN = simple("schwebstein_brocken");
+    public static final DeferredItem<BlockItem> CHRONOGLAS_SAND = blockItem("chronoglas_sand", ModBlocks.CHRONOGLAS_SAND);
+    public static final DeferredItem<BlockItem> CHRONOGLAS = blockItem("chronoglas", ModBlocks.CHRONOGLAS);
+    public static final DeferredItem<BlockItem> BIOMASSE_BLOCK = blockItem("biomasse_block", ModBlocks.BIOMASSE_BLOCK);
+    public static final DeferredItem<Item> BIOMASSE_PULPE = simple("biomasse_pulpe");
+    public static final DeferredItem<BlockItem> FRESSENDE_FLORA = blockItem("fressende_flora", ModBlocks.FRESSENDE_FLORA);
 
     private static DeferredItem<Item> simple(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));

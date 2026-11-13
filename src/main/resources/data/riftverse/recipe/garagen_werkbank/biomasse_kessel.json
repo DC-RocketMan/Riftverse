@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "ICI",
+    "FXF",
+    "BSB"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "C": {
+      "item": "minecraft:composter"
+    },
+    "F": {
+      "item": "minecraft:furnace"
+    },
+    "X": {
+      "item": "riftverse:xenit_gehaeuse"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "S": {
+      "item": "riftverse:xenit_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:biomasse_kessel"
+  },
+  "loetzinn": 2
+}

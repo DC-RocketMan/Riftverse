@@ -1,0 +1,96 @@
+{
+  "variants": {
+    "active=false,facing=north,powered=false": {
+      "model": "riftverse:block/umspanner"
+    },
+    "active=true,facing=north,powered=false": {
+      "model": "riftverse:block/umspanner"
+    },
+    "active=false,facing=north,powered=true": {
+      "model": "riftverse:block/umspanner_hoch"
+    },
+    "active=true,facing=north,powered=true": {
+      "model": "riftverse:block/umspanner_hoch"
+    },
+    "active=false,facing=east,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "y": 90
+    },
+    "active=true,facing=east,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "y": 90
+    },
+    "active=false,facing=east,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "y": 90
+    },
+    "active=true,facing=east,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "y": 90
+    },
+    "active=false,facing=south,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "y": 180
+    },
+    "active=true,facing=south,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "y": 180
+    },
+    "active=false,facing=south,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "y": 180
+    },
+    "active=true,facing=south,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "y": 180
+    },
+    "active=false,facing=west,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "y": 270
+    },
+    "active=true,facing=west,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "y": 270
+    },
+    "active=false,facing=west,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "y": 270
+    },
+    "active=true,facing=west,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "y": 270
+    },
+    "active=false,facing=up,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "x": 270
+    },
+    "active=true,facing=up,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "x": 270
+    },
+    "active=false,facing=up,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "x": 270
+    },
+    "active=true,facing=up,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "x": 270
+    },
+    "active=false,facing=down,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "x": 90
+    },
+    "active=true,facing=down,powered=false": {
+      "model": "riftverse:block/umspanner",
+      "x": 90
+    },
+    "active=false,facing=down,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "x": 90
+    },
+    "active=true,facing=down,powered=true": {
+      "model": "riftverse:block/umspanner_hoch",
+      "x": 90
+    }
+  }
+}

@@ -4,6 +4,14 @@ import dev.riftverse.Riftverse;
 import dev.riftverse.energy.EnergyItems;
 import dev.riftverse.energy.EnergyPortBlockEntity;
 import dev.riftverse.energy.KreativQuelleBlockEntity;
+import dev.riftverse.energy.UmspannerBlockEntity;
+import dev.riftverse.tech.BiomasseKesselBlockEntity;
+import dev.riftverse.tech.ChronoBeschleunigerBlockEntity;
+import dev.riftverse.tech.FluxZelleBlockEntity;
+import dev.riftverse.tech.FluxkristallResonatorBlockEntity;
+import dev.riftverse.tech.GravitationsPendelBlockEntity;
+import dev.riftverse.tech.RaffinerieBlockEntity;
+import dev.riftverse.tech.ZeitschleifenSolarBlockEntity;
 import dev.riftverse.tech.FluidMixerBlockEntity;
 import dev.riftverse.tech.KurbelDynamoBlockEntity;
 import dev.riftverse.tech.ProcessingBlockEntity;
@@ -31,7 +39,11 @@ public final class ModBlockEntities {
                     ModBlocks.XENIT_SCHMELZE.get(),
                     ModBlocks.PLATINEN_AETZER.get(),
                     ModBlocks.KRISTALL_SCHLEIFER.get(),
-                    ModBlocks.RECYCLER.get()).build(null));
+                    ModBlocks.RECYCLER.get(),
+                    ModBlocks.PRAEZISIONS_MONTIERER.get(),
+                    ModBlocks.QUANTENZENTRIFUGE.get(),
+                    ModBlocks.GRAVITATIONSPRESSE.get(),
+                    ModBlocks.DIMENSIONS_SCANNER.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidMixerBlockEntity>> FLUID_MIXER =
             BLOCK_ENTITIES.register("fluid_mixer", () -> BlockEntityType.Builder.of(FluidMixerBlockEntity::new,
@@ -62,6 +74,32 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("garagen_werkbank", () -> BlockEntityType.Builder.of(WerkbankBlockEntity::new,
                     ModBlocks.GARAGEN_WERKBANK.get()).build(null));
 
+    // --- Meilenstein 3 ---
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UmspannerBlockEntity>> UMSPANNER =
+            BLOCK_ENTITIES.register("umspanner", () -> BlockEntityType.Builder.of(UmspannerBlockEntity::new,
+                    ModBlocks.UMSPANNER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluxZelleBlockEntity>> FLUX_ZELLE =
+            BLOCK_ENTITIES.register("flux_zelle", () -> BlockEntityType.Builder.of(FluxZelleBlockEntity::new,
+                    ModBlocks.FLUX_ZELLE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChronoBeschleunigerBlockEntity>> CHRONO_BESCHLEUNIGER =
+            BLOCK_ENTITIES.register("chrono_beschleuniger", () -> BlockEntityType.Builder.of(ChronoBeschleunigerBlockEntity::new,
+                    ModBlocks.CHRONO_BESCHLEUNIGER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RaffinerieBlockEntity>> RAFFINERIE =
+            BLOCK_ENTITIES.register("portalfluid_raffinerie", () -> BlockEntityType.Builder.of(RaffinerieBlockEntity::new,
+                    ModBlocks.PORTALFLUID_RAFFINERIE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BiomasseKesselBlockEntity>> BIOMASSE_KESSEL =
+            BLOCK_ENTITIES.register("biomasse_kessel", () -> BlockEntityType.Builder.of(BiomasseKesselBlockEntity::new,
+                    ModBlocks.BIOMASSE_KESSEL.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ZeitschleifenSolarBlockEntity>> ZEITSCHLEIFEN_SOLAR =
+            BLOCK_ENTITIES.register("zeitschleifen_solar", () -> BlockEntityType.Builder.of(ZeitschleifenSolarBlockEntity::new,
+                    ModBlocks.ZEITSCHLEIFEN_SOLAR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluxkristallResonatorBlockEntity>> FLUXKRISTALL_RESONATOR =
+            BLOCK_ENTITIES.register("fluxkristall_resonator", () -> BlockEntityType.Builder.of(FluxkristallResonatorBlockEntity::new,
+                    ModBlocks.FLUXKRISTALL_RESONATOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GravitationsPendelBlockEntity>> GRAVITATIONS_PENDEL =
+            BLOCK_ENTITIES.register("gravitations_pendel", () -> BlockEntityType.Builder.of(GravitationsPendelBlockEntity::new,
+                    ModBlocks.GRAVITATIONS_PENDEL.get()).build(null));
+
     /**
      * Trichter und Rohre befüllen die Maschinen; fremde FE-Leitungen docken nur am Einspeiser und Ausspeiser an.
      * Maschinen und Generatoren zeigen ihren Füllstand nur lesbar an (für Jade, Integrated Dynamics).
@@ -90,6 +128,21 @@ public final class ModBlockEntities {
 
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ENERGY_PORT.get(),
                 (port, side) -> port.externalStorage(side));
+
+        // Meilenstein 3
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, UMSPANNER.get(), (u, side) -> u.energy().readOnly());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, FLUX_ZELLE.get(), (cell, side) -> cell.energy().readOnly());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, CHRONO_BESCHLEUNIGER.get(), (c, side) -> c.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RAFFINERIE.get(), (r, side) -> r.automationHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, RAFFINERIE.get(), (r, side) -> r.fluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, RAFFINERIE.get(), (r, side) -> r.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BIOMASSE_KESSEL.get(), (k, side) -> k.automationHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BIOMASSE_KESSEL.get(), (k, side) -> k.energy().readOnly());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ZEITSCHLEIFEN_SOLAR.get(), (s, side) -> s.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FLUXKRISTALL_RESONATOR.get(), (r, side) -> r.automationHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLUXKRISTALL_RESONATOR.get(), (r, side) -> r.fluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, FLUXKRISTALL_RESONATOR.get(), (r, side) -> r.energy().readOnly());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, GRAVITATIONS_PENDEL.get(), (p, side) -> p.energy().readOnly());
 
         EnergyItems.register(event);
     }

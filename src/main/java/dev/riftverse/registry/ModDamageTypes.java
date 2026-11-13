@@ -14,6 +14,9 @@ public final class ModDamageTypes {
     /** Säureseen und Säureregen der toxischen Welt. */
     public static final ResourceKey<DamageType> SAEURE = ResourceKey.create(Registries.DAMAGE_TYPE, Riftverse.id("saeure"));
 
+    /** Fressende Flora der organischen Welt. */
+    public static final ResourceKey<DamageType> FRESSENDE_FLORA = ResourceKey.create(Registries.DAMAGE_TYPE, Riftverse.id("fressende_flora"));
+
     public static DamageSource source(Level level, ResourceKey<DamageType> key) {
         return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key));
     }
