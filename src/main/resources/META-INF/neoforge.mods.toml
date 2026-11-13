@@ -29,3 +29,25 @@ config="riftverse.mixins.json"
     versionRange="[1.21.1]"
     ordering="NONE"
     side="BOTH"
+
+# Optionale Integrationen: Rezeptanzeigen und Blockinfos
+[[dependencies.riftverse]]
+    modId="jei"
+    type="optional"
+    versionRange="[19.0,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.riftverse]]
+    modId="emi"
+    type="optional"
+    versionRange="[1.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.riftverse]]
+    modId="jade"
+    type="optional"
+    versionRange="[15.0,)"
+    ordering="NONE"
+    side="BOTH"

@@ -49,6 +49,35 @@ neoForge {
     }
 }
 
+repositories {
+    // JEI
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com/'
+        content { includeGroup 'mezz.jei' }
+    }
+    // EMI
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/releases/'
+        content { includeGroup 'dev.emi' }
+    }
+    // Jade
+    maven {
+        name = 'Modrinth'
+        url = 'https://api.modrinth.com/maven'
+        content { includeGroup 'maven.modrinth' }
+    }
+}
+
+// Rezeptanzeigen und Jade sind optional: nur gegen ihre API kompilieren, nicht mitliefern
+dependencies {
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
+    compileOnly "maven.modrinth:jade:${jade_version}"
+}
+
 // Wichtig unter Windows: Umlaute in den Story-Texten korrekt kompilieren
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
