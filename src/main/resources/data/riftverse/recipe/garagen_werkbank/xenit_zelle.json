@@ -2,7 +2,7 @@
   "type": "riftverse:werkbank_shaped",
   "pattern": [
     "ESE",
-    "ECE",
+    "PCP",
     "EBE"
   ],
   "key": {
@@ -17,6 +17,9 @@
     },
     "B": {
       "item": "riftverse:basis_schaltkreis"
+    },
+    "P": {
+      "tag": "c:plates/iron"
     }
   },
   "result": {

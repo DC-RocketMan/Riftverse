@@ -2,7 +2,7 @@
   "type": "riftverse:werkbank_shaped",
   "pattern": [
     "WGW",
-    "WXW",
+    "RXR",
     "WGW"
   ],
   "key": {
@@ -14,6 +14,9 @@
     },
     "X": {
       "item": "riftverse:flux_spule"
+    },
+    "R": {
+      "tag": "c:rods/xenit"
     }
   },
   "result": {

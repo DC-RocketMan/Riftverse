@@ -37,7 +37,9 @@ import java.util.Locale;
 public record RezeptAnsicht(ResourceLocation id, Kategorie kategorie, List<Slot> slots, int pfeilX, int pfeilY,
                             int zeilenY, List<Component> zeilen, int breite, int hoehe, boolean formlos) {
 
-    public static final int SLOT = 18, PFEIL_B = 24, PFEIL_H = 17, ZEILE = 10, MIN_BREITE = 140;
+    public static final int SLOT = 18, PFEIL_B = 24, PFEIL_H = 17, ZEILE = 10, MIN_BREITE = 160;
+    /** Feste Größe für JEI: Platz für 6 Eingänge in zwei Reihen oder das 3 × 3-Raster und 5 Textzeilen. */
+    public static final int JEI_BREITE = 176, JEI_HOEHE = 3 * SLOT + 3 + 4 * ZEILE + 2;
 
     /** Ein Slot: Items (mehrere = Auswahl) oder Fluid, mit Chance (1 = sicher) und optionalem Hinweis. */
     public record Slot(int x, int y, boolean eingang, List<ItemStack> items, @Nullable FluidStack fluid,

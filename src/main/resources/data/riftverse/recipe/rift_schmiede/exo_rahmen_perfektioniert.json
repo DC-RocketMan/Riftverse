@@ -28,6 +28,12 @@
         "tag": "riftverse:story_fragmente"
       },
       "count": 3
+    },
+    {
+      "ingredient": {
+        "tag": "c:plates/xenit"
+      },
+      "count": 4
     }
   ],
   "result": {

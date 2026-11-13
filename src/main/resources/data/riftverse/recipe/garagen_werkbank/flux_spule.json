@@ -1,13 +1,16 @@
 {
   "type": "riftverse:werkbank_shaped",
   "pattern": [
-    "GFG",
-    "GXG",
-    "GFG"
+    "GFK",
+    "GXK",
+    "GFK"
   ],
   "key": {
     "G": {
       "tag": "c:wires/gold"
+    },
+    "K": {
+      "tag": "c:wires/copper"
     },
     "F": {
       "tag": "c:dusts/fluxkristall"

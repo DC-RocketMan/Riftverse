@@ -475,34 +475,43 @@ def recipes():
     for metal, plate_item in METALS_PLATE.items():
         machine_recipe('garagenpresse', f'platte/{metal}', [(f'#c:ingots/{metal}', 1)], plate_item, 1, time=40)
     machine_recipe('garagenpresse', 'schrottplatte', [('alien_schrott', 1)], 'schrottplatte', 1, time=40)
-    machine_recipe('garagenpresse', 'isolierfolie', [('polymerfetzen', 2)], 'isolierfolie', 1, time=40)
+    # Meilenstein 7: 1 Polymerfetzen → 2 Folien (vorher 2 → 1); ~200 Isolierschichten im Durchlauf fraßen 400 Alien-Schrott
+    machine_recipe('garagenpresse', 'isolierfolie', [('polymerfetzen', 1)], 'isolierfolie', 2, time=40)
 
 
 # =============================================================================
 # Worldgen und Schadenstyp
 # =============================================================================
 def worldgen():
-    write(os.path.join(DATA, NS, 'worldgen', 'configured_feature', 'ore_tin.json'), {
-        'type': 'minecraft:ore',
-        'config': {'discard_chance_on_air_exposure': 0.0, 'size': 9, 'targets': [
-            {'state': {'Name': rl('tin_ore')},
-             'target': {'predicate_type': 'minecraft:tag_match', 'tag': 'minecraft:stone_ore_replaceables'}},
-            {'state': {'Name': rl('deepslate_tin_ore')},
-             'target': {'predicate_type': 'minecraft:tag_match', 'tag': 'minecraft:deepslate_ore_replaceables'}}]}})
-    # So häufig wie in FTB-Packs (Vorlage: Zinn aus Mekanism)
-    write(os.path.join(DATA, NS, 'worldgen', 'placed_feature', 'ore_tin.json'), {
-        'feature': rl('ore_tin'),
-        'placement': [
-            {'type': rl('config_menge'), 'option': 'zinn_dichte'},
-            {'type': 'minecraft:count', 'count': 14},
-            {'type': 'minecraft:in_square'},
-            {'type': 'minecraft:height_range', 'height': {'type': 'minecraft:trapezoid',
-                                                          'min_inclusive': {'absolute': -24},
-                                                          'max_inclusive': {'absolute': 112}}},
-            {'type': 'minecraft:biome'}]})
+    # Zinn wie bei Mekanism (OreType.TIN): kleine Adern (14 × bis 4 Erz, Y −20..94) und große (12 × bis 9 Erz, Y −32..72)
+    def tin_ore(name, size):
+        write(os.path.join(DATA, NS, 'worldgen', 'configured_feature', name + '.json'), {
+            'type': 'minecraft:ore',
+            'config': {'discard_chance_on_air_exposure': 0.0, 'size': size, 'targets': [
+                {'state': {'Name': rl('tin_ore')},
+                 'target': {'predicate_type': 'minecraft:tag_match', 'tag': 'minecraft:stone_ore_replaceables'}},
+                {'state': {'Name': rl('deepslate_tin_ore')},
+                 'target': {'predicate_type': 'minecraft:tag_match', 'tag': 'minecraft:deepslate_ore_replaceables'}}]}})
+
+    def tin_placed(name, count, low, high):
+        write(os.path.join(DATA, NS, 'worldgen', 'placed_feature', name + '.json'), {
+            'feature': rl(name),
+            'placement': [
+                {'type': rl('config_menge'), 'option': 'zinn_dichte'},
+                {'type': 'minecraft:count', 'count': count},
+                {'type': 'minecraft:in_square'},
+                {'type': 'minecraft:height_range', 'height': {'type': 'minecraft:trapezoid',
+                                                              'min_inclusive': {'absolute': low},
+                                                              'max_inclusive': {'absolute': high}}},
+                {'type': 'minecraft:biome'}]})
+
+    tin_ore('ore_tin', 9)
+    tin_placed('ore_tin', 12, -32, 72)
+    tin_ore('ore_tin_small', 4)
+    tin_placed('ore_tin_small', 14, -20, 94)
     write(os.path.join(DATA, NS, 'neoforge', 'biome_modifier', 'add_tin_ore.json'), {
-        'type': f'{NS}:add_features_if', 'biomes': '#minecraft:is_overworld', 'features': rl('ore_tin'),
-        'step': 'underground_ores', 'config': 'tin_ore'})
+        'type': f'{NS}:add_features_if', 'biomes': '#minecraft:is_overworld',
+        'features': [rl('ore_tin_small'), rl('ore_tin')], 'step': 'underground_ores', 'config': 'tin_ore'})
     write(os.path.join(DATA, NS, 'damage_type', 'stromschlag.json'), {
         'exhaustion': 0.1, 'message_id': f'{NS}.stromschlag', 'scaling': 'never'})
 
@@ -823,8 +832,10 @@ def m2_recipes():
     werkbank_shaped('universe_scanner', [' L ', 'XCX', ' B '],
                     {'L': 'fluxlinse', 'X': '#c:plates/xenit', 'C': 'minecraft:compass', 'B': 'basis_schaltkreis'},
                     'universe_scanner', loetzinn=1)
-    werkbank_shaped('xenit_zelle', ['ESE', 'ECE', 'EBE'],
-                    {'E': 'energiezelle', 'S': 'xenit_spule', 'C': 'xenit_gehaeuse', 'B': 'basis_schaltkreis'},
+    # Meilenstein 7: 4 statt 6 Energiezellen (die Speicher bauen aufeinander auf und wurden zu teuer)
+    werkbank_shaped('xenit_zelle', ['ESE', 'PCP', 'EBE'],
+                    {'E': 'energiezelle', 'S': 'xenit_spule', 'C': 'xenit_gehaeuse', 'B': 'basis_schaltkreis',
+                     'P': '#c:plates/iron'},
                     'xenit_zelle', loetzinn=2)
     werkbank_shaped('xenit_schmelze', ['XFX', 'SCS', 'IBI'],
                     {'X': '#c:plates/xenit', 'F': 'minecraft:furnace', 'S': 'xenit_spule', 'C': 'xenit_gehaeuse',
@@ -897,11 +908,13 @@ def m2_worldgen():
         'placement': {'type': 'minecraft:random_spread', 'salt': 1847263195, 'spacing': 62, 'separation': 56,
                       'locate_offset': [8, 0, 8]}})
 
-    # Xenit-Zone: 1–2 Adern à 3–6 Erz pro Chunk am Krater, Eisen-Band Y -24..56 (am dichtesten um Y 16)
+    # Xenit-Zone: 2–4 Adern à 3–6 Erz pro Chunk am Krater, Eisen-Band Y -24..56 (am dichtesten um Y 16).
+    # Meilenstein 7: von 1–2 auf 2–4 Adern, damit eine Stunde Strip-Mining nahe am Krater 20–40 Erz bringt
+    # (Rechnung in tools/balance/bilanz.py, Vergleich mit dem Eisen-Band aus Vanilla).
     ore_feature('ore_xenit_krater', 'xenit_ore', 'deepslate_xenit_ore', 6)
     placed('ore_xenit_krater', 'ore_xenit_krater', [
         {'type': rl('config_menge'), 'option': 'xenit_dichte'},
-        {'type': 'minecraft:count', 'count': {'type': 'minecraft:uniform', 'min_inclusive': 1, 'max_inclusive': 2}},
+        {'type': 'minecraft:count', 'count': {'type': 'minecraft:uniform', 'min_inclusive': 2, 'max_inclusive': 4}},
         {'type': rl('krater_zone')},
         {'type': 'minecraft:in_square'},
         {'type': 'minecraft:height_range', 'height': {'type': 'minecraft:trapezoid',
@@ -1288,8 +1301,10 @@ def m3_recipes():
     werkbank_shaped('labor_huelle', ['ISI', 'S S', 'ISI'], {'I': '#c:plates/iron', 'S': '#c:plates/steel'}, 'labor_huelle', 4, hammer=1)
     werkbank_shaped('labor_gehaeuse', ['SVS', 'VXV', 'SVS'],
                     {'S': '#c:plates/steel', 'V': 'verbundplatte', 'X': 'xenit_gehaeuse'}, 'labor_gehaeuse', hammer=1)
-    werkbank_shaped('flux_spule', ['GFG', 'GXG', 'GFG'],
-                    {'G': '#c:wires/gold', 'F': '#c:dusts/fluxkristall', 'X': '#c:rods/xenit'}, 'flux_spule', loetzinn=1)
+    # Meilenstein 7: Wicklung halb Gold, halb Kupfer (vorher 6 Golddraht); die Spule steckt in fast allem ab T2
+    werkbank_shaped('flux_spule', ['GFK', 'GXK', 'GFK'],
+                    {'G': '#c:wires/gold', 'K': '#c:wires/copper', 'F': '#c:dusts/fluxkristall', 'X': '#c:rods/xenit'},
+                    'flux_spule', loetzinn=1)
     werkbank_shaped('umspanner', ['IKI', 'SXT', 'IFI'],
                     {'I': '#c:plates/iron', 'K': 'kupferkabel_isoliert', 'F': 'flux_leitung_isoliert', 'S': 'xenit_spule',
                      'T': 'flux_spule', 'X': 'xenit_gehaeuse'}, 'umspanner', loetzinn=2)
@@ -1726,17 +1741,19 @@ def m4_recipes():
     werkbank_shaped('graphit_gehaeuse', ['GRG', 'SLS', 'GRG'],
                     {'G': 'graphitplatte', 'R': 'gravitit_rahmen', 'S': '#c:plates/steel', 'L': 'labor_gehaeuse'},
                     'graphit_gehaeuse', hammer=2)
-    werkbank_shaped('gravitit_spule', ['WGW', 'WXW', 'WGW'],
-                    {'W': '#c:wires/gold', 'G': 'gravitit', 'X': 'flux_spule'}, 'gravitit_spule', loetzinn=1)
+    # Meilenstein 7: Xenit-Stangen statt zwei der sechs Golddrähte (Gold lag im Durchlauf 50 % über dem Plan)
+    werkbank_shaped('gravitit_spule', ['WGW', 'RXR', 'WGW'],
+                    {'W': '#c:wires/gold', 'G': 'gravitit', 'X': 'flux_spule', 'R': '#c:rods/xenit'}, 'gravitit_spule', loetzinn=1)
     werkbank_shaped('umspanner_ii', ['SFS', 'TLU', 'SGS'],
                     {'S': '#c:plates/steel', 'F': 'flux_leitung_isoliert', 'T': 'flux_spule', 'L': 'labor_gehaeuse',
                      'U': 'gravitit_spule', 'G': 'gravitit_leitung_isoliert'}, 'umspanner_ii', loetzinn=2)
     werkbank_shaped('umspanner_iii', ['SGS', 'TXT', 'SQS'],
                     {'S': '#c:plates/steel', 'G': 'gravitit_leitung_doppelt', 'T': 'gravitit_spule', 'X': 'graphit_gehaeuse',
                      'Q': 'quanten_schaltkreis'}, 'umspanner_iii', loetzinn=3)
-    werkbank_shaped('chrono_speicher', ['ZTZ', 'QGQ', 'ZCZ'],
+    # Meilenstein 7: 2 statt 4 Flux-Zellen (vorher ~100 Xenit- und ~115 Zinnbarren pro Speicher)
+    werkbank_shaped('chrono_speicher', ['PTP', 'ZGZ', 'QCQ'],
                     {'Z': 'flux_zelle', 'T': 'gravitit_spule', 'Q': 'quanten_schaltkreis', 'G': 'graphit_gehaeuse',
-                     'C': 'chrono_linse'}, 'chrono_speicher', loetzinn=4)
+                     'C': 'chrono_linse', 'P': 'graphitplatte'}, 'chrono_speicher', loetzinn=4)
     werkbank_shapeless('kopplungskarte', ['minecraft:paper', '#c:dusts/fluxkristall', 'rift_schaltkreis'], 'kopplungskarte')
 
     # --- Garagen-Werkbank: Maschinen und Generatoren -----------------------------------------
@@ -2094,7 +2111,9 @@ def m5_recipes():
     machine_recipe2('rift_schmiede', 'singularitaetslinse',
                     [('chrono_linse', 1), ('gravitit', 4), ('inversionssplitter', 1), ('chronoglas_scheibe', 2)],
                     'singularitaetslinse', 1, time=400)
-    machine_recipe2('rift_schmiede', 'null_huelle', [('graphit_huelle', 4), ('gravitit', 1), ('minecraft:obsidian', 2)],
+    # Meilenstein 7: mit Xenit- und Stahlplatten, damit die großen T4-Hüllen Masse kosten wie im Dokument
+    machine_recipe2('rift_schmiede', 'null_huelle', [('graphit_huelle', 4), ('gravitit', 1), ('minecraft:obsidian', 2),
+                                                    ('#c:plates/xenit', 2), ('#c:plates/steel', 2)],
                     'null_huelle', 4, time=200)
     machine_recipe2('rift_schmiede', 'nullmaterie_faser', [('nullmaterie', 1), ('#c:wires/gold', 2)], 'nullmaterie_faser', 4,
                     time=200)
@@ -2348,8 +2367,9 @@ def m6_recipes():
         montierer(f'{t}_rohling', steps, f'{t}_rohling', time=600)
         lithograf(f'{t}_kalibriert', [(f'{t}_rohling', 1), ('quanten_schaltkreis', 2), ('kalibrier_satz', 1)], f'{t}_kalibriert', time=600)
         schmiede(f'{t}_perfektioniert', [(f'{t}_kalibriert', 1), ('nullmaterie', 4), ('multiversal_prozessor', 2),
-                 ('multiversum_legierung', 1), (story, 3)], f'{t}_perfektioniert', time=2400)
-    montierer('kalibrier_satz', [('fluxkristall', 2), ('saeuregel', 2), ('chronoglas_scheibe', 2), (story, 1), ('quanten_schaltkreis', 1)],
+                 ('multiversum_legierung', 1), (story, 3), ('#c:plates/xenit', 4)], f'{t}_perfektioniert', time=2400)
+    montierer('kalibrier_satz', [('fluxkristall', 2), ('saeuregel', 2), ('chronoglas_scheibe', 2), (story, 1), ('quanten_schaltkreis', 1),
+                                 ('#c:ingots/xenit', 4)],
               'kalibrier_satz', time=300)
     schmiede('multiversum_legierung', [('gravitit', 2), ('inversionssplitter', 2), ('schwebstein_brocken', 2), ('biomasse_pulpe', 2),
              ('alien_schrott', 4), ('fluxkristall', 2)], 'multiversum_legierung', time=400)
@@ -2679,10 +2699,10 @@ M7_DE = {
     'jei.riftverse.kurbel': '%s Kurbel-Ticks',
     'jei.riftverse.stufe': 'Spannung: %s',
     'jei.riftverse.modus': 'Modus: %s',
-    'jei.riftverse.reihenfolge': 'Zutaten der Reihe nach einlegen',
+    'jei.riftverse.reihenfolge': 'Reihenfolge der Slots zählt',
     'jei.riftverse.schritt': 'Schritt %s',
     'jei.riftverse.aufbau': 'Nur mit fertigem Aufbau',
-    'jei.riftverse.scanner': 'Probe bestimmt das Ziel der Karte',
+    'jei.riftverse.scanner': 'Die Probe gibt das Ziel vor',
     'jei.riftverse.hammer': 'Hammer: %s Haltbarkeit',
     'jei.riftverse.loetzinn': 'Lötzinn: %s',
     'jei.riftverse.chance': '%s %% Chance',
@@ -2774,10 +2794,10 @@ M7_EN = {
     'jei.riftverse.kurbel': '%s crank ticks',
     'jei.riftverse.stufe': 'Voltage: %s',
     'jei.riftverse.modus': 'Mode: %s',
-    'jei.riftverse.reihenfolge': 'Insert the ingredients in order',
+    'jei.riftverse.reihenfolge': 'Slot order matters',
     'jei.riftverse.schritt': 'Step %s',
     'jei.riftverse.aufbau': 'Needs the complete structure',
-    'jei.riftverse.scanner': 'The sample decides where the map leads',
+    'jei.riftverse.scanner': 'The sample sets the target',
     'jei.riftverse.hammer': 'Hammer: %s durability',
     'jei.riftverse.loetzinn': 'Solder: %s',
     'jei.riftverse.chance': '%s %% chance',

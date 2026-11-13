@@ -288,7 +288,8 @@ final class RauchTestM5 {
 
     private static List<ItemStack> hullZutaten() {
         return new ArrayList<>(List.of(new ItemStack(ModItems.GRAPHIT_HUELLE.get(), 4), new ItemStack(ModItems.GRAVITIT.get()),
-                new ItemStack(Items.OBSIDIAN, 2)));
+                new ItemStack(Items.OBSIDIAN, 2), new ItemStack(ModItems.XENIT_PLATTE.get(), 2),
+                new ItemStack(ModItems.STAHL_PLATTE.get(), 2)));
     }
 
     private static void buildSchmiede(ServerLevel level, BlockPos controller, boolean komplett) {

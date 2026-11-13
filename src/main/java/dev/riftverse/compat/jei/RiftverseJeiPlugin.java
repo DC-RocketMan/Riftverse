@@ -96,9 +96,8 @@ public class RiftverseJeiPlugin implements IModPlugin {
             this.kategorie = kategorie;
             this.symbol = gui.createDrawableIngredient(VanillaTypes.ITEM_STACK, kategorie.symbol());
             this.pfeil = gui.getRecipeArrow();
-            // Platz für das größte Layout der Kategorie: 6 Eingänge, 4 Ausgänge, 5 Textzeilen
-            this.breite = 160;
-            this.hoehe = 2 * RezeptAnsicht.SLOT + 3 + 5 * RezeptAnsicht.ZEILE + 2;
+            this.breite = RezeptAnsicht.JEI_BREITE;
+            this.hoehe = RezeptAnsicht.JEI_HOEHE;
         }
 
         @Override

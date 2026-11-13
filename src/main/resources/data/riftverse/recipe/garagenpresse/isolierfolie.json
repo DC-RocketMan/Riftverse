@@ -4,12 +4,12 @@
     {
       "ingredient": {
         "item": "riftverse:polymerfetzen"
-      },
-      "count": 2
+      }
     }
   ],
   "result": {
-    "id": "riftverse:isolierfolie"
+    "id": "riftverse:isolierfolie",
+    "count": 2
   },
   "time": 40
 }
