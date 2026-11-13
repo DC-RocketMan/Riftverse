@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "riftverse:block/umspanner_ii_side",
+    "north": "riftverse:block/umspanner_ii_front",
+    "south": "riftverse:block/umspanner_ii_side",
+    "east": "riftverse:block/umspanner_ii_side",
+    "west": "riftverse:block/umspanner_ii_side",
+    "up": "riftverse:block/umspanner_ii_side",
+    "down": "riftverse:block/umspanner_ii_side"
+  }
+}

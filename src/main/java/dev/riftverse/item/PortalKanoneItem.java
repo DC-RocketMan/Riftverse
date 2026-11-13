@@ -5,6 +5,7 @@ import dev.riftverse.portal.Heimanker;
 import dev.riftverse.portal.RiftPortalEntity;
 import dev.riftverse.registry.ModDataComponents;
 import dev.riftverse.registry.ModDataComponents.KanonenTank;
+import dev.riftverse.registry.ModDataComponents.KanonenZiele;
 import dev.riftverse.registry.ModItems;
 import dev.riftverse.universe.Multiverse;
 import dev.riftverse.universe.UniverseId;
@@ -37,7 +38,9 @@ import java.util.List;
 
 /**
  * Portal-Kanone. Mk I: rein zufällige Sprünge, 250 mB pro Schuss (Roh-Portalfluid: T1-Universen, stabilisiertes
- * Portalfluid: auch T2). Mk II: nur stabilisiertes Portalfluid, 100 mB pro Schuss, Koordinatenkarten.
+ * Portalfluid: auch T2). Mk II: stabilisiertes Portalfluid oder Konzentrat, 100 mB pro Schuss, Koordinatenkarten;
+ * mit Konzentrat springt sie zufällig auch in T3-Welten. Mk III: nur Konzentrat, 50 mB pro Schuss, merkt sich bis zu
+ * 8 Ziele (Taste V wechselt: Zufall → Kurzstrecke → Ziel 1 … 8) und öffnet Kurzstrecken-Portale in derselben Welt.
  * <ul>
  *   <li>Rechtsklick: Rift in ein zufälliges Universum öffnen.</li>
  *   <li>Schleichen + Rechtsklick oder Rückkehr-Taste (Standard R): Rift zum Heimanker öffnen.</li>
@@ -68,8 +71,24 @@ public class PortalKanoneItem extends Item {
         };
     }
 
+    /** Reichweite der Kurzstrecken-Portale (Mk III). */
+    public static final int KURZSTRECKE_WEITE = 96;
+
     public static KanonenTank tank(ItemStack gun) {
         return gun.getOrDefault(ModDataComponents.KANONEN_TANK.get(), KanonenTank.LEER);
+    }
+
+    public static KanonenZiele ziele(ItemStack gun) {
+        return gun.getOrDefault(ModDataComponents.KANONEN_ZIELE.get(), KanonenZiele.LEER);
+    }
+
+    /** Welche Fluid-Stufen (1 roh, 2 stabil, 3 Konzentrat) diese Kanone verträgt. */
+    public boolean accepts(int stufe) {
+        return switch (tier) {
+            case 1 -> stufe <= 2;
+            case 2 -> stufe >= 2;
+            default -> stufe >= 3;
+        };
     }
 
     // ------------------------------------------------------------------ Benutzung
@@ -93,6 +112,12 @@ public class PortalKanoneItem extends Item {
         UniverseId here = Multiverse.at(level, player.blockPosition());
 
         UniverseId mapped = tier >= 2 ? mapTarget(player, gun) : null;
+        boolean fromCard = mapped != null;
+        KanonenZiele ziele = ziele(gun);
+        if (mapped == null && tier >= 3) {
+            if (ziele.auswahl() == KanonenZiele.KURZSTRECKE) return kurzstrecke(player, gun);
+            mapped = ziele.gewaehlt();
+        }
         if (mapped != null && mapped.equals(here)) {
             player.displayClientMessage(Component.translatable("message.riftverse.schon_dort").withStyle(ChatFormatting.YELLOW), true);
             return false;
@@ -105,7 +130,7 @@ public class PortalKanoneItem extends Item {
         if (mapped != null) {
             target = mapped;
         } else {
-            List<UniverseType> types = UniverseType.reachableWith(shot.stabil() ? Math.max(2, tier) : tier);
+            List<UniverseType> types = UniverseType.reachableWith(Math.max(tier, shot.stufe()));
             target = Multiverse.random(level.random, types);
             for (int i = 0; i < 4 && target.equals(here); i++) target = Multiverse.random(level.random, types);
         }
@@ -116,6 +141,7 @@ public class PortalKanoneItem extends Item {
         portal.setSpawnReturn(false);
         level.addFreshEntity(portal);
         effects(level, player, spot);
+        if (fromCard && tier >= 3) gun.set(ModDataComponents.KANONEN_ZIELE.get(), ziele.merken(mapped));
         if (mapped != null) {
             player.displayClientMessage(Component.translatable("message.riftverse.rift_ziel", "Universum " + target.code(),
                     target.type().displayName()).withStyle(ChatFormatting.GREEN), true);
@@ -123,6 +149,54 @@ public class PortalKanoneItem extends Item {
             player.displayClientMessage(Component.translatable("message.riftverse.rift_open").withStyle(ChatFormatting.GREEN), true);
         }
         return true;
+    }
+
+    /**
+     * Mk III, Auswahl „Kurzstrecke“: Rift direkt vor dem Spieler, das an die anvisierte Stelle in derselben Welt führt
+     * (bis {@link #KURZSTRECKE_WEITE} Blöcke).
+     */
+    public boolean kurzstrecke(ServerPlayer player, ItemStack gun) {
+        if (player.getCooldowns().isOnCooldown(this)) return false;
+        ServerLevel level = player.serverLevel();
+        HitResult hit = player.pick(KURZSTRECKE_WEITE, 1.0f, false);
+        if (!(hit instanceof BlockHitResult bhr) || hit.getType() != HitResult.Type.BLOCK) {
+            player.displayClientMessage(Component.translatable("message.riftverse.kurzstrecke_kein_ziel", KURZSTRECKE_WEITE)
+                    .withStyle(ChatFormatting.YELLOW), true);
+            return false;
+        }
+        BlockPos target = bhr.getBlockPos().relative(bhr.getDirection());
+        Vec3 dest = groundBelow(level, Vec3.atBottomCenterOf(target));
+        if (shoot(player, gun) == null) return false;
+        Vec3 spot = groundBelow(level, player.position().add(Vec3.directionFromRotation(0f, player.getYRot()).scale(2.5)));
+        RiftPortalEntity portal = RiftPortalEntity.create(level, spot, player.getYRot() + 180f, RiftPortalEntity.STYLE_RANDOM, 300);
+        portal.setExactTarget(level.dimension(), dest);
+        portal.setSpawnReturn(false);
+        level.addFreshEntity(portal);
+        effects(level, player, dest);
+        player.displayClientMessage(Component.translatable("message.riftverse.kurzstrecke",
+                (int) Math.round(dest.distanceTo(player.position()))).withStyle(ChatFormatting.GREEN), true);
+        return true;
+    }
+
+    /** Taste V (Mk III): nächste Auswahl; mit Schleichen das gewählte Ziel löschen. */
+    public void zielWechseln(ServerPlayer player, ItemStack gun, boolean loeschen) {
+        if (tier < 3) {
+            player.displayClientMessage(Component.translatable("message.riftverse.ziele_erst_mk3").withStyle(ChatFormatting.YELLOW), true);
+            return;
+        }
+        KanonenZiele z = ziele(gun);
+        z = loeschen ? z.loeschen() : z.weiter();
+        gun.set(ModDataComponents.KANONEN_ZIELE.get(), z);
+        player.displayClientMessage(auswahlText(z).copy().withStyle(loeschen ? ChatFormatting.GOLD : ChatFormatting.AQUA), true);
+    }
+
+    public static Component auswahlText(KanonenZiele z) {
+        if (z.auswahl() == KanonenZiele.ZUFALL) return Component.translatable("message.riftverse.ziel_zufall");
+        if (z.auswahl() == KanonenZiele.KURZSTRECKE) return Component.translatable("message.riftverse.ziel_kurzstrecke");
+        UniverseId id = z.gewaehlt();
+        if (id == null) return Component.translatable("message.riftverse.ziel_zufall");
+        return Component.translatable("message.riftverse.ziel_nummer", z.auswahl() + 1, z.ziele().size(),
+                "Universum " + id.code(), id.type().displayName());
     }
 
     /** Universum der Koordinatenkarte in der anderen Hand, falls diese Kanone es erreicht. */
@@ -168,9 +242,9 @@ public class PortalKanoneItem extends Item {
         return shoot(player, gun) != null;
     }
 
-    /** Mk I verträgt beide Fluide, ab Mk II nur noch stabilisiertes Portalfluid. */
+    /** Mk I verträgt Roh-Portalfluid, ab Mk II nicht mehr. */
     public boolean acceptsRaw() {
-        return tier < 2;
+        return accepts(1);
     }
 
     /**
@@ -181,7 +255,7 @@ public class PortalKanoneItem extends Item {
     public KanonenTank shoot(ServerPlayer player, ItemStack gun) {
         if (player.getAbilities().instabuild) {
             player.getCooldowns().addCooldown(this, 20);
-            return new KanonenTank(TANK, 0, tier >= 2);
+            return new KanonenTank(TANK, 0, tier >= 2, tier >= 3);
         }
         long now = Zerfall.now(player.level());
         KanonenTank tank = tank(gun);
@@ -189,40 +263,51 @@ public class PortalKanoneItem extends Item {
             tank = KanonenTank.LEER;
             player.displayClientMessage(Component.translatable("message.riftverse.kanone_zerfallen").withStyle(ChatFormatting.GRAY), false);
         }
-        if (tank.mb() > 0 && !tank.stabil() && !acceptsRaw()) tank = KanonenTank.LEER;
+        if (tank.mb() > 0 && !accepts(tank.stufe())) tank = KanonenTank.LEER;
         if (tank.mb() < shotCost()) {
-            ItemStack cartridge = takeCartridge(player, now, acceptsRaw());
+            ItemStack cartridge = takeCartridge(player, now, this);
             if (cartridge == null) {
                 gun.set(ModDataComponents.KANONEN_TANK.get(), tank);
-                player.displayClientMessage(Component.translatable(acceptsRaw() ? "message.riftverse.kein_fluid" : "message.riftverse.kein_fluid_stabil")
-                        .withStyle(ChatFormatting.RED), true);
+                String key = tier >= 3 ? "message.riftverse.kein_fluid_konzentrat"
+                        : acceptsRaw() ? "message.riftverse.kein_fluid" : "message.riftverse.kein_fluid_stabil";
+                player.displayClientMessage(Component.translatable(key).withStyle(ChatFormatting.RED), true);
                 player.level().playSound(null, player.blockPosition(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 1f, 1.2f);
                 return null;
             }
-            boolean stabil = cartridge.is(ModItems.FLUID_KARTUSCHE_STABIL.get());
+            int stufe = stufe(cartridge);
             // Ein Rest der anderen Sorte verpufft beim Nachladen
-            int rest = tank.mb() > 0 && tank.stabil() == stabil ? tank.mb() : 0;
-            long z = stabil ? 0 : FluidKartuscheItem.zerfall(cartridge);
-            tank = new KanonenTank(Math.min(TANK, rest + FluidKartuscheItem.INHALT), rest > 0 ? Zerfall.frueher(tank.zerfall(), z) : z, stabil);
+            int rest = tank.mb() > 0 && tank.stufe() == stufe ? tank.mb() : 0;
+            long z = stufe >= 2 ? 0 : FluidKartuscheItem.zerfall(cartridge);
+            tank = new KanonenTank(Math.min(TANK, rest + FluidKartuscheItem.INHALT), rest > 0 ? Zerfall.frueher(tank.zerfall(), z) : z,
+                    stufe >= 2, stufe >= 3);
             player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 0.8f, 1.6f);
         }
         int left = tank.mb() - shotCost();
-        gun.set(ModDataComponents.KANONEN_TANK.get(), left > 0 ? new KanonenTank(left, tank.zerfall(), tank.stabil()) : KanonenTank.LEER);
+        gun.set(ModDataComponents.KANONEN_TANK.get(), left > 0
+                ? new KanonenTank(left, tank.zerfall(), tank.stabil(), tank.konzentrat()) : KanonenTank.LEER);
         player.getCooldowns().addCooldown(this, 40);
         return tank;
     }
 
+    /** Fluid-Stufe einer vollen Kartusche: 1 roh, 2 stabil, 3 Konzentrat, 0 = keine volle Kartusche. */
+    public static int stufe(ItemStack cartridge) {
+        if (cartridge.is(ModItems.FLUID_KARTUSCHE_KONZENTRAT.get())) return 3;
+        if (cartridge.is(ModItems.FLUID_KARTUSCHE_STABIL.get())) return 2;
+        if (cartridge.is(ModItems.FLUID_KARTUSCHE_VOLL.get())) return 1;
+        return 0;
+    }
+
     /**
-     * Nimmt eine volle, unzerfallene Kartusche aus dem Inventar und legt dafür eine leere zurück.
-     * @param raw ob Kartuschen mit Roh-Portalfluid passen (nur Mk I)
+     * Nimmt die erste passende volle, unzerfallene Kartusche aus dem Inventar und legt dafür eine leere zurück.
      */
     @Nullable
-    private static ItemStack takeCartridge(ServerPlayer player, long now, boolean raw) {
+    private static ItemStack takeCartridge(ServerPlayer player, long now, PortalKanoneItem gun) {
         Inventory inv = player.getInventory();
         for (int i = 0; i < inv.getContainerSize(); i++) {
             ItemStack stack = inv.getItem(i);
-            boolean stabil = stack.is(ModItems.FLUID_KARTUSCHE_STABIL.get());
-            if (!stabil && !(raw && stack.is(ModItems.FLUID_KARTUSCHE_VOLL.get()))) continue;
+            int stufe = stufe(stack);
+            if (stufe == 0 || !gun.accepts(stufe)) continue;
+            boolean stabil = stufe >= 2;
             if (!stabil && FluidKartuscheItem.zerfallen(stack, now)) {
                 inv.setItem(i, new ItemStack(ModItems.FLUID_KARTUSCHE.get(), stack.getCount()));
                 continue;
@@ -311,14 +396,16 @@ public class PortalKanoneItem extends Item {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return tank(stack).stabil() ? 0x9A6BFF : 0x39FF6A;
+        KanonenTank t = tank(stack);
+        return t.konzentrat() ? 0x2AA8C0 : t.stabil() ? 0x9A6BFF : 0x39FF6A;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         KanonenTank tank = tank(stack);
-        tooltip.add(Component.translatable(tank.stabil() ? "tooltip.riftverse.kanone_tank_stabil" : "tooltip.riftverse.kanone_tank",
-                tank.mb(), TANK, shotCost()).withStyle(ChatFormatting.GRAY));
+        String tankKey = tank.konzentrat() ? "tooltip.riftverse.kanone_tank_konzentrat"
+                : tank.stabil() ? "tooltip.riftverse.kanone_tank_stabil" : "tooltip.riftverse.kanone_tank";
+        tooltip.add(Component.translatable(tankKey, tank.mb(), TANK, shotCost()).withStyle(ChatFormatting.GRAY));
         Level level = context.level();
         if (tank.mb() > 0 && tank.zerfall() > 0 && level != null) {
             tooltip.add(Component.translatable("tooltip.riftverse.zerfaellt_in", Zerfall.rest(tank.zerfall(), level.getGameTime()))
@@ -326,6 +413,16 @@ public class PortalKanoneItem extends Item {
         }
         tooltip.add(Component.translatable("tooltip.riftverse.kanone_mk" + tier).withStyle(ChatFormatting.DARK_GREEN));
         if (tier >= 2) tooltip.add(Component.translatable("tooltip.riftverse.kanone_karte").withStyle(ChatFormatting.DARK_GREEN));
+        if (tier >= 3) {
+            KanonenZiele z = ziele(stack);
+            tooltip.add(auswahlText(z).copy().withStyle(ChatFormatting.AQUA));
+            for (int i = 0; i < z.ziele().size(); i++) {
+                UniverseId id = z.ziele().get(i);
+                tooltip.add(Component.literal((i == z.auswahl() ? "▶ " : "  ") + (i + 1) + ". Universum " + id.code() + " · ")
+                        .append(id.type().displayName()).withStyle(i == z.auswahl() ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY));
+            }
+            tooltip.add(Component.translatable("tooltip.riftverse.kanone_ziele").withStyle(ChatFormatting.DARK_GREEN));
+        }
         tooltip.add(Component.translatable("tooltip.riftverse.kanone_bedienung").withStyle(ChatFormatting.DARK_GRAY));
     }
 }

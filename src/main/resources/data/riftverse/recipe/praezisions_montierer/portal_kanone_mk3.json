@@ -1,0 +1,40 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:portal_kanone_mk2"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_rahmen"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:inversionssplitter"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chrono_linse"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "riftverse:story_fragmente"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:portal_kanone_mk3"
+  },
+  "time": 600
+}

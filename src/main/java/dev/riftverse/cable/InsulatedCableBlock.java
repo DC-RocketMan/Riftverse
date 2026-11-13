@@ -29,9 +29,16 @@ public class InsulatedCableBlock extends CableBlock {
     public static final int DEFAULT_TINT = 0x5AA9B0;
     /** Streifen der ungefärbten Flux-Leitung (Labor-Weiß). */
     public static final int DEFAULT_TINT_II = 0xE6EAEC;
+    /** Streifen der ungefärbten Gravitit-Leitung (Gravitit-Blau). */
+    public static final int DEFAULT_TINT_III = 0x4A62A8;
 
     public InsulatedCableBlock(Properties properties, VoltageTier tier, double lossPerBlock, int thicknessPx) {
-        super(properties, tier, lossPerBlock, thicknessPx, true);
+        this(properties, tier, lossPerBlock, thicknessPx, 0.0f);
+    }
+
+    /** @param shockDamage Gravitit-Leitung mit nur einer Isolierschicht: noch ein Schlag */
+    public InsulatedCableBlock(Properties properties, VoltageTier tier, double lossPerBlock, int thicknessPx, float shockDamage) {
+        super(properties, tier, lossPerBlock, thicknessPx, true, shockDamage);
         registerDefaultState(defaultBlockState().setValue(COLOR, 0));
     }
 
@@ -60,6 +67,11 @@ public class InsulatedCableBlock extends CableBlock {
     public static int tint(BlockState state) {
         int c = color(state);
         if (c != 0) return DyeColor.byId(c - 1).getFireworkColor();
-        return state.getBlock() instanceof CableBlock cable && cable.tier() == VoltageTier.II ? DEFAULT_TINT_II : DEFAULT_TINT;
+        if (!(state.getBlock() instanceof CableBlock cable)) return DEFAULT_TINT;
+        return switch (cable.tier()) {
+            case II -> DEFAULT_TINT_II;
+            case III, IV -> DEFAULT_TINT_III;
+            default -> DEFAULT_TINT;
+        };
     }
 }

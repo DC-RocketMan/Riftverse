@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GQG",
+    "GCG",
+    "TXT"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "C": {
+      "item": "minecraft:cauldron"
+    },
+    "T": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "X": {
+      "item": "riftverse:graphit_gehaeuse"
+    }
+  },
+  "result": {
+    "id": "riftverse:klon_tank"
+  },
+  "loetzinn": 3
+}

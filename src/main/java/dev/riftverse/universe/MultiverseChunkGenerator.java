@@ -149,6 +149,8 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
             case NIEDRIGGRAVITATION -> decorateFloating(chunk, p, tops, pos);
             case ZEITDILATATION -> decorateTime(chunk, p, tops, pos);
             case ORGANISCH -> decorateOrganic(chunk, p, tops, pos);
+            case HOCHGRAVITATION -> decorateHeavy(chunk, p, tops, pos);
+            case SPIEGEL -> decorateMirror(chunk, p, tops, pos);
         }
         return CompletableFuture.completedFuture(chunk);
     }
@@ -429,6 +431,70 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
                         };
                     } else if (ground.is(Blocks.SAND)) {
                         plant = rnd.nextInt(4) == 0 ? Blocks.CACTUS.defaultBlockState() : Blocks.DEAD_BUSH.defaultBlockState();
+                    }
+                    if (plant != null) chunk.setBlockState(pos.set(x, top + 1, z), plant, false);
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ Hochgravitationswelt
+
+    /** Plattgedrückte Ebenen: Gravitit-Brocken ragen aus dem Boden, sonst kaum etwas wächst hoch. */
+    private void decorateHeavy(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
+        RandomSource rnd = decoRandom(p, chunk);
+        ChunkPos cp = chunk.getPos();
+        BlockState gravitit = ModBlocks.GRAVITIT_ORE.get().defaultBlockState();
+        for (int lx = 0; lx < 16; lx++) {
+            for (int lz = 0; lz < 16; lz++) {
+                int top = tops[lx][lz];
+                if (!dryLand(p, top)) continue;
+                int x = cp.getMinBlockX() + lx, z = cp.getMinBlockZ() + lz;
+                if (!chunk.getBlockState(pos.set(x, top + 1, z)).isAir()) continue;
+                float roll = rnd.nextFloat();
+                if (roll < p.featureDensity) {
+                    // halb versunkener Gravitit-Brocken
+                    chunk.setBlockState(pos.set(x, top, z), gravitit, false);
+                    chunk.setBlockState(pos.set(x, top - 1, z), gravitit, false);
+                } else if (roll < p.featureDensity + p.plantDensity) {
+                    BlockState ground = chunk.getBlockState(pos.set(x, top, z));
+                    if (!ground.is(Blocks.DEEPSLATE)) chunk.setBlockState(pos.set(x, top + 1, z), Blocks.DEAD_BUSH.defaultBlockState(), false);
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------ Spiegelwelt
+
+    /** Spiegelkristall-Nadeln und helle Blumen. */
+    private void decorateMirror(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
+        RandomSource rnd = decoRandom(p, chunk);
+        ChunkPos cp = chunk.getPos();
+        BlockState kristall = ModBlocks.SPIEGELKRISTALL.get().defaultBlockState();
+        for (int lx = 0; lx < 16; lx++) {
+            for (int lz = 0; lz < 16; lz++) {
+                int top = tops[lx][lz];
+                if (!dryLand(p, top)) continue;
+                int x = cp.getMinBlockX() + lx, z = cp.getMinBlockZ() + lz;
+                if (!chunk.getBlockState(pos.set(x, top + 1, z)).isAir()) continue;
+                boolean inner = lx >= 1 && lx <= 14 && lz >= 1 && lz <= 14;
+                if (inner && rnd.nextFloat() < p.featureDensity) {
+                    int h = 1 + rnd.nextInt(3);
+                    for (int i = 0; i < h; i++) chunk.setBlockState(pos.set(x, top + 1 + i, z), kristall, false);
+                    continue;
+                }
+                if (rnd.nextFloat() < p.plantDensity) {
+                    BlockState ground = chunk.getBlockState(pos.set(x, top, z));
+                    BlockState plant = null;
+                    if (ground.is(Blocks.GRASS_BLOCK)) {
+                        plant = switch (rnd.nextInt(5)) {
+                            case 0 -> Blocks.WHITE_TULIP.defaultBlockState();
+                            case 1 -> Blocks.LILY_OF_THE_VALLEY.defaultBlockState();
+                            case 2 -> Blocks.AZURE_BLUET.defaultBlockState();
+                            default -> Blocks.SHORT_GRASS.defaultBlockState();
+                        };
+                    } else if (ground.is(Blocks.SNOW_BLOCK)) {
+                        plant = Blocks.SNOW.defaultBlockState();
                     }
                     if (plant != null) chunk.setBlockState(pos.set(x, top + 1, z), plant, false);
                 }

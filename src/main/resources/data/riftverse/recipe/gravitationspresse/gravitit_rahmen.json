@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:gravitationspresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:gravitit_rahmen"
+  },
+  "time": 300
+}

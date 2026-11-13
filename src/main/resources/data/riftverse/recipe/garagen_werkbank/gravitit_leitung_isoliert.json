@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "item": "riftverse:gravitit_leitung"
+    },
+    {
+      "item": "riftverse:isolierfolie"
+    }
+  ],
+  "result": {
+    "id": "riftverse:gravitit_leitung_isoliert"
+  }
+}

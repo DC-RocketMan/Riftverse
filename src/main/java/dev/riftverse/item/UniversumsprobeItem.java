@@ -59,5 +59,9 @@ public class UniversumsprobeItem extends KoordinatenkarteItem {
         }
         super.appendHoverText(stack, context, tooltip, flag);
         tooltip.add(Component.translatable("tooltip.riftverse.probe_scanner").withStyle(ChatFormatting.DARK_GRAY));
+        Integer used = stack.get(ModDataComponents.VERSCHLEISS.get());
+        int rest = dev.riftverse.tech.UniversumsDestillatorBlockEntity.DURCHLAEUFE - (used == null ? 0 : used);
+        tooltip.add(Component.translatable("tooltip.riftverse.probe_destillator", rest,
+                dev.riftverse.tech.UniversumsDestillatorBlockEntity.DURCHLAEUFE).withStyle(ChatFormatting.DARK_GRAY));
     }
 }

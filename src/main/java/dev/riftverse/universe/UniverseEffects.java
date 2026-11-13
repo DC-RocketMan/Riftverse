@@ -55,6 +55,9 @@ public final class UniverseEffects {
     private static final ResourceLocation SAFE_FALL = Riftverse.id("universe_safe_fall");
     private static final ResourceLocation FALL_DAMAGE = Riftverse.id("universe_fall_damage");
     private static final ResourceLocation SCALE = Riftverse.id("universe_scale");
+    private static final ResourceLocation STEP = Riftverse.id("universe_step");
+    /** Markiert Doppelgänger der Spiegelwelt. */
+    public static final String DOPPELGAENGER = "riftverse:doppelgaenger";
 
     private static final String WARN_KEY = "riftverse:warned";
 
@@ -76,6 +79,13 @@ public final class UniverseEffects {
             }
             case KRISTALL -> {
                 if (player.tickCount % 10 == 0 && player.isSprinting()) resonance(level, player);
+            }
+            case SPIEGEL -> {
+                if (player.tickCount % 600 == 0) doppelgaenger(level, player);
+            }
+            case HOCHGRAVITATION -> {
+                if (player.tickCount % 200 == 0) warn(player, "gravity",
+                        Component.translatable("message.riftverse.hochgravitation").withStyle(ChatFormatting.GOLD));
             }
             default -> { }
         }
@@ -133,6 +143,37 @@ public final class UniverseEffects {
         level.addFreshEntity(bolt);
     }
 
+    /**
+     * Spiegelwelt: Ab und zu taucht ein Doppelgänger auf, der die Ausrüstung des Spielers kopiert. Die Kopien
+     * fallen nicht herunter. Höchstens zwei Doppelgänger pro Spieler gleichzeitig.
+     */
+    private static void doppelgaenger(ServerLevel level, Player player) {
+        if (level.random.nextFloat() > 0.2f) return;
+        int count = level.getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(48),
+                m -> m.getPersistentData().getBoolean(DOPPELGAENGER)).size();
+        if (count >= 2) return;
+        double angle = level.random.nextDouble() * Math.PI * 2;
+        double dist = 12 + level.random.nextDouble() * 8;
+        int x = (int) Math.floor(player.getX() + Math.cos(angle) * dist);
+        int z = (int) Math.floor(player.getZ() + Math.sin(angle) * dist);
+        int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
+        if (Math.abs(y - player.getY()) > 12) return;
+        net.minecraft.world.entity.monster.Husk twin = EntityType.HUSK.create(level);
+        if (twin == null) return;
+        twin.moveTo(x + 0.5, y, z + 0.5, level.random.nextFloat() * 360f, 0f);
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            if (slot.getType() == EquipmentSlot.Type.ANIMAL_ARMOR) continue;
+            ItemStack copy = player.getItemBySlot(slot).copy();
+            twin.setItemSlot(slot, copy);
+            twin.setDropChance(slot, 0.0f);
+        }
+        twin.setCustomName(Component.translatable("entity.riftverse.doppelgaenger", player.getName()));
+        twin.getPersistentData().putBoolean(DOPPELGAENGER, true);
+        twin.setPersistenceRequired();
+        level.addFreshEntity(twin);
+        warn(player, "doppelgaenger", Component.translatable("message.riftverse.doppelgaenger").withStyle(ChatFormatting.LIGHT_PURPLE));
+    }
+
     private static void hop(ServerLevel level, Player player) {
         for (Mob mob : level.getEntitiesOfClass(Mob.class, player.getBoundingBox().inflate(24))) {
             if (mob.onGround() && level.random.nextFloat() < 0.15f) mob.getJumpControl().jump();
@@ -178,9 +219,13 @@ public final class UniverseEffects {
 
     public static void applyGravity(LivingEntity e, @Nullable UniverseProfile p) {
         double g = p == null ? 1.0 : p.gravity;
+        boolean heavy = p != null && p.type == UniverseType.HOCHGRAVITATION;
         set(e, Attributes.GRAVITY, GRAVITY, g - 1.0);
         set(e, Attributes.SAFE_FALL_DISTANCE, SAFE_FALL, 1.0 / g - 1.0);
-        set(e, Attributes.FALL_DAMAGE_MULTIPLIER, FALL_DAMAGE, g - 1.0);
+        // Hochgravitation: Fallschaden 3×, schon kleine Stürze sind tödlich
+        set(e, Attributes.FALL_DAMAGE_MULTIPLIER, FALL_DAMAGE, heavy ? 2.0 : g - 1.0);
+        // Springen geht dort kaum noch; damit man nicht in jeder Mulde festsitzt, steigt man volle Blöcke hoch
+        set(e, Attributes.STEP_HEIGHT, STEP, heavy ? 1.0 / 0.6 - 1.0 : 0.0);
     }
 
     private static void set(LivingEntity e, Holder<Attribute> attribute, ResourceLocation id, double amount) {

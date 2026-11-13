@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#c:ingots",
+    "#c:plates",
+    "#minecraft:planks",
+    "minecraft:bricks",
+    "minecraft:stone_bricks",
+    "minecraft:glass"
+  ]
+}

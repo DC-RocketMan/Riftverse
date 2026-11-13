@@ -2,6 +2,8 @@
   "values": [
     "#c:ores/tin",
     "#c:ores/xenit",
-    "#c:ores/fluxkristall"
+    "#c:ores/fluxkristall",
+    "#c:ores/gravitit",
+    "#c:ores/inversionssplitter"
   ]
 }

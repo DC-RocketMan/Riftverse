@@ -6,6 +6,13 @@ import dev.riftverse.energy.EnergyPortBlockEntity;
 import dev.riftverse.energy.KreativQuelleBlockEntity;
 import dev.riftverse.energy.UmspannerBlockEntity;
 import dev.riftverse.tech.BiomasseKesselBlockEntity;
+import dev.riftverse.tech.ChronoSpeicherBlockEntity;
+import dev.riftverse.tech.KlonTankBlockEntity;
+import dev.riftverse.tech.MaterieRekonfiguratorBlockEntity;
+import dev.riftverse.tech.MikrokosmosZelleBlockEntity;
+import dev.riftverse.tech.ParallelzapferBlockEntity;
+import dev.riftverse.tech.RiftKabelknotenBlockEntity;
+import dev.riftverse.tech.UniversumsDestillatorBlockEntity;
 import dev.riftverse.tech.ChronoBeschleunigerBlockEntity;
 import dev.riftverse.tech.FluxZelleBlockEntity;
 import dev.riftverse.tech.FluxkristallResonatorBlockEntity;
@@ -43,7 +50,8 @@ public final class ModBlockEntities {
                     ModBlocks.PRAEZISIONS_MONTIERER.get(),
                     ModBlocks.QUANTENZENTRIFUGE.get(),
                     ModBlocks.GRAVITATIONSPRESSE.get(),
-                    ModBlocks.DIMENSIONS_SCANNER.get()).build(null));
+                    ModBlocks.DIMENSIONS_SCANNER.get(),
+                    ModBlocks.QUANTEN_LITHOGRAF.get()).build(null));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluidMixerBlockEntity>> FLUID_MIXER =
             BLOCK_ENTITIES.register("fluid_mixer", () -> BlockEntityType.Builder.of(FluidMixerBlockEntity::new,
@@ -77,7 +85,7 @@ public final class ModBlockEntities {
     // --- Meilenstein 3 ---
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UmspannerBlockEntity>> UMSPANNER =
             BLOCK_ENTITIES.register("umspanner", () -> BlockEntityType.Builder.of(UmspannerBlockEntity::new,
-                    ModBlocks.UMSPANNER.get()).build(null));
+                    ModBlocks.UMSPANNER.get(), ModBlocks.UMSPANNER_II.get(), ModBlocks.UMSPANNER_III.get()).build(null));
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<FluxZelleBlockEntity>> FLUX_ZELLE =
             BLOCK_ENTITIES.register("flux_zelle", () -> BlockEntityType.Builder.of(FluxZelleBlockEntity::new,
                     ModBlocks.FLUX_ZELLE.get()).build(null));
@@ -99,6 +107,29 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GravitationsPendelBlockEntity>> GRAVITATIONS_PENDEL =
             BLOCK_ENTITIES.register("gravitations_pendel", () -> BlockEntityType.Builder.of(GravitationsPendelBlockEntity::new,
                     ModBlocks.GRAVITATIONS_PENDEL.get()).build(null));
+
+    // --- Meilenstein 4 ---
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ChronoSpeicherBlockEntity>> CHRONO_SPEICHER =
+            BLOCK_ENTITIES.register("chrono_speicher", () -> BlockEntityType.Builder.of(ChronoSpeicherBlockEntity::new,
+                    ModBlocks.CHRONO_SPEICHER.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MaterieRekonfiguratorBlockEntity>> MATERIE_REKONFIGURATOR =
+            BLOCK_ENTITIES.register("materie_rekonfigurator", () -> BlockEntityType.Builder.of(MaterieRekonfiguratorBlockEntity::new,
+                    ModBlocks.MATERIE_REKONFIGURATOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KlonTankBlockEntity>> KLON_TANK =
+            BLOCK_ENTITIES.register("klon_tank", () -> BlockEntityType.Builder.of(KlonTankBlockEntity::new,
+                    ModBlocks.KLON_TANK.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<UniversumsDestillatorBlockEntity>> UNIVERSUMS_DESTILLATOR =
+            BLOCK_ENTITIES.register("universums_destillator", () -> BlockEntityType.Builder.of(UniversumsDestillatorBlockEntity::new,
+                    ModBlocks.UNIVERSUMS_DESTILLATOR.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RiftKabelknotenBlockEntity>> RIFT_KABELKNOTEN =
+            BLOCK_ENTITIES.register("rift_kabelknoten", () -> BlockEntityType.Builder.of(RiftKabelknotenBlockEntity::new,
+                    ModBlocks.RIFT_KABELKNOTEN.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MikrokosmosZelleBlockEntity>> MIKROKOSMOS_ZELLE =
+            BLOCK_ENTITIES.register("mikrokosmos_zelle", () -> BlockEntityType.Builder.of(MikrokosmosZelleBlockEntity::new,
+                    ModBlocks.MIKROKOSMOS_ZELLE.get()).build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<ParallelzapferBlockEntity>> PARALLELZAPFER =
+            BLOCK_ENTITIES.register("parallelzapfer", () -> BlockEntityType.Builder.of(ParallelzapferBlockEntity::new,
+                    ModBlocks.PARALLELZAPFER.get()).build(null));
 
     /**
      * Trichter und Rohre befüllen die Maschinen; fremde FE-Leitungen docken nur am Einspeiser und Ausspeiser an.
@@ -143,6 +174,24 @@ public final class ModBlockEntities {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FLUXKRISTALL_RESONATOR.get(), (r, side) -> r.fluidHandler());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, FLUXKRISTALL_RESONATOR.get(), (r, side) -> r.energy().readOnly());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, GRAVITATIONS_PENDEL.get(), (p, side) -> p.energy().readOnly());
+
+        // Meilenstein 4
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, CHRONO_SPEICHER.get(), (c, side) -> c.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MATERIE_REKONFIGURATOR.get(), (m, side) -> m.automationHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, MATERIE_REKONFIGURATOR.get(), (m, side) -> m.fluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, MATERIE_REKONFIGURATOR.get(), (m, side) -> m.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, KLON_TANK.get(), (k, side) -> k.automationHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, KLON_TANK.get(), (k, side) -> k.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, UNIVERSUMS_DESTILLATOR.get(), (d, side) -> d.automationHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, UNIVERSUMS_DESTILLATOR.get(), (d, side) -> d.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, RIFT_KABELKNOTEN.get(), (k, side) -> k.itemHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, RIFT_KABELKNOTEN.get(), (k, side) -> k.fluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, RIFT_KABELKNOTEN.get(), (k, side) -> k.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, MIKROKOSMOS_ZELLE.get(), (z, side) -> z.automationHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, MIKROKOSMOS_ZELLE.get(), (z, side) -> z.energy().readOnly());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, PARALLELZAPFER.get(), (p, side) -> p.automationHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, PARALLELZAPFER.get(), (p, side) -> p.fluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, PARALLELZAPFER.get(), (p, side) -> p.energy().readOnly());
 
         EnergyItems.register(event);
     }

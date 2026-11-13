@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
@@ -93,6 +94,26 @@ public final class Multiblock {
         else if (corner) list.add(new Part(right, up, back, Multiblock::huelle, HUELLE));
         else if (up == 2 && right == 0 && back == 1) {
             list.add(new Part(0, 2, 1, s -> s.is(ModBlocks.SCHWEBSTEIN_KERN.get()), "block.riftverse.schwebstein_kern"));
+        }
+    });
+
+    private static boolean graphitHuelle(BlockState s) {
+        return s.is(ModBlocks.GRAPHIT_HUELLE.get());
+    }
+
+    private static final String GRAPHIT = "block.riftverse.graphit_huelle";
+
+    /**
+     * Parallelzapfer, 3 × 3 × 3: Boden aus Graphit-Hülle, darüber vier Eckpfosten aus Graphit-Hülle und darauf vier
+     * Blitzableiter als Antennen. In der Mitte über dem Steuerblock bleibt Luft – dort öffnet sich der Riss.
+     */
+    public static final Multiblock PARALLELZAPFER = build(3, (right, up, back, list) -> {
+        boolean corner = right != 0 && back != 1;
+        if (up == 0) list.add(new Part(right, up, back, Multiblock::graphitHuelle, GRAPHIT));
+        else if (up == 1 && corner) list.add(new Part(right, up, back, Multiblock::graphitHuelle, GRAPHIT));
+        else if (up == 1 && right == 0 && back == 1) list.add(new Part(0, 1, 1, BlockState::isAir, "gui.riftverse.zapfer.luft"));
+        else if (up == 2 && corner) {
+            list.add(new Part(right, up, back, s -> s.is(Blocks.LIGHTNING_ROD), "block.minecraft.lightning_rod"));
         }
     });
 

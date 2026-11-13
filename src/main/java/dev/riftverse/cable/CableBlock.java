@@ -45,16 +45,27 @@ public class CableBlock extends Block {
     private final VoltageTier tier;
     private final double lossPerBlock;
     private final boolean insulated;
+    private final float shockDamage;
     private final VoxelShape[] shapes;
 
     /**
      * @param thicknessPx Dicke in Pixeln (von 16), z. B. 4 blank, 6 isoliert
      */
     public CableBlock(Properties properties, VoltageTier tier, double lossPerBlock, int thicknessPx, boolean insulated) {
+        this(properties, tier, lossPerBlock, thicknessPx, insulated, insulated ? 0.0f : 2.0f);
+    }
+
+    /**
+     * @param shockDamage Schaden des Schlags bei Berührung unter Strom (0 = sicher). Die Gravitit-Leitung gibt blank
+     *                    einen starken Schlag und mit nur einer Isolierschicht noch einen normalen.
+     */
+    public CableBlock(Properties properties, VoltageTier tier, double lossPerBlock, int thicknessPx, boolean insulated,
+                      float shockDamage) {
         super(properties);
         this.tier = tier;
         this.lossPerBlock = lossPerBlock;
         this.insulated = insulated;
+        this.shockDamage = shockDamage;
         this.shapes = makeShapes(thicknessPx / 2.0);
         BlockState state = stateDefinition.any();
         for (BooleanProperty p : PROPERTY_BY_DIRECTION.values()) state = state.setValue(p, false);
@@ -78,6 +89,11 @@ public class CableBlock extends Block {
 
     public boolean insulated() {
         return insulated;
+    }
+
+    /** Schaden des Schlags; 0 = sicher anzufassen. */
+    public float shockDamage() {
+        return shockDamage;
     }
 
     // ------------------------------------------------------------------ Verbindungen
@@ -163,15 +179,15 @@ public class CableBlock extends Block {
 
     // ------------------------------------------------------------------ Strom
 
-    /** Blanke Leitung unter Strom: Schlag bei Berührung. */
+    /** Blanke (oder zu dünn isolierte) Leitung unter Strom: Schlag bei Berührung. */
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (insulated || level.isClientSide || !(entity instanceof LivingEntity living)) return;
+        if (shockDamage <= 0.0f || level.isClientSide || !(entity instanceof LivingEntity living)) return;
         if (level.getGameTime() % 10 != 0 || !Config.CABLE_SHOCK.get()) return;
         if (!EnergyNet.isLive(level, pos)) return;
         DamageSource source = new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(ModDamageTypes.STROMSCHLAG));
-        living.hurt(source, 2.0f);
+        living.hurt(source, shockDamage);
     }
 
     /** Rechtsklick mit leerer Hand: Kennzahlen des Teilnetzes in der Aktionsleiste. */

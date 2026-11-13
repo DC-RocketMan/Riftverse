@@ -1,0 +1,25 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:stabilisierte_linse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:chrono_linse"
+  },
+  "time": 300
+}

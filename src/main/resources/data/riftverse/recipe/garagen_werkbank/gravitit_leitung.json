@@ -1,0 +1,21 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SSS",
+    "GGG",
+    "SSS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "G": {
+      "item": "riftverse:gravitit"
+    }
+  },
+  "result": {
+    "id": "riftverse:gravitit_leitung",
+    "count": 6
+  },
+  "hammer": 1
+}

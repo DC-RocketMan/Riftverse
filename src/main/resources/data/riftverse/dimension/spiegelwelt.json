@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:spiegelwelt",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "spiegelwelt",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "spiegelwelt",
+      "biomes": [
+        "riftverse:spiegel_silber",
+        "riftverse:spiegel_glas"
+      ]
+    }
+  }
+}

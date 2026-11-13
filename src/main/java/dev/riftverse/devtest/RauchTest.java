@@ -60,7 +60,8 @@ import java.util.Optional;
  * Rauchtest für die CI ({@code ./gradlew runRauchtest}): startet einen Server, prüft Rezepte,
  * baut ein kleines Netz und die Maschinen aus Meilenstein 2 auf, erzeugt Universen und einen
  * Meteoritenkrater, ab Meilenstein 3 auch Umspanner, Flux-Zelle, T2-Maschinen, Multiblöcke und Kanone Mk II
- * ({@link RauchTestM3}), lässt alles laufen und beendet den Server wieder.
+ * ({@link RauchTestM3}), ab Meilenstein 4 Stufe III, die T3-Maschinen und -Generatoren, Kabelknoten und Kanone Mk III
+ * ({@link RauchTestM4}), lässt alles laufen und beendet den Server wieder.
  * Nur aktiv mit {@code -Driftverse.rauchtest=true}; im normalen Spiel passiert hier nichts.
  */
 public final class RauchTest {
@@ -141,6 +142,7 @@ public final class RauchTest {
 
         meilenstein2(server, level, recipes, base);
         RauchTestM3.aufbauen(server, level, recipes, base.south(64));
+        RauchTestM4.aufbauen(server, level, recipes, base.south(112));
         ticks = 0;
     }
 
@@ -350,6 +352,7 @@ public final class RauchTest {
         check(level.getBlockState(overvoltageMachine).isAir(), "Überspannung: Walzbank an Stufe II ist explodiert");
         meilenstein2Ergebnis(level);
         RauchTestM3.ergebnis(server, level);
+        RauchTestM4.ergebnis(server, level);
 
         if (failures.isEmpty()) {
             Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: BESTANDEN");

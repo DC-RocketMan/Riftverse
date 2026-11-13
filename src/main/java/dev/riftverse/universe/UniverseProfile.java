@@ -34,7 +34,9 @@ public final class UniverseProfile {
         ROLLING("Hügelland"), TERRACED("Tafelberge"), CANYON("Schluchtenland"), SPIKES("Nadelfelsen"),
         ARCHIPELAGO("Seenplatte"), CRATERED("Kraterfeld"), HALDEN("Müllberge"),
         // Meilenstein 3 (immer hinten anhängen, die Gewichte zählen nach Position)
-        SCHWEBEINSELN("Schwebeinseln");
+        SCHWEBEINSELN("Schwebeinseln"),
+        // Meilenstein 4
+        PLATTGEDRUECKT("Plattgedrückte Ebene");
         public final String label;
         Terrain(String label) { this.label = label; }
     }
@@ -83,7 +85,17 @@ public final class UniverseProfile {
                     new Palette("Fleischsteppe", ModBlocks.BIOMASSE_BLOCK.get(), Blocks.NETHER_WART_BLOCK, Blocks.DRIPSTONE_BLOCK, Blocks.MUD),
                     new Palette("Pilzgewebe", Blocks.MYCELIUM, ModBlocks.BIOMASSE_BLOCK.get(), Blocks.DEEPSLATE, Blocks.MUD),
                     new Palette("Moosfleisch", Blocks.MOSS_BLOCK, ModBlocks.BIOMASSE_BLOCK.get(), Blocks.STONE, Blocks.CLAY),
-                    new Palette("Wurzelgeflecht", Blocks.ROOTED_DIRT, Blocks.NETHER_WART_BLOCK, Blocks.DEEPSLATE, Blocks.MUD)));
+                    new Palette("Wurzelgeflecht", Blocks.ROOTED_DIRT, Blocks.NETHER_WART_BLOCK, Blocks.DEEPSLATE, Blocks.MUD)),
+            UniverseType.HOCHGRAVITATION, List.of(
+                    new Palette("Basaltdecke", Blocks.SMOOTH_BASALT, Blocks.BASALT, Blocks.BLACKSTONE, Blocks.GRAVEL),
+                    new Palette("Schieferpanzer", Blocks.DEEPSLATE, Blocks.COBBLED_DEEPSLATE, Blocks.DEEPSLATE, Blocks.TUFF),
+                    new Palette("Presstuff", Blocks.TUFF, Blocks.TUFF, Blocks.DEEPSLATE, Blocks.GRAVEL),
+                    new Palette("Schwerer Lehm", Blocks.PACKED_MUD, Blocks.MUD_BRICKS, Blocks.DEEPSLATE, Blocks.CLAY)),
+            UniverseType.SPIEGEL, List.of(
+                    new Palette("Quarzspiegel", Blocks.QUARTZ_BLOCK, Blocks.CALCITE, Blocks.STONE, Blocks.SAND),
+                    new Palette("Silberwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.DIORITE, Blocks.GRAVEL),
+                    new Palette("Glasschnee", Blocks.SNOW_BLOCK, Blocks.PACKED_ICE, Blocks.STONE, Blocks.ICE),
+                    new Palette("Kalkspiegel", Blocks.CALCITE, Blocks.SMOOTH_STONE, Blocks.DEEPSLATE, Blocks.CALCITE)));
 
     // ------------------------------------------------------------------ Cache
 
@@ -121,6 +133,8 @@ public final class UniverseProfile {
     public final float plantDensity;
 
     private final double base, amplitude, frequency;
+    /** Hochgravitation: Krater flacher. */
+    private final double amplitudeScale;
     private final double stepHeight, spikeHeight, canyonDepth, craterDensity, haldenHeight;
     private final SimplexNoise heightNoise, detailNoise, featureNoise, fieldNoise;
     private final ImprovedNoise caveNoise, oreNoise;
@@ -144,6 +158,8 @@ public final class UniverseProfile {
             case NIEDRIGGRAVITATION -> weighted(r, Terrain.values(), 0, 0, 0, 0, 0, 0, 0, 1);
             case ZEITDILATATION -> weighted(r, Terrain.values(), 40, 25, 15, 0, 10, 10, 0);
             case ORGANISCH -> weighted(r, Terrain.values(), 45, 0, 15, 10, 30, 0, 0);
+            case HOCHGRAVITATION -> weighted(r, Terrain.values(), 0, 0, 0, 0, 0, 30, 0, 0, 70);
+            case SPIEGEL -> weighted(r, Terrain.values(), 35, 20, 20, 15, 10, 0, 0);
         };
         List<Palette> palettes = PALETTES.get(type);
         this.palette = palettes.get(r.nextInt(palettes.size()));
@@ -154,6 +170,8 @@ public final class UniverseProfile {
             case NIEDRIGGRAVITATION -> 0.004f + r.nextFloat() * 0.008f;
             case ZEITDILATATION -> 0.003f + r.nextFloat() * 0.006f;
             case ORGANISCH -> 0.006f + r.nextFloat() * 0.01f;
+            case HOCHGRAVITATION -> 0.004f + r.nextFloat() * 0.006f;
+            case SPIEGEL -> 0.004f + r.nextFloat() * 0.008f;
         };
         this.plantDensity = switch (type) {
             case SCHROTT -> 0.01f + r.nextFloat() * 0.03f;
@@ -162,6 +180,8 @@ public final class UniverseProfile {
             case NIEDRIGGRAVITATION -> 0.05f + r.nextFloat() * 0.1f;
             case ZEITDILATATION -> 0.1f + r.nextFloat() * 0.2f;
             case ORGANISCH -> 0.03f + r.nextFloat() * 0.05f;
+            case HOCHGRAVITATION -> 0.005f + r.nextFloat() * 0.02f;
+            case SPIEGEL -> 0.06f + r.nextFloat() * 0.12f;
         };
 
         double richness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
@@ -182,7 +202,15 @@ public final class UniverseProfile {
             case ARCHIPELAGO -> { base = 52; amplitude = 18 + r.nextInt(14); frequency = 1.0 / (120 + r.nextInt(100)); }
             case CRATERED -> { base = 70 + r.nextInt(16); amplitude = 4 + r.nextInt(9); frequency = 1.0 / (160 + r.nextInt(120)); }
             case SCHWEBEINSELN -> { base = 96 + r.nextInt(24); amplitude = 26 + r.nextInt(26); frequency = 1.0 / (70 + r.nextInt(50)); }
+            // Hochgravitation: Die Schwerkraft drückt alles flach, Stufen von höchstens einem Block
+            case PLATTGEDRUECKT -> { base = 64 + r.nextInt(8); amplitude = 3 + r.nextInt(4); frequency = 1.0 / (200 + r.nextInt(120)); }
             default -> { base = 66 + r.nextInt(10); amplitude = 6 + r.nextInt(10); frequency = 1.0 / (110 + r.nextInt(90)); }
+        }
+        if (type == UniverseType.HOCHGRAVITATION && terrain == Terrain.CRATERED) {
+            // auch die Krater der Hochgravitationswelt sind flach gedrückt
+            this.amplitudeScale = 0.4;
+        } else {
+            this.amplitudeScale = 1.0;
         }
         this.stepHeight = 5 + r.nextInt(8);
         this.spikeHeight = 30 + r.nextInt(45);
@@ -234,6 +262,11 @@ public final class UniverseProfile {
      * @return false, wenn hier kein Land ist (Leere)
      */
     public boolean column(int x, int z, int[] out) {
+        if (type == UniverseType.SPIEGEL) {
+            // Spiegelwelt: Das Gelände ist an der Mittelachse des Universums gespiegelt
+            int axis = Multiverse.cellCenter(id.cellX());
+            if (x > axis) x = 2 * axis - x;
+        }
         double n = fbm(heightNoise, x * frequency, z * frequency, 4);
         double detail = fbm(detailNoise, x / 24.0, z / 24.0, 2) * 2.0;
         int minY = -64;
@@ -257,7 +290,8 @@ public final class UniverseProfile {
                 }
             }
             case ARCHIPELAGO -> h = base + amplitude * (n + 0.1) + detail;
-            case CRATERED -> h = base + amplitude * n + craters(x, z) + detail * 0.5;
+            case CRATERED -> h = base + (amplitude * n + craters(x, z)) * amplitudeScale + detail * 0.5 * amplitudeScale;
+            case PLATTGEDRUECKT -> h = base + amplitude * n + Math.round(detail * 0.25);
             case HALDEN -> {
                 double m = Math.max(0, halde(x, z));
                 h = base + amplitude * n + m * m * haldenHeight + detail;
@@ -367,6 +401,9 @@ public final class UniverseProfile {
         // T2: Schwebstein-Adern in den Inseln, Biomasse-Nester in der organischen Welt
         if (type == UniverseType.NIEDRIGGRAVITATION && roll < 180) return ModBlocks.SCHWEBSTEIN.get().defaultBlockState();
         if (type == UniverseType.ORGANISCH && roll < 120) return ModBlocks.BIOMASSE_BLOCK.get().defaultBlockState();
+        // T3: Gravitit tief und dicht in der Hochgravitationswelt, Spiegelkristall in der Spiegelwelt
+        if (type == UniverseType.HOCHGRAVITATION && roll < 160 && y < 40) return ModBlocks.GRAVITIT_ORE.get().defaultBlockState();
+        if (type == UniverseType.SPIEGEL && roll < 150) return ModBlocks.SPIEGELKRISTALL.get().defaultBlockState();
         if (roll < 300) return (deep ? Blocks.DEEPSLATE_COAL_ORE : Blocks.COAL_ORE).defaultBlockState();
         if (roll < 470) return (deep ? Blocks.DEEPSLATE_IRON_ORE : Blocks.IRON_ORE).defaultBlockState();
         if (roll < 590) return (deep ? Blocks.DEEPSLATE_COPPER_ORE : Blocks.COPPER_ORE).defaultBlockState();

@@ -17,7 +17,7 @@ import java.util.List;
  * (siehe {@link Multiverse}). Welcher Typ erreichbar ist, hängt von der Kanonenstufe ab.
  * <p>
  * Meilenstein 2 bringt die drei T1-Typen, Meilenstein 3 die drei T2-Typen (Niedriggravitation, Zeitdilatation,
- * Organisch). Neue Typen kommen immer hinten dazu, weil der Seed eines Universums die Ordnungszahl enthält.
+ * Organisch), Meilenstein 4 die T3-Typen Hochgravitation und Spiegelwelt. Neue Typen kommen immer hinten dazu, weil der Seed eines Universums die Ordnungszahl enthält.
  */
 public enum UniverseType implements StringRepresentable {
     /** Dauerhafter Nebel, Müllberge; Alien-Schrott, Xenit in Wrackfeldern; Schrott-Golems in den Halden. */
@@ -33,7 +33,13 @@ public enum UniverseType implements StringRepresentable {
     /** Pflanzen und Zufallsticks 4× schneller; Chronoglas-Sand fällt in Zeitlupe; Zeitverzerrungen setzen zurück. */
     ZEITDILATATION("zeitdilatation", 2, 1.0),
     /** Abgebaute Blöcke wachsen nach, der Boden atmet; Biomasse-Pulpe; fressende Flora. */
-    ORGANISCH("organische_welt", 2, 1.0);
+    ORGANISCH("organische_welt", 2, 1.0),
+
+    // --- T3, ab Kanone Mk III (Mk II mit Portalfluid-Konzentrat: zufällig) ------------------
+    /** Gravitation 250 %, kaum Sprünge, dreifacher Fallschaden; Gravitit, extrem dichtes Erz. */
+    HOCHGRAVITATION("hochgravitation", 3, 2.5),
+    /** Tag und Nacht vertauscht, gespiegeltes Gelände; Inversionssplitter; Doppelgänger kopieren die Ausrüstung. */
+    SPIEGEL("spiegelwelt", 3, 1.0);
 
     public static final Codec<UniverseType> CODEC = StringRepresentable.fromEnum(UniverseType::values);
 

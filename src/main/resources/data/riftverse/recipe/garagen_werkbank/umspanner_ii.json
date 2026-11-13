@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SFS",
+    "TLU",
+    "SGS"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "F": {
+      "item": "riftverse:flux_leitung_isoliert"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "U": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "G": {
+      "item": "riftverse:gravitit_leitung_isoliert"
+    }
+  },
+  "result": {
+    "id": "riftverse:umspanner_ii"
+  },
+  "loetzinn": 2
+}

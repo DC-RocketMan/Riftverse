@@ -3,6 +3,7 @@ package dev.riftverse.registry;
 import dev.riftverse.Riftverse;
 import dev.riftverse.tech.menu.FluidMixerMenu;
 import dev.riftverse.tech.menu.GeneratorMenu;
+import dev.riftverse.tech.menu.IndustrieMenu;
 import dev.riftverse.tech.menu.ProcessingMenu;
 import dev.riftverse.tech.menu.RaffinerieMenu;
 import dev.riftverse.tech.menu.ResonatorMenu;
@@ -32,6 +33,10 @@ public final class ModMenus {
             MENUS.register("portalfluid_raffinerie", () -> IMenuTypeExtension.create(RaffinerieMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<ResonatorMenu>> RESONATOR =
             MENUS.register("fluxkristall_resonator", () -> IMenuTypeExtension.create(ResonatorMenu::new));
+
+    /** Gemeinsame GUI der T3-Geräte aus Meilenstein 4. */
+    public static final DeferredHolder<MenuType<?>, MenuType<IndustrieMenu>> INDUSTRIE =
+            MENUS.register("industrie", () -> IMenuTypeExtension.create(IndustrieMenu::new));
 
     private ModMenus() {}
 }

@@ -1,0 +1,62 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "riftverse:block/gravitit_leitung_doppelt_core"
+      }
+    },
+    {
+      "when": {
+        "north": "true"
+      },
+      "apply": {
+        "model": "riftverse:block/gravitit_leitung_doppelt_side"
+      }
+    },
+    {
+      "when": {
+        "east": "true"
+      },
+      "apply": {
+        "model": "riftverse:block/gravitit_leitung_doppelt_side",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true"
+      },
+      "apply": {
+        "model": "riftverse:block/gravitit_leitung_doppelt_side",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true"
+      },
+      "apply": {
+        "model": "riftverse:block/gravitit_leitung_doppelt_side",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "riftverse:block/gravitit_leitung_doppelt_side",
+        "x": 270
+      }
+    },
+    {
+      "when": {
+        "down": "true"
+      },
+      "apply": {
+        "model": "riftverse:block/gravitit_leitung_doppelt_side",
+        "x": 90
+      }
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "riftverse:block/mikrokosmos_zelle_top",
+    "side": "riftverse:block/mikrokosmos_zelle_side",
+    "bottom": "riftverse:block/casing_t3"
+  }
+}
