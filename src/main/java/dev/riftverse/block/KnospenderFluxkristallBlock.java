@@ -22,7 +22,8 @@ public class KnospenderFluxkristallBlock extends Block {
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (UniverseType.of(level.dimension()) != UniverseType.KRISTALL || random.nextInt(4) != 0) return;
+        dev.riftverse.universe.UniverseProfile profile = dev.riftverse.universe.Multiverse.profileAt(level, pos);
+        if (profile == null || profile.look != UniverseType.KRISTALL || random.nextInt(4) != 0) return;
         Direction dir = Direction.getRandom(random);
         BlockPos target = pos.relative(dir);
         BlockState there = level.getBlockState(target);

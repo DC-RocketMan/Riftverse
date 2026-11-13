@@ -65,6 +65,16 @@
     "riftverse:spiegelkristall",
     "riftverse:gravitit_leitung",
     "riftverse:gravitit_leitung_isoliert",
-    "riftverse:gravitit_leitung_doppelt"
+    "riftverse:gravitit_leitung_doppelt",
+    "riftverse:null_gehaeuse",
+    "riftverse:null_huelle",
+    "riftverse:eindaemmungsring",
+    "riftverse:rift_schmiede",
+    "riftverse:weltenformer",
+    "riftverse:singularitaetskern",
+    "riftverse:nullmaterie_erz",
+    "riftverse:nullmaterie_block",
+    "riftverse:null_leitung",
+    "riftverse:leerstein"
   ]
 }

@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "HSH",
+    "SFS",
+    "HSH"
+  ],
+  "key": {
+    "H": {
+      "item": "riftverse:null_huelle"
+    },
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "F": {
+      "item": "riftverse:flux_spule"
+    }
+  },
+  "result": {
+    "id": "riftverse:eindaemmungsring",
+    "count": 8
+  },
+  "hammer": 1
+}

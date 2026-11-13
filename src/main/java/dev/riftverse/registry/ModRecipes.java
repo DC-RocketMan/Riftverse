@@ -35,6 +35,8 @@ public final class ModRecipes {
     public static final DeferredHolder<RecipeType<?>, RecipeType<FluidMixerRecipe>> RAFFINERIE_TYPE = type("raffinerie");
     // Meilenstein 4 – T3 Multiversum-Industrie
     public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> QUANTEN_LITHOGRAF_TYPE = type("quanten_lithograf");
+    // Meilenstein 5 – T4 Weltenformer
+    public static final DeferredHolder<RecipeType<?>, RecipeType<MachineRecipe>> RIFT_SCHMIEDE_TYPE = type("rift_schmiede");
 
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> ERZMUEHLE =
             SERIALIZERS.register("erzmuehle", () -> new MachineRecipeSerializer(MachineKind.ERZMUEHLE));
@@ -67,6 +69,8 @@ public final class ModRecipes {
             SERIALIZERS.register("raffinerie", () -> new FluidMixerRecipe.Serializer(FluidMixerRecipe.Machine.RAFFINERIE));
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> QUANTEN_LITHOGRAF =
             SERIALIZERS.register("quanten_lithograf", () -> new MachineRecipeSerializer(MachineKind.QUANTEN_LITHOGRAF));
+    public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> RIFT_SCHMIEDE =
+            SERIALIZERS.register("rift_schmiede", () -> new MachineRecipeSerializer(MachineKind.RIFT_SCHMIEDE));
     public static final DeferredHolder<RecipeSerializer<?>, WerkbankRecipe.ShapedSerializer> WERKBANK_SHAPED =
             SERIALIZERS.register("werkbank_shaped", WerkbankRecipe.ShapedSerializer::new);
     public static final DeferredHolder<RecipeSerializer<?>, WerkbankRecipe.ShapelessSerializer> WERKBANK_SHAPELESS =

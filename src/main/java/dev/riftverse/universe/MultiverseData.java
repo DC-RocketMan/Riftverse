@@ -118,6 +118,8 @@ public class MultiverseData extends SavedData {
     }
 
     private final Map<String, Record> records = new HashMap<>();
+    /** Weltenformer: wie oft jede Bauart schon gezüchtet wurde (siehe {@link Zucht#key()}). */
+    private final Map<String, Integer> zuchten = new HashMap<>();
     private int liberated;
     private long gameTime;
 
@@ -140,6 +142,14 @@ public class MultiverseData extends SavedData {
             UniverseId id = UniverseId.fromKey(key);
             if (id != null) action.accept(id, rec);
         });
+    }
+
+    /** Nächste laufende Nummer für ein Universum dieser Bauart. */
+    public int nextZucht(Zucht zucht) {
+        int n = zuchten.getOrDefault(zucht.key(), 0);
+        zuchten.put(zucht.key(), n + 1);
+        setDirty();
+        return n;
     }
 
     /** Anzahl befreiter Universen – Bosse werden mit der Zeit stärker. */
@@ -208,6 +218,8 @@ public class MultiverseData extends SavedData {
         MultiverseData data = new MultiverseData();
         data.liberated = tag.getInt("Liberated");
         data.gameTime = tag.getLong("GameTime");
+        CompoundTag z = tag.getCompound("Zuchten");
+        for (String key : z.getAllKeys()) data.zuchten.put(key, z.getInt(key));
         CompoundTag recs = tag.getCompound("Universes");
         for (String key : recs.getAllKeys()) {
             if (UniverseId.fromKey(key) == null) continue;   // Einträge aus dem Prototyp
@@ -229,6 +241,9 @@ public class MultiverseData extends SavedData {
             if (v.worthSaving()) recs.put(k, v.save());
         });
         tag.put("Universes", recs);
+        CompoundTag z = new CompoundTag();
+        zuchten.forEach(z::putInt);
+        tag.put("Zuchten", z);
         return tag;
     }
 }

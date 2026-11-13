@@ -12,7 +12,7 @@ PRE = os.path.join(os.path.dirname(OUT), 'riftverse_vorschau')
 os.makedirs(PRE, exist_ok=True)
 
 pk = Pack(OUT)
-mods = ARGS[1].split(',') if len(ARGS) > 1 else ['materials', 'machines', 'gadgets', 'armor', 'meilenstein1', 'meilenstein2', 'meilenstein3', 'meilenstein4']
+mods = ARGS[1].split(',') if len(ARGS) > 1 else ['materials', 'machines', 'gadgets', 'armor', 'meilenstein1', 'meilenstein2', 'meilenstein3', 'meilenstein4', 'meilenstein5']
 for m in mods:
     __import__(m).build(pk)
 

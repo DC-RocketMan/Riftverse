@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "active=false,facing=north": {
+      "model": "riftverse:block/rift_schmiede"
+    },
+    "active=true,facing=north": {
+      "model": "riftverse:block/rift_schmiede"
+    },
+    "active=false,facing=east": {
+      "model": "riftverse:block/rift_schmiede",
+      "y": 90
+    },
+    "active=true,facing=east": {
+      "model": "riftverse:block/rift_schmiede",
+      "y": 90
+    },
+    "active=false,facing=south": {
+      "model": "riftverse:block/rift_schmiede",
+      "y": 180
+    },
+    "active=true,facing=south": {
+      "model": "riftverse:block/rift_schmiede",
+      "y": 180
+    },
+    "active=false,facing=west": {
+      "model": "riftverse:block/rift_schmiede",
+      "y": 270
+    },
+    "active=true,facing=west": {
+      "model": "riftverse:block/rift_schmiede",
+      "y": 270
+    }
+  }
+}

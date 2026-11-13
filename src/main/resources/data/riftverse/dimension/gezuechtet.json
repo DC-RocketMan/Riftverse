@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:gezuechtet",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "gezuechtet",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "gezuechtet",
+      "biomes": [
+        "riftverse:schrott_dunst",
+        "riftverse:schrott_rost",
+        "riftverse:kristall_glanz",
+        "riftverse:kristall_aurora",
+        "riftverse:toxisch_gruen",
+        "riftverse:toxisch_schwefel",
+        "riftverse:schwebe_himmel",
+        "riftverse:schwebe_daemmerung",
+        "riftverse:zeit_bernstein",
+        "riftverse:zeit_violett",
+        "riftverse:organisch_rosa",
+        "riftverse:organisch_purpur",
+        "riftverse:hochgrav_basalt",
+        "riftverse:hochgrav_druck",
+        "riftverse:spiegel_silber",
+        "riftverse:spiegel_glas"
+      ]
+    }
+  }
+}

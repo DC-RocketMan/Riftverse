@@ -281,7 +281,50 @@ public final class ModBlocks {
             () -> new DropExperienceBlock(UniformInt.of(2, 5), BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ)
                     .strength(3.0f, 6.0f).requiresCorrectToolForDrops().sound(SoundType.GLASS).lightLevel(state -> 6)));
 
+    // =====================================================================
+    // Meilenstein 5 – T4 Weltenformer
+    // =====================================================================
+
+    // --- Energienetz Stufe IV ---
+    /** Null-Leitung: dünn wie die Glasfaser bei IC2, sicher ohne Hülle, fast verlustfrei. */
+    public static final DeferredBlock<CableBlock> NULL_LEITUNG = BLOCKS.register("null_leitung",
+            () -> new CableBlock(cableProps(SoundType.AMETHYST).lightLevel(state -> 2), VoltageTier.IV, 0.05, 4, false, 0.0f));
+
+    // --- Gehäuse und Multiblock-Hülle ---
+    public static final DeferredBlock<Block> NULL_GEHAEUSE = BLOCKS.register("null_gehaeuse", () -> new Block(nullProps().lightLevel(state -> 3)));
+    /** Hülle des Weltenformer-Rings; braucht noch keine Nullmaterie. */
+    public static final DeferredBlock<Block> NULL_HUELLE = BLOCKS.register("null_huelle", () -> new Block(nullProps()));
+    /** Eindämmungsring des Singularitätskerns (drei Ringe im Würfel 5 × 5 × 5). */
+    public static final DeferredBlock<Block> EINDAEMMUNGSRING = BLOCKS.register("eindaemmungsring",
+            () -> new Block(nullProps().lightLevel(state -> 7)));
+
+    // --- T4-Maschinen und -Generator ---
+    public static final DeferredBlock<ProcessingBlock> RIFT_SCHMIEDE = BLOCKS.register("rift_schmiede",
+            () -> new ProcessingBlock(nullProps().lightLevel(activeLight(12)), MachineKind.RIFT_SCHMIEDE));
+    public static final DeferredBlock<TechBlock> WELTENFORMER = BLOCKS.register("weltenformer",
+            () -> new TechBlock(nullProps().lightLevel(activeLight(14)), ModBlockEntities.WELTENFORMER, true));
+    public static final DeferredBlock<TechBlock> SINGULARITAETSKERN = BLOCKS.register("singularitaetskern",
+            () -> new TechBlock(nullProps().lightLevel(activeLight(4)), ModBlockEntities.SINGULARITAETSKERN, true));
+
+    // --- Leere Welt ---
+    /** Gestein der schwebenden Kerne: schwarz mit Sternpunkten. */
+    public static final DeferredBlock<Block> LEERSTEIN = BLOCKS.register("leerstein",
+            () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(3.0f, 9.0f)
+                    .requiresCorrectToolForDrops().sound(SoundType.DEEPSLATE)));
+    /** Nullmaterie-Erz: nur in den bewachten Nullkernen, braucht eine Diamantspitzhacke. */
+    public static final DeferredBlock<Block> NULLMATERIE_ERZ = BLOCKS.register("nullmaterie_erz",
+            () -> new DropExperienceBlock(UniformInt.of(6, 12), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK)
+                    .strength(30.0f, 1200.0f).requiresCorrectToolForDrops().sound(SoundType.ANCIENT_DEBRIS).lightLevel(state -> 3)));
+    public static final DeferredBlock<Block> NULLMATERIE_BLOCK = BLOCKS.register("nullmaterie_block",
+            () -> new Block(nullProps().strength(25.0f, 1200.0f).lightLevel(state -> 5)));
+
     // ---------------------------------------------------------------------
+
+    /** T4-Weltenformer: Null-Schwarz mit Sternenfeld, braucht eine Diamantspitzhacke. */
+    private static BlockBehaviour.Properties nullProps() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_BLACK).strength(6.0f, 1200.0f)
+                .requiresCorrectToolForDrops().sound(SoundType.NETHERITE_BLOCK);
+    }
 
     /** T3-Industrie: Graphit mit Petrol-Leiterbahnen, braucht eine Eisenspitzhacke. */
     private static BlockBehaviour.Properties graphitProps() {

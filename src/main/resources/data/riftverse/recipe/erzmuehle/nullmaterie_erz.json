@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:erzmuehle",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "c:ores/nullmaterie"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:nullmaterie"
+  },
+  "time": 600
+}

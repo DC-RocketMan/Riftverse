@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "PLP",
+    "SGS",
+    "QHQ"
+  ],
+  "key": {
+    "P": {
+      "item": "riftverse:multiversal_prozessor"
+    },
+    "L": {
+      "item": "riftverse:singularitaetslinse"
+    },
+    "S": {
+      "item": "riftverse:gravitit_spule"
+    },
+    "G": {
+      "item": "riftverse:graphit_gehaeuse"
+    },
+    "Q": {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    "H": {
+      "item": "riftverse:null_huelle"
+    }
+  },
+  "result": {
+    "id": "riftverse:weltenformer"
+  },
+  "loetzinn": 4
+}

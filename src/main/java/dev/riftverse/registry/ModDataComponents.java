@@ -111,32 +111,43 @@ public final class ModDataComponents {
      * @param stabil  stabilisiertes Portalfluid aus der Raffinerie statt Roh-Portalfluid
      * @param konzentrat Portalfluid-Konzentrat (Meilenstein 4); dann ist auch {@code stabil} gesetzt
      */
-    public record KanonenTank(int mb, long zerfall, boolean stabil, boolean konzentrat) {
-        public static final KanonenTank LEER = new KanonenTank(0, 0, false, false);
+    public record KanonenTank(int mb, long zerfall, boolean stabil, boolean konzentrat, boolean essenz) {
+        public static final KanonenTank LEER = new KanonenTank(0, 0, false, false, false);
         public static final Codec<KanonenTank> CODEC = RecordCodecBuilder.create(i -> i.group(
                 Codec.INT.fieldOf("mb").forGetter(KanonenTank::mb),
                 Codec.LONG.fieldOf("zerfall").forGetter(KanonenTank::zerfall),
                 Codec.BOOL.optionalFieldOf("stabil", false).forGetter(KanonenTank::stabil),
-                Codec.BOOL.optionalFieldOf("konzentrat", false).forGetter(KanonenTank::konzentrat)
+                Codec.BOOL.optionalFieldOf("konzentrat", false).forGetter(KanonenTank::konzentrat),
+                Codec.BOOL.optionalFieldOf("essenz", false).forGetter(KanonenTank::essenz)
         ).apply(i, KanonenTank::new));
         public static final StreamCodec<RegistryFriendlyByteBuf, KanonenTank> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.VAR_INT, KanonenTank::mb,
                 ByteBufCodecs.VAR_LONG, KanonenTank::zerfall,
                 ByteBufCodecs.BOOL, KanonenTank::stabil,
                 ByteBufCodecs.BOOL, KanonenTank::konzentrat,
+                ByteBufCodecs.BOOL, KanonenTank::essenz,
                 KanonenTank::new);
 
         public KanonenTank(int mb, long zerfall) {
-            this(mb, zerfall, false, false);
+            this(mb, zerfall, false, false, false);
         }
 
         public KanonenTank(int mb, long zerfall, boolean stabil) {
             this(mb, zerfall, stabil, false);
         }
 
-        /** Fluid-Stufe: 1 roh, 2 stabil, 3 Konzentrat. */
+        public KanonenTank(int mb, long zerfall, boolean stabil, boolean konzentrat) {
+            this(mb, zerfall, stabil, konzentrat, false);
+        }
+
+        /** Tank einer bestimmten Fluid-Stufe (1 roh … 4 Weltenformer-Essenz). */
+        public static KanonenTank ofStufe(int mb, long zerfall, int stufe) {
+            return new KanonenTank(mb, zerfall, stufe >= 2, stufe >= 3, stufe >= 4);
+        }
+
+        /** Fluid-Stufe: 1 roh, 2 stabil, 3 Konzentrat, 4 Weltenformer-Essenz. */
         public int stufe() {
-            return konzentrat ? 3 : stabil ? 2 : 1;
+            return essenz ? 4 : konzentrat ? 3 : stabil ? 2 : 1;
         }
     }
 

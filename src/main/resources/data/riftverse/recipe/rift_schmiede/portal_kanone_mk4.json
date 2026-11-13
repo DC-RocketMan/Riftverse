@@ -1,0 +1,35 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:portal_kanone_mk3"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:multiversal_prozessor"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:singularitaetslinse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:nullmaterie_kern"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "riftverse:story_fragmente"
+      },
+      "count": 3
+    }
+  ],
+  "result": {
+    "id": "riftverse:portal_kanone_mk4"
+  },
+  "time": 1200
+}

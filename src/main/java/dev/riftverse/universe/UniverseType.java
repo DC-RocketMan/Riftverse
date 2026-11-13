@@ -17,7 +17,9 @@ import java.util.List;
  * (siehe {@link Multiverse}). Welcher Typ erreichbar ist, hängt von der Kanonenstufe ab.
  * <p>
  * Meilenstein 2 bringt die drei T1-Typen, Meilenstein 3 die drei T2-Typen (Niedriggravitation, Zeitdilatation,
- * Organisch), Meilenstein 4 die T3-Typen Hochgravitation und Spiegelwelt. Neue Typen kommen immer hinten dazu, weil der Seed eines Universums die Ordnungszahl enthält.
+ * Organisch), Meilenstein 4 die T3-Typen Hochgravitation und Spiegelwelt, Meilenstein 5 die Leere Welt und die
+ * gezüchteten Universen des Weltenformers. Neue Typen kommen immer hinten dazu, weil der Seed eines Universums die
+ * Ordnungszahl enthält.
  */
 public enum UniverseType implements StringRepresentable {
     /** Dauerhafter Nebel, Müllberge; Alien-Schrott, Xenit in Wrackfeldern; Schrott-Golems in den Halden. */
@@ -39,7 +41,16 @@ public enum UniverseType implements StringRepresentable {
     /** Gravitation 250 %, kaum Sprünge, dreifacher Fallschaden; Gravitit, extrem dichtes Erz. */
     HOCHGRAVITATION("hochgravitation", 3, 2.5),
     /** Tag und Nacht vertauscht, gespiegeltes Gelände; Inversionssplitter; Doppelgänger kopieren die Ausrüstung. */
-    SPIEGEL("spiegelwelt", 3, 1.0);
+    SPIEGEL("spiegelwelt", 3, 1.0),
+
+    // --- T4, ab Kanone Mk IV (Mk III mit Weltenformer-Essenz: zufällig in die Leere Welt) -------
+    /** Fast keine Blöcke, Sternenhimmel, schwebende Kerne; Nullmaterie (selten, bewacht); die Leere frisst Licht. */
+    LEERE("leere_welt", 4, 1.0),
+    /**
+     * Gezüchtete Universen aus dem Weltenformer: Landschaft, Rohstoffe, Schwerkraft und Gefahren sind frei gewählt
+     * (siehe {@link Zucht}). Nie ein zufälliges Ziel – man kommt nur mit der Koordinatenkarte des Weltenformers hin.
+     */
+    GEZUECHTET("gezuechtet", 4, 1.0);
 
     public static final Codec<UniverseType> CODEC = StringRepresentable.fromEnum(UniverseType::values);
 
@@ -100,6 +111,16 @@ public enum UniverseType implements StringRepresentable {
             if (t.id.equals(id)) return t;
         }
         return null;
+    }
+
+    /** Kann eine Kanone zufällig hier landen? Gezüchtete Universen erreicht man nur gezielt. */
+    public boolean randomTarget() {
+        return this != GEZUECHTET;
+    }
+
+    /** Zufallsziele einer Kanone dieser Stufe (ohne gezüchtete Universen). */
+    public static List<UniverseType> randomWith(int tier) {
+        return Arrays.stream(values()).filter(t -> t.gunTier <= tier && t.randomTarget()).toList();
     }
 
     /** Alle Typen, die eine Kanone dieser Stufe erreicht. */

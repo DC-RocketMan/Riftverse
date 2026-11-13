@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:inversionssplitter"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:wires/gold"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "riftverse:multiversal_prozessor"
+  },
+  "time": 400
+}

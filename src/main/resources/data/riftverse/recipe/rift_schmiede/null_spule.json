@@ -1,0 +1,20 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:nullmaterie_faser"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_spule"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:null_spule"
+  },
+  "time": 300
+}

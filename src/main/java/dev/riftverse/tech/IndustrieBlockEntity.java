@@ -26,7 +26,7 @@ import java.util.List;
 
 /**
  * Basis der T3-Maschinen und -Generatoren aus Meilenstein 4 (Materie-Rekonfigurator, Klon-Tank, Universums-Destillator,
- * Mikrokosmos-Zelle, Parallelzapfer). Alle teilen eine GUI ({@link IndustrieMenu}): Energiebalken links, Slots nach
+ * Mikrokosmos-Zelle, Parallelzapfer) und der T4-Geräte aus Meilenstein 5 (Weltenformer, Singularitätskern). Alle teilen eine GUI ({@link IndustrieMenu}): Energiebalken links, Slots nach
  * dem Bauplan der Maschine, optional Fortschritt, Tank und ein paar Textzeilen.
  * <p>
  * Werte für die GUI laufen über {@link ContainerData} und werden nur als 16-Bit-Zahlen übertragen; große Werte
@@ -139,6 +139,11 @@ public abstract class IndustrieBlockEntity extends RiftEnergyBlockEntity impleme
     /** Farbe des Tanks in der GUI. */
     public int tankColor() {
         return 0xFF9A6BFF;
+    }
+
+    /** Übersetzungsschlüssel des Fluids im Tank (für den Tooltip). */
+    public String tankFluidKey() {
+        return "fluid_type.riftverse.portalfluid";
     }
 
     public List<GuiButton> guiButtons() {

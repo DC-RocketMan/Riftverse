@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "top": "riftverse:block/casing_t4",
+    "side": "riftverse:block/casing_t4",
+    "front": "riftverse:block/weltenformer_front"
+  }
+}

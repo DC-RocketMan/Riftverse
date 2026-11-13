@@ -4,7 +4,88 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
-## Stand: Meilenstein 4 – T3 Multiversum-Industrie
+## Stand: Meilenstein 5 – T4 Weltenformer
+
+Mit dem Weltenformer kommen Stufe IV mit der Null-Leitung, die Rift-Schmiede, der Weltenformer, der Singularitätskern,
+die Portal-Kanone Mk IV, die Leere Welt und gezüchtete Universen dazu.
+
+| Bereich | Inhalt |
+|---|---|
+| **Stufe IV** | Null-Leitung (4 px, sicher ohne Hülle, 0,05 FE Verlust pro Block, unbegrenzte Paketgröße) aus Nullmaterie-Faser |
+| **Gehäuse** | Null-Hülle für den Weltenformer-Ring (ohne Nullmaterie), Null-Gehäuse (mit Nullmaterie-Faser), Eindämmungsring |
+| **Rift-Schmiede** | Multiblock 5 × 5 × 5, 20.000 FE/t auf Stufe IV, sechs Eingänge: Multiversal-Prozessor, Singularitätslinse, Null-Hülle, alles aus Nullmaterie und die Kanone Mk IV |
+| **Weltenformer** | Ring 7 × 7 × 3, 40.000 FE/t + Portalfluid-Konzentrat; macht Weltenformer-Essenz oder züchtet ein Universum nach Wahl |
+| **Singularitätskern** | 100.000 FE/t auf Stufe IV, frisst 64 Items pro Sekunde; hungrig wächst er und frisst seine Umgebung; Notabschaltung per Knopf oder Redstone; der Eindämmungsring (5 × 5 × 5) schaltet ihn stattdessen sicher ab |
+| **Zwischenprodukte (T4-Leitern)** | Multiversal-Prozessor, Singularitätslinse, Null-Spule, Weltenformer-Essenz, Null-Gehäuse, Null-Leitung; dazu Nullmaterie-Faser und Nullmaterie-Kern |
+| **Kanone Mk IV** | Aus der Rift-Schmiede: Mk III, Multiversal-Prozessor, Singularitätslinse, Nullmaterie-Kern, 3 Story-Fragmente; nur Weltenformer-Essenz, 25 mB pro Schuss; erreicht die Leere Welt und gezüchtete Universen |
+| **Leere Welt** | Ewige Sternennacht, fast keine Blöcke, schwebende Kerne aus Leerstein; seltene Nullkerne mit Nullmaterie-Erz, bewacht von Plagegeistern; die Leere frisst Licht, Betten explodieren, kein Klon-Tank |
+| **Gezüchtete Universen** | Landschaft, Rohstoffe, Schwerkraft (0,3 / 1 / 2,5 g) und Gefahren (an/aus) frei gewählt; erreichbar nur über die Koordinatenkarte des Weltenformers |
+
+### So spielt sich Meilenstein 5
+
+1. Die **Rift-Schmiede** baut man noch aus T3-Teilen: Steuerblock (Werkbank: Quanten-Schaltkreise, Kanonenkern,
+   Graphit-Gehäuse, Amboss, Gravitit-Spulen, Chrono-Linse) vorne in der Mitte eines Bodens aus 5 × 5 Graphit-Hülle,
+   vier Eckpfosten (3 hoch) und ein Deckelrahmen aus Graphit-Hülle. In der Mitte steht ein Amboss, darüber bleibt Luft.
+   Strom bis zur Null-Leitung: ein Parallelzapfer direkt am Steuerblock oder ein Umspanner III ↔ IV davor.
+2. In der Schmiede **Multiversal-Prozessoren**, **Singularitätslinsen** und **Null-Hülle** (4 Graphit-Hülle +
+   Gravitit + 2 Obsidian → 4) machen.
+3. Den **Weltenformer** bauen: Steuerblock vorne in der Mitte eines Rings aus 7 × 7 Null-Hülle, darüber eine Lage mit
+   Null-Hülle an den Ecken und Glas an den Seiten, oben wieder ein Ring aus Null-Hülle. Innen bleibt alles frei.
+4. Im Modus **Essenz**: leere Kartusche + Inversionssplitter + 2.000 mB Konzentrat → **Weltenformer-Essenz**.
+   Mit Essenz springt die **Kanone Mk III** zufällig auch in die **Leere Welt**.
+5. In der Leeren Welt die **Nullkerne** suchen (weinender Obsidian auf der Oberseite), die Plagegeister besiegen und das
+   **Nullmaterie-Erz** mit einer Diamantspitzhacke abbauen.
+6. In der Schmiede Nullmaterie zu **Nullmaterie-Faser** (→ Null-Leitung, Null-Spule, Null-Gehäuse) und zum
+   **Nullmaterie-Kern** verarbeiten, dann die **Kanone Mk IV** schmieden.
+7. Im Modus **Welt**: zwei Universumsproben (links die Landschaft, rechts die Rohstoffe), Schwerkraft und Gefahren an
+   den Knöpfen wählen, Papier einlegen – nach einer Minute kommt die **Koordinatenkarte** eines neuen Universums heraus.
+   Mit Karte in der anderen Hand bringt die Mk IV einen dorthin.
+8. Den **Singularitätskern** (Null-Spulen, Nullmaterie-Kern, Singularitätslinsen, Null-Gehäuse, Multiversal-Prozessor)
+   zünden und füttern – 64 beliebige Items pro Sekunde, am besten über Rohre. Wer sich nicht traut, baut den
+   **Eindämmungsring** drumherum.
+
+### T4-Geräte
+
+- **Weltenformer:** Slots von links: Probe Landschaft, Probe Rohstoffe, leere Kartusche oder Papier, Inversionssplitter,
+  Ausgang; rechts Konzentrat-Kartusche rein und leere Kartusche raus (Rohre füllen Konzentrat direkt in den Tank,
+  16.000 mB). Die Proben bleiben liegen. Proben aus gezüchteten Universen geben deren Wahl weiter; die Leere Welt taugt
+  nicht als Vorlage. Im Ring schwebt ein Partikel-Planet in den Farben der Landschaft, plattgedrückt bei 2,5 g.
+- **Singularitätskern:** neun Futterslots, Akku-Slot wird geladen. Zu wenig Futter heißt anteilig weniger Strom. Nach
+  5 Sekunden Hunger wächst er alle 10 Sekunden eine Stufe (bis 6): Er saugt Gegenstände, Mobs und Spieler an, verletzt
+  alles direkt am Kern und frisst Blöcke im Umkreis von 1 + Stufe (keine Maschinen, keine Kisten, nichts
+  Unzerstörbares). Gefressenes zählt als Futter. Die Notabschaltung (Knopf oder Redstone-Signal) hält ihn sofort an
+  und setzt das Wachstum zurück; danach kühlt er eine Minute ab.
+- **Eindämmungsring:** drei Ringe wie bei einem Kreiselkompass, jeder der Rand eines 5 × 5-Quadrats durch den Kern
+  (waagerecht, Nord-Süd, Ost-West; 42 Blöcke). Steht der Ring, schaltet der Kern nach 5 Sekunden Hunger sicher ab.
+
+### Entscheidungen in Meilenstein 5
+
+- **Henne-Ei-Problem wie in Meilenstein 3 und 4:** Die Mk IV braucht Nullmaterie aus der Leeren Welt. Deshalb kommen
+  Rift-Schmiede und Weltenformer ohne Nullmaterie aus (Graphit-Hülle, Null-Hülle aus Graphit, Gravitit und Obsidian),
+  und mit **Weltenformer-Essenz** springt die Mk III zufällig in die Leere Welt.
+- **Kanonen-Fluide:** Jede Kanone nimmt ihr Fluid und das nächsthöhere: Mk I roh und stabil, Mk II stabil und Konzentrat,
+  Mk III Konzentrat und Essenz, Mk IV nur Essenz.
+- **Weltenformer-Essenz gibt es nur in Kartuschen,** nicht als eigenes Fluid in Rohren (sie entsteht direkt in der
+  Kartusche).
+- **Gezüchtete Universen** liegen in einer eigenen Dimension. Ihre Wahl steckt in der Zellnummer, deshalb braucht der
+  Weltengenerator keine Speicherdaten und das Aufräumen funktioniert wie überall. Pro Kombination gibt es 50 Universen;
+  danach landet man wieder in einem schon gezüchteten. Zufallssprünge führen nie in ein gezüchtetes Universum.
+- **Was eine Landschaft mitbringt:** Gelände, Gestein, Deko, Biom, Nachwachsen (organisch), Kristallknospen und – wenn
+  „Gefahr: an“ – Giftluft, Säureregen, Resonanz und Doppelgänger. Nicht übertragen werden die Effekte, die an der
+  Dimension hängen: vertauschte Tageszeit der Spiegelwelt, 4× Zufallsticks und Zeitverzerrungen der
+  Zeitdilatationswelt. Die Schwerkraft kommt immer vom Knopf, Fallschaden 3× ab 2,5 g.
+- **Leere Welt:** Die Leere frisst Licht – was ein Spieler dort an Licht setzt, verschwindet nach 5 Sekunden (Riftverse-
+  Maschinen ausgenommen). „Kein Respawn-Anker“ heißt: Betten explodieren und ein Klon-Tank lässt sich dort nicht
+  aufstellen. Die Rifts landen auf einem großen Ankunftskern in der Zellmitte.
+- **Nullmaterie ist selten:** 4–7 Erz pro Nullkern, ein Erz gibt genau eine Nullmaterie (kein Glück). Wächter sind
+  Plagegeister aus einem Spawner in der Kammer des Kerns – sie fliegen und kommen durch Wände. Der
+  Universums-Destillator holt aus der Leere nur Leerstein und Obsidian.
+- **Rift-Schmiede-Hülle:** Die Schmiede nutzt Graphit-Hülle, damit sie vor der ersten Nullmaterie steht; Null-Schwarz
+  bleibt dem Weltenformer.
+- **Singularitätskern:** Die Notabschaltung ist sicher, kostet aber eine Minute Abkühlzeit. Gefährlich ist nur ein
+  hungriger Kern ohne Ring.
+
+## Meilenstein 4 – T3 Multiversum-Industrie
 
 Mit der Multiversum-Industrie kommen Stufe III, alle T3-Maschinen und -Generatoren, der Chrono-Speicher, die
 Portal-Kanone Mk III, zwei neue Universumstypen und ein Ersatz für die Story-Fragmente dazu.
@@ -70,7 +151,7 @@ Portal-Kanone Mk III, zwei neue Universumstypen und ein Ersatz für die Story-Fr
 - **Kanone Mk III:** Zur Liste aus dem Dokument kommt die **Chrono-Linse** (Linsen-Leiter T3). Kurzstrecken-Portale
   reichen 96 Blöcke weit und kosten einen normalen Schuss. Sind alle 8 Plätze belegt, fliegt das älteste Ziel raus.
 - **Story-Fragmente:** Die Fragment-Replik füllt das Tag `riftverse:story_fragmente`, bis Story-Modus und Grindweg kommen.
-- **Stufe IV ohne Leitung:** Die Null-Leitung kommt erst in Meilenstein 5. Bis dahin sitzt der Parallelzapfer (und der
+- **Stufe IV ohne Leitung:** Die Null-Leitung kam erst in Meilenstein 5. Bis dahin sitzt der Parallelzapfer (und der
   empfangende Kabelknoten) direkt an der Front eines Umspanners III ↔ IV; jede Gravitit-Leitung dazwischen schmilzt.
 - **Chrono-Speicher als Verbund statt Hülle:** Speicher, die sich berühren, gleichen ihre Ladung jeden Tick aus und
   wirken wie ein großer Speicher (bis 9 × 9 × 9). So zählt jeder Speicher mit, ohne eigene Multiblock-Hülle.

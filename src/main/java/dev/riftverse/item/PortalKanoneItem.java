@@ -40,7 +40,9 @@ import java.util.List;
  * Portal-Kanone. Mk I: rein zufällige Sprünge, 250 mB pro Schuss (Roh-Portalfluid: T1-Universen, stabilisiertes
  * Portalfluid: auch T2). Mk II: stabilisiertes Portalfluid oder Konzentrat, 100 mB pro Schuss, Koordinatenkarten;
  * mit Konzentrat springt sie zufällig auch in T3-Welten. Mk III: nur Konzentrat, 50 mB pro Schuss, merkt sich bis zu
- * 8 Ziele (Taste V wechselt: Zufall → Kurzstrecke → Ziel 1 … 8) und öffnet Kurzstrecken-Portale in derselben Welt.
+ * 8 Ziele (Taste V wechselt: Zufall → Kurzstrecke → Ziel 1 … 8) und öffnet Kurzstrecken-Portale in derselben Welt;
+ * mit Weltenformer-Essenz springt sie zufällig auch in die Leere Welt. Mk IV: nur Weltenformer-Essenz, 25 mB pro
+ * Schuss, alles von Mk III und dazu die gezüchteten Universen des Weltenformers (über deren Koordinatenkarte).
  * <ul>
  *   <li>Rechtsklick: Rift in ein zufälliges Universum öffnen.</li>
  *   <li>Schleichen + Rechtsklick oder Rückkehr-Taste (Standard R): Rift zum Heimanker öffnen.</li>
@@ -82,12 +84,17 @@ public class PortalKanoneItem extends Item {
         return gun.getOrDefault(ModDataComponents.KANONEN_ZIELE.get(), KanonenZiele.LEER);
     }
 
-    /** Welche Fluid-Stufen (1 roh, 2 stabil, 3 Konzentrat) diese Kanone verträgt. */
+    /**
+     * Welche Fluid-Stufen (1 roh, 2 stabil, 3 Konzentrat, 4 Weltenformer-Essenz) diese Kanone verträgt. Jede Kanone
+     * nimmt ihre eigene Stufe und die nächsthöhere, mit der sie dann zufällig auch eine Stufe weiter springt;
+     * die Mk IV läuft nur mit Essenz.
+     */
     public boolean accepts(int stufe) {
         return switch (tier) {
-            case 1 -> stufe <= 2;
-            case 2 -> stufe >= 2;
-            default -> stufe >= 3;
+            case 1 -> stufe >= 1 && stufe <= 2;
+            case 2 -> stufe >= 2 && stufe <= 3;
+            case 3 -> stufe >= 3 && stufe <= 4;
+            default -> stufe == 4;
         };
     }
 
@@ -130,7 +137,7 @@ public class PortalKanoneItem extends Item {
         if (mapped != null) {
             target = mapped;
         } else {
-            List<UniverseType> types = UniverseType.reachableWith(Math.max(tier, shot.stufe()));
+            List<UniverseType> types = UniverseType.randomWith(Math.max(tier, shot.stufe()));
             target = Multiverse.random(level.random, types);
             for (int i = 0; i < 4 && target.equals(here); i++) target = Multiverse.random(level.random, types);
         }
@@ -255,7 +262,7 @@ public class PortalKanoneItem extends Item {
     public KanonenTank shoot(ServerPlayer player, ItemStack gun) {
         if (player.getAbilities().instabuild) {
             player.getCooldowns().addCooldown(this, 20);
-            return new KanonenTank(TANK, 0, tier >= 2, tier >= 3);
+            return KanonenTank.ofStufe(TANK, 0, Math.min(4, tier));
         }
         long now = Zerfall.now(player.level());
         KanonenTank tank = tank(gun);
@@ -268,7 +275,8 @@ public class PortalKanoneItem extends Item {
             ItemStack cartridge = takeCartridge(player, now, this);
             if (cartridge == null) {
                 gun.set(ModDataComponents.KANONEN_TANK.get(), tank);
-                String key = tier >= 3 ? "message.riftverse.kein_fluid_konzentrat"
+                String key = tier >= 4 ? "message.riftverse.kein_fluid_essenz"
+                        : tier >= 3 ? "message.riftverse.kein_fluid_konzentrat"
                         : acceptsRaw() ? "message.riftverse.kein_fluid" : "message.riftverse.kein_fluid_stabil";
                 player.displayClientMessage(Component.translatable(key).withStyle(ChatFormatting.RED), true);
                 player.level().playSound(null, player.blockPosition(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 1f, 1.2f);
@@ -278,19 +286,20 @@ public class PortalKanoneItem extends Item {
             // Ein Rest der anderen Sorte verpufft beim Nachladen
             int rest = tank.mb() > 0 && tank.stufe() == stufe ? tank.mb() : 0;
             long z = stufe >= 2 ? 0 : FluidKartuscheItem.zerfall(cartridge);
-            tank = new KanonenTank(Math.min(TANK, rest + FluidKartuscheItem.INHALT), rest > 0 ? Zerfall.frueher(tank.zerfall(), z) : z,
-                    stufe >= 2, stufe >= 3);
+            tank = KanonenTank.ofStufe(Math.min(TANK, rest + FluidKartuscheItem.INHALT), rest > 0 ? Zerfall.frueher(tank.zerfall(), z) : z,
+                    stufe);
             player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 0.8f, 1.6f);
         }
         int left = tank.mb() - shotCost();
         gun.set(ModDataComponents.KANONEN_TANK.get(), left > 0
-                ? new KanonenTank(left, tank.zerfall(), tank.stabil(), tank.konzentrat()) : KanonenTank.LEER);
+                ? new KanonenTank(left, tank.zerfall(), tank.stabil(), tank.konzentrat(), tank.essenz()) : KanonenTank.LEER);
         player.getCooldowns().addCooldown(this, 40);
         return tank;
     }
 
-    /** Fluid-Stufe einer vollen Kartusche: 1 roh, 2 stabil, 3 Konzentrat, 0 = keine volle Kartusche. */
+    /** Fluid-Stufe einer vollen Kartusche: 1 roh, 2 stabil, 3 Konzentrat, 4 Essenz, 0 = keine volle Kartusche. */
     public static int stufe(ItemStack cartridge) {
+        if (cartridge.is(ModItems.FLUID_KARTUSCHE_ESSENZ.get())) return 4;
         if (cartridge.is(ModItems.FLUID_KARTUSCHE_KONZENTRAT.get())) return 3;
         if (cartridge.is(ModItems.FLUID_KARTUSCHE_STABIL.get())) return 2;
         if (cartridge.is(ModItems.FLUID_KARTUSCHE_VOLL.get())) return 1;
@@ -397,13 +406,14 @@ public class PortalKanoneItem extends Item {
     @Override
     public int getBarColor(ItemStack stack) {
         KanonenTank t = tank(stack);
-        return t.konzentrat() ? 0x2AA8C0 : t.stabil() ? 0x9A6BFF : 0x39FF6A;
+        return t.essenz() ? 0xC86BFF : t.konzentrat() ? 0x2AA8C0 : t.stabil() ? 0x9A6BFF : 0x39FF6A;
     }
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         KanonenTank tank = tank(stack);
-        String tankKey = tank.konzentrat() ? "tooltip.riftverse.kanone_tank_konzentrat"
+        String tankKey = tank.essenz() ? "tooltip.riftverse.kanone_tank_essenz"
+                : tank.konzentrat() ? "tooltip.riftverse.kanone_tank_konzentrat"
                 : tank.stabil() ? "tooltip.riftverse.kanone_tank_stabil" : "tooltip.riftverse.kanone_tank";
         tooltip.add(Component.translatable(tankKey, tank.mb(), TANK, shotCost()).withStyle(ChatFormatting.GRAY));
         Level level = context.level();
