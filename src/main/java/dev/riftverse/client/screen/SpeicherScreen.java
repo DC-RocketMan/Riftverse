@@ -46,7 +46,7 @@ public class SpeicherScreen extends AbstractContainerScreen<SpeicherMenu> {
         super.render(g, mouseX, mouseY, partialTick);
         renderTooltip(g, mouseX, mouseY);
         if (GuiKit.inside(mouseX, mouseY, leftPos + BAR_X, topPos + BAR_Y, BAR_W, BAR_H)) {
-            g.renderComponentTooltip(font, EnergyTooltips.energy(menu.energy(), menu.capacity(), VoltageTier.I), mouseX, mouseY);
+            g.renderComponentTooltip(font, EnergyTooltips.energy(menu.energy(), menu.capacity(), menu.tier()), mouseX, mouseY);
         }
     }
 }

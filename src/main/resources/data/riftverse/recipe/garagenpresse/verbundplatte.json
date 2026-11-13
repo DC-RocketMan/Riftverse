@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:garagenpresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:mischmetall"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/xenit"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/fluxkristall"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:verbundplatte"
+  },
+  "time": 60
+}

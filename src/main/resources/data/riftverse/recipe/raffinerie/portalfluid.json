@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:raffinerie",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:saeuregel"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "c:dusts/fluxkristall"
+      }
+    }
+  ],
+  "fluid": {
+    "fluid": "riftverse:roh_portalfluid",
+    "amount": 1000
+  },
+  "result": {
+    "id": "riftverse:portalfluid",
+    "amount": 1000
+  },
+  "time": 300
+}

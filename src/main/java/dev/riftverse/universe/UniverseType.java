@@ -16,7 +16,8 @@ import java.util.List;
  * Universumstypen. Jeder Typ ist eine eigene Dimension, die in ein Raster aus Universen aufgeteilt ist
  * (siehe {@link Multiverse}). Welcher Typ erreichbar ist, hängt von der Kanonenstufe ab.
  * <p>
- * Meilenstein 2 bringt die drei T1-Typen; Niedriggravitation, Zeitdilatation usw. folgen mit Kanone Mk II.
+ * Meilenstein 2 bringt die drei T1-Typen, Meilenstein 3 die drei T2-Typen (Niedriggravitation, Zeitdilatation,
+ * Organisch). Neue Typen kommen immer hinten dazu, weil der Seed eines Universums die Ordnungszahl enthält.
  */
 public enum UniverseType implements StringRepresentable {
     /** Dauerhafter Nebel, Müllberge; Alien-Schrott, Xenit in Wrackfeldern; Schrott-Golems in den Halden. */
@@ -24,7 +25,15 @@ public enum UniverseType implements StringRepresentable {
     /** Immer hell, Kristalle wachsen nach; Fluxkristall-Cluster; Lärm lässt Kristalle explodieren. */
     KRISTALL("kristallwelt", 1, 1.0),
     /** Luft vergiftet ohne Helm; Säureseen mit Säuregel; Säureregen beschädigt Rüstung. */
-    TOXISCH("toxische_welt", 1, 1.0);
+    TOXISCH("toxische_welt", 1, 1.0),
+
+    // --- T2, ab Kanone Mk II (Mk I mit stabilisiertem Portalfluid: zufällig) ---------------
+    /** Gravitation 30 %, schwebende Inseln über dem Nichts; Schwebstein; Abstürze zwischen den Inseln. */
+    NIEDRIGGRAVITATION("niedriggravitation", 2, 0.3),
+    /** Pflanzen und Zufallsticks 4× schneller; Chronoglas-Sand fällt in Zeitlupe; Zeitverzerrungen setzen zurück. */
+    ZEITDILATATION("zeitdilatation", 2, 1.0),
+    /** Abgebaute Blöcke wachsen nach, der Boden atmet; Biomasse-Pulpe; fressende Flora. */
+    ORGANISCH("organische_welt", 2, 1.0);
 
     public static final Codec<UniverseType> CODEC = StringRepresentable.fromEnum(UniverseType::values);
 
@@ -54,7 +63,7 @@ public enum UniverseType implements StringRepresentable {
         return gunTier;
     }
 
-    /** Gravitation in g; die T1-Typen haben normale Schwerkraft. */
+    /** Gravitation in g; außer der Niedriggravitationswelt haben alle bisherigen Typen normale Schwerkraft. */
     public double gravity() {
         return gravity;
     }

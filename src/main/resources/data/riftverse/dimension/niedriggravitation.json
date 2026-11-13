@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:niedriggravitation",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "niedriggravitation",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "niedriggravitation",
+      "biomes": [
+        "riftverse:schwebe_himmel",
+        "riftverse:schwebe_daemmerung"
+      ]
+    }
+  }
+}

@@ -29,6 +29,25 @@
     "riftverse:platinen_aetzer",
     "riftverse:kristall_schleifer",
     "riftverse:recycler",
-    "riftverse:fluid_mixer"
+    "riftverse:fluid_mixer",
+    "riftverse:praezisions_montierer",
+    "riftverse:quantenzentrifuge",
+    "riftverse:gravitationspresse",
+    "riftverse:chrono_beschleuniger",
+    "riftverse:portalfluid_raffinerie",
+    "riftverse:fluxkristall_resonator",
+    "riftverse:gravitations_pendel",
+    "riftverse:dimensions_scanner",
+    "riftverse:zeitschleifen_solar",
+    "riftverse:umspanner",
+    "riftverse:flux_zelle",
+    "riftverse:labor_gehaeuse",
+    "riftverse:labor_huelle",
+    "riftverse:resonator_kammer",
+    "riftverse:schwebstein_kern",
+    "riftverse:biomasse_kessel",
+    "riftverse:schwebstein",
+    "riftverse:flux_leitung",
+    "riftverse:flux_leitung_isoliert"
   ]
 }

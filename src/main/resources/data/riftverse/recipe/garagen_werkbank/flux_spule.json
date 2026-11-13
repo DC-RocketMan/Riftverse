@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GFG",
+    "GXG",
+    "GFG"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:wires/gold"
+    },
+    "F": {
+      "tag": "c:dusts/fluxkristall"
+    },
+    "X": {
+      "tag": "c:rods/xenit"
+    }
+  },
+  "result": {
+    "id": "riftverse:flux_spule"
+  },
+  "loetzinn": 1
+}

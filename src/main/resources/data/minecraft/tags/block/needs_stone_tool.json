@@ -17,6 +17,8 @@
     "riftverse:platinen_aetzer",
     "riftverse:kristall_schleifer",
     "riftverse:recycler",
-    "riftverse:fluid_mixer"
+    "riftverse:fluid_mixer",
+    "riftverse:biomasse_kessel",
+    "riftverse:schwebstein"
   ]
 }

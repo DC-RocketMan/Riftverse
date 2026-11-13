@@ -25,6 +25,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
@@ -81,11 +82,22 @@ public class XenitZelleBlockEntity extends RiftEnergyBlockEntity
         }
     };
 
+    private final VoltageTier tier;
     private int lastStored = -1;
     private int flowTicks;
 
     public XenitZelleBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.XENIT_ZELLE.get(), pos, state, CAPACITY);
+        this(ModBlockEntities.XENIT_ZELLE.get(), pos, state, CAPACITY, TIER);
+    }
+
+    /** Für größere Speicher (Flux-Zelle). */
+    protected XenitZelleBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int capacity, VoltageTier tier) {
+        super(type, pos, state, capacity);
+        this.tier = tier;
+    }
+
+    public VoltageTier tier() {
+        return tier;
     }
 
     public ItemStackHandler items() {
@@ -95,8 +107,8 @@ public class XenitZelleBlockEntity extends RiftEnergyBlockEntity
     @Override
     public void serverTick() {
         if (level == null) return;
-        ItemEnergy.charge(items.getStackInSlot(SLOT_CHARGE), energy, TIER.maxPacket());
-        ItemEnergy.discharge(items.getStackInSlot(SLOT_DISCHARGE), energy, TIER.maxPacket());
+        ItemEnergy.charge(items.getStackInSlot(SLOT_CHARGE), energy, tier.maxPacket());
+        ItemEnergy.discharge(items.getStackInSlot(SLOT_DISCHARGE), energy, tier.maxPacket());
         if (energy.stored() != lastStored) {
             if (lastStored >= 0) flowTicks = 20;
             lastStored = energy.stored();
@@ -104,21 +116,26 @@ public class XenitZelleBlockEntity extends RiftEnergyBlockEntity
         if (flowTicks > 0) flowTicks--;
         boolean active = flowTicks > 0;
         BlockState state = level.getBlockState(worldPosition);
-        if (state.hasProperty(TechBlock.ACTIVE) && state.getValue(TechBlock.ACTIVE) != active) {
-            level.setBlock(worldPosition, state.setValue(TechBlock.ACTIVE, active), Block.UPDATE_ALL);
-        }
+        BlockState next = updateState(state);
+        if (state.hasProperty(TechBlock.ACTIVE) && next.getValue(TechBlock.ACTIVE) != active) next = next.setValue(TechBlock.ACTIVE, active);
+        if (next != state) level.setBlock(worldPosition, next, Block.UPDATE_ALL);
+    }
+
+    /** Weitere Blockzustände (Füllstandsband der Flux-Zelle). */
+    protected BlockState updateState(BlockState state) {
+        return state;
     }
 
     // ------------------------------------------------------------------ Netz
 
     @Override
     public int getOfferedEnergy() {
-        return Math.min(energy.stored(), TIER.emitPacket());
+        return Math.min(energy.stored(), tier.emitPacket());
     }
 
     @Override
     public VoltageTier getSourceTier() {
-        return TIER;
+        return tier;
     }
 
     @Override
@@ -133,7 +150,7 @@ public class XenitZelleBlockEntity extends RiftEnergyBlockEntity
 
     @Override
     public VoltageTier getSinkTier() {
-        return TIER;
+        return tier;
     }
 
     @Override

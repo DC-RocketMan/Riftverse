@@ -24,7 +24,7 @@ public final class ClientEvents {
         }
     }
 
-    /** Schrottwelt: dauerhafter Nebel. Toxische Welt: leichter Dunst. */
+    /** Schrottwelt: dauerhafter Nebel. Toxische und organische Welt: leichter Dunst. */
     @SubscribeEvent
     public static void onFog(ViewportEvent.RenderFog event) {
         Minecraft mc = Minecraft.getInstance();
@@ -33,6 +33,7 @@ public final class ClientEvents {
         float far;
         if (type == UniverseType.SCHROTT) far = 48.0f;
         else if (type == UniverseType.TOXISCH) far = 96.0f;
+        else if (type == UniverseType.ORGANISCH) far = 80.0f;
         else return;
         if (event.getFarPlaneDistance() <= far) return;
         event.setNearPlaneDistance(Math.min(event.getNearPlaneDistance(), far * 0.1f));

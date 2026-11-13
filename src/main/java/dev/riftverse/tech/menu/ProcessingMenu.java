@@ -48,7 +48,7 @@ public class ProcessingMenu extends AbstractContainerMenu {
         int n = kind.inputs(), o = kind.outputs();
         IItemHandler handler = machine != null ? machine.items() : new ItemStackHandler(n + o + 1);
 
-        for (int i = 0; i < n; i++) addSlot(new SlotItemHandler(handler, i, inputX(n, i), IN_Y));
+        for (int i = 0; i < n; i++) addSlot(new SlotItemHandler(handler, i, inputX(n, i), inputY(n, i)));
         for (int i = 0; i < o; i++) addSlot(new SlotItemHandler(handler, n + i, outputX(o, i), outputY(o, i)));
         if (kind.electric()) addSlot(new SlotItemHandler(handler, n + o, BATTERY_X, BATTERY_Y));
         machineSlots = slots.size();
@@ -57,13 +57,18 @@ public class ProcessingMenu extends AbstractContainerMenu {
         addDataSlots(data);
     }
 
-    /** x-Position des i-ten Eingangs bei n Eingängen. */
+    /** x-Position des i-ten Eingangs bei n Eingängen (ab 4 Eingängen zwei Reihen à 3). */
     public static int inputX(int n, int i) {
         return switch (n) {
             case 1 -> 56;
             case 2 -> 38 + i * 18;
-            default -> 30 + i * 18;
+            case 3 -> 30 + i * 18;
+            default -> 30 + (i % 3) * 18;
         };
+    }
+
+    public static int inputY(int n, int i) {
+        return n <= 3 ? IN_Y : 26 + (i / 3) * 18;
     }
 
     /** Ausgänge: einer groß, zwei nebeneinander, vier im Quadrat. */
@@ -106,6 +111,11 @@ public class ProcessingMenu extends AbstractContainerMenu {
 
     public int mode() {
         return data.get(ProcessingBlockEntity.DATA_MODE);
+    }
+
+    /** Montageschritte des aktuellen Rezepts (Präzisions-Montierer), 0 = keins. */
+    public int steps() {
+        return data.get(ProcessingBlockEntity.DATA_STEPS);
     }
 
     public boolean cranking() {

@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "CCC",
+    "RLR",
+    "TDT"
+  ],
+  "key": {
+    "C": {
+      "item": "riftverse:chronoglas_scheibe"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "D": {
+      "item": "minecraft:daylight_detector"
+    }
+  },
+  "result": {
+    "id": "riftverse:zeitschleifen_solar"
+  },
+  "loetzinn": 2
+}

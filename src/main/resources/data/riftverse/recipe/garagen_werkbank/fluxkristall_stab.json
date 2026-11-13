@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    " F ",
+    "HXH",
+    " F "
+  ],
+  "key": {
+    "F": {
+      "tag": "c:gems/fluxkristall"
+    },
+    "H": {
+      "item": "riftverse:zinn_huelse"
+    },
+    "X": {
+      "tag": "c:rods/xenit"
+    }
+  },
+  "result": {
+    "id": "riftverse:fluxkristall_stab"
+  },
+  "loetzinn": 1
+}

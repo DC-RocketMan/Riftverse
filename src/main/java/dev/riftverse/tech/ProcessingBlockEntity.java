@@ -8,7 +8,9 @@ import dev.riftverse.energy.VoltageTier;
 import dev.riftverse.recipe.MachineRecipe;
 import dev.riftverse.recipe.MachineRecipeInput;
 import dev.riftverse.registry.ModBlockEntities;
+import dev.riftverse.registry.ModDataComponents;
 import dev.riftverse.tech.menu.ProcessingMenu;
+import dev.riftverse.universe.UniverseId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -40,7 +42,7 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         implements MenuProvider, RiftEnergySink, Crankable, ServerTickable, DropsContents {
 
     public static final int DATA_PROGRESS = 0, DATA_MAX = 1, DATA_ENERGY_LO = 2, DATA_ENERGY_HI = 3,
-            DATA_CAP_LO = 4, DATA_CAP_HI = 5, DATA_MODE = 6, DATA_CRANK = 7, DATA_COUNT = 8;
+            DATA_CAP_LO = 4, DATA_CAP_HI = 5, DATA_MODE = 6, DATA_CRANK = 7, DATA_STEPS = 8, DATA_COUNT = 9;
 
     private final MachineKind kind;
     private final ItemStackHandler items;
@@ -87,6 +89,7 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
                     case DATA_CAP_HI -> energy.capacity() >>> 16;
                     case DATA_MODE -> mode;
                     case DATA_CRANK -> crankTicks;
+                    case DATA_STEPS -> cached != null && kind.ordered() ? cached.value().steps() : 0;
                     default -> 0;
                 };
             }
@@ -142,11 +145,11 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
     @Override
     public void serverTick() {
         if (level == null) return;
-        if (kind.electric()) ItemEnergy.discharge(items.getStackInSlot(batterySlot()), energy, VoltageTier.I.maxPacket());
+        if (kind.electric()) ItemEnergy.discharge(items.getStackInSlot(batterySlot()), energy, kind.tier().maxPacket());
 
         RecipeHolder<MachineRecipe> holder = currentRecipe();
         boolean working = false;
-        if (holder != null && canOutput(holder.value().allOutputs())) {
+        if (holder != null && canOutput(withTarget(holder.value().allOutputs()))) {
             MachineRecipe recipe = holder.value();
             maxProgress = recipe.time();
             if (kind.electric()) {
@@ -183,9 +186,35 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
     private RecipeHolder<MachineRecipe> currentRecipe() {
         if (recipeDirty && level != null) {
             cached = level.getRecipeManager().getRecipeFor(kind.recipeType(), input(), level).orElse(null);
+            // Der Dimensions-Scanner liest nur gefüllte Universumsproben
+            if (cached != null && kind == MachineKind.DIMENSIONS_SCANNER && scannedTarget() == null) cached = null;
             recipeDirty = false;
         }
         return cached;
+    }
+
+    /** Universum der Probe im Dimensions-Scanner, oder null. */
+    @Nullable
+    private UniverseId scannedTarget() {
+        for (int i = 0; i < kind.inputs(); i++) {
+            UniverseId id = items.getStackInSlot(i).get(ModDataComponents.ZIEL.get());
+            if (id != null) return id;
+        }
+        return null;
+    }
+
+    /** Dimensions-Scanner: Die Koordinatenkarte bekommt das Universum der Probe. */
+    private List<ItemStack> withTarget(List<ItemStack> products) {
+        if (kind != MachineKind.DIMENSIONS_SCANNER) return products;
+        UniverseId target = scannedTarget();
+        if (target == null) return products;
+        List<ItemStack> out = new ArrayList<>();
+        for (ItemStack p : products) {
+            ItemStack c = p.copy();
+            c.set(ModDataComponents.ZIEL.get(), target);
+            out.add(c);
+        }
+        return out;
     }
 
     /** Passen alle möglichen Produkte gleichzeitig in die Ausgänge? */
@@ -224,12 +253,13 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
             recipeDirty = true;
             return;
         }
+        List<ItemStack> products = withTarget(recipe.roll(level.random));
         for (int i = 0; i < slots.length; i++) {
             items.extractItem(slots[i], recipe.ingredients().get(i).count(), false);
         }
         List<ItemStack> outs = new ArrayList<>();
         for (int i = 0; i < kind.outputs(); i++) outs.add(items.getStackInSlot(outputSlot() + i).copy());
-        for (ItemStack product : recipe.roll(level.random)) insertInto(outs, product);
+        for (ItemStack product : products) insertInto(outs, product);
         for (int i = 0; i < kind.outputs(); i++) {
             if (!ItemStack.matches(outs.get(i), items.getStackInSlot(outputSlot() + i))) items.setStackInSlot(outputSlot() + i, outs.get(i));
         }

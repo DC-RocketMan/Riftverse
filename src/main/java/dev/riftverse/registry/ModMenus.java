@@ -4,6 +4,8 @@ import dev.riftverse.Riftverse;
 import dev.riftverse.tech.menu.FluidMixerMenu;
 import dev.riftverse.tech.menu.GeneratorMenu;
 import dev.riftverse.tech.menu.ProcessingMenu;
+import dev.riftverse.tech.menu.RaffinerieMenu;
+import dev.riftverse.tech.menu.ResonatorMenu;
 import dev.riftverse.tech.menu.SpeicherMenu;
 import dev.riftverse.tech.menu.WerkbankMenu;
 import net.minecraft.core.registries.Registries;
@@ -25,6 +27,11 @@ public final class ModMenus {
             MENUS.register("fluid_mixer", () -> IMenuTypeExtension.create(FluidMixerMenu::new));
     public static final DeferredHolder<MenuType<?>, MenuType<SpeicherMenu>> SPEICHER =
             MENUS.register("speicher", () -> IMenuTypeExtension.create(SpeicherMenu::new));
+
+    public static final DeferredHolder<MenuType<?>, MenuType<RaffinerieMenu>> RAFFINERIE =
+            MENUS.register("portalfluid_raffinerie", () -> IMenuTypeExtension.create(RaffinerieMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<ResonatorMenu>> RESONATOR =
+            MENUS.register("fluxkristall_resonator", () -> IMenuTypeExtension.create(ResonatorMenu::new));
 
     private ModMenus() {}
 }

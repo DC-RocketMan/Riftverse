@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:gravitationspresse",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:schwebstein_brocken"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:antigrav_platte"
+  },
+  "time": 200
+}

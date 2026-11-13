@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "GKG",
+    "RLR",
+    "TMT"
+  ],
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "K": {
+      "item": "minecraft:cauldron"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "M": {
+      "item": "riftverse:fluid_mixer"
+    }
+  },
+  "result": {
+    "id": "riftverse:portalfluid_raffinerie"
+  },
+  "loetzinn": 3
+}

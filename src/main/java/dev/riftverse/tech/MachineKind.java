@@ -10,7 +10,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import java.util.List;
 
 /**
- * Die verarbeitenden Maschinen (T0 und T1). Jede hat einen eigenen Rezepttyp im Datapack
+ * Die verarbeitenden Maschinen (T0 bis T2). Jede hat einen eigenen Rezepttyp im Datapack
  * ({@code data/riftverse/recipe/<maschine>/...}).
  * <p>
  * Slots: Eingänge 0..n-1, Ausgänge n..n+o-1, Akku-Slot n+o (nur elektrische Maschinen).
@@ -31,20 +31,38 @@ public enum MachineKind {
     /** Fluxkristall → Fluxlinse + Fluxstaub */
     KRISTALL_SCHLEIFER("kristall_schleifer", 1, 2, 50, List.of()),
     /** Alien-Schrott → Polymerfetzen und zufällig Drähte, Federn, Mini-Motoren */
-    RECYCLER("recycler", 1, 4, 20, List.of());
+    RECYCLER("recycler", 1, 4, 20, List.of()),
+
+    // --- T2 Rift-Labor (Stufe II) ---------------------------------------------------
+    /** Sequenzielle Montage in 3–6 Schritten: Zutat i gehört in Slot i (Rift-Schaltkreis, Kanonenkern, Kanone Mk II). */
+    PRAEZISIONS_MONTIERER("praezisions_montierer", 6, 1, 200, List.of(), VoltageTier.II, true),
+    /** Säuregel, Biomasse → 2–3 Nebenprodukte (Ätzlösung, Toxinrest, Nährserum) */
+    QUANTENZENTRIFUGE("quantenzentrifuge", 2, 3, 300, List.of(), VoltageTier.II, false),
+    /** Schwebstein → Antigrav-Platte (ab T3 auch Gravitit → Rahmen) */
+    GRAVITATIONSPRESSE("gravitationspresse", 1, 1, 350, List.of(), VoltageTier.II, false),
+    /** Universumsprobe + Papier → Koordinatenkarte mit Typ und Modifikatoren */
+    DIMENSIONS_SCANNER("dimensions_scanner", 2, 1, 150, List.of(), VoltageTier.II, false);
 
     private final String id;
     private final int inputs;
     private final int outputs;
     private final int energyPerTick;
     private final List<String> modes;
+    private final VoltageTier tier;
+    private final boolean ordered;
 
     MachineKind(String id, int inputs, int outputs, int energyPerTick, List<String> modes) {
+        this(id, inputs, outputs, energyPerTick, modes, VoltageTier.I, false);
+    }
+
+    MachineKind(String id, int inputs, int outputs, int energyPerTick, List<String> modes, VoltageTier tier, boolean ordered) {
         this.id = id;
         this.inputs = inputs;
         this.outputs = outputs;
         this.energyPerTick = energyPerTick;
         this.modes = modes;
+        this.tier = tier;
+        this.ordered = ordered;
     }
 
     public String id() {
@@ -74,8 +92,14 @@ public enum MachineKind {
         return Math.max(1, energyPerTick * 400);
     }
 
+    /** Höchste Spannungsstufe, die die Maschine verträgt. */
     public VoltageTier tier() {
-        return VoltageTier.I;
+        return tier;
+    }
+
+    /** Montierer: Die Zutaten müssen der Reihe nach in den Slots liegen (Schritt 1 in Slot 1 …). */
+    public boolean ordered() {
+        return ordered;
     }
 
     public List<String> modes() {
@@ -101,6 +125,10 @@ public enum MachineKind {
             case PLATINEN_AETZER -> ModRecipes.PLATINEN_AETZER_TYPE.get();
             case KRISTALL_SCHLEIFER -> ModRecipes.KRISTALL_SCHLEIFER_TYPE.get();
             case RECYCLER -> ModRecipes.RECYCLER_TYPE.get();
+            case PRAEZISIONS_MONTIERER -> ModRecipes.PRAEZISIONS_MONTIERER_TYPE.get();
+            case QUANTENZENTRIFUGE -> ModRecipes.QUANTENZENTRIFUGE_TYPE.get();
+            case GRAVITATIONSPRESSE -> ModRecipes.GRAVITATIONSPRESSE_TYPE.get();
+            case DIMENSIONS_SCANNER -> ModRecipes.DIMENSIONS_SCANNER_TYPE.get();
         };
     }
 
@@ -114,6 +142,10 @@ public enum MachineKind {
             case PLATINEN_AETZER -> ModRecipes.PLATINEN_AETZER.get();
             case KRISTALL_SCHLEIFER -> ModRecipes.KRISTALL_SCHLEIFER.get();
             case RECYCLER -> ModRecipes.RECYCLER.get();
+            case PRAEZISIONS_MONTIERER -> ModRecipes.PRAEZISIONS_MONTIERER.get();
+            case QUANTENZENTRIFUGE -> ModRecipes.QUANTENZENTRIFUGE.get();
+            case GRAVITATIONSPRESSE -> ModRecipes.GRAVITATIONSPRESSE.get();
+            case DIMENSIONS_SCANNER -> ModRecipes.DIMENSIONS_SCANNER.get();
         };
     }
 

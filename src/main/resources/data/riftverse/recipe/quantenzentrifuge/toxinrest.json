@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:quantenzentrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:toxinrest"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "minecraft:slime_ball"
+  },
+  "time": 200,
+  "byproducts": [
+    {
+      "result": {
+        "id": "riftverse:saeuregel"
+      },
+      "chance": 0.25
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "FTF",
+    "XLX",
+    "FRF"
+  ],
+  "key": {
+    "F": {
+      "tag": "c:gems/fluxkristall"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "X": {
+      "item": "riftverse:xenit_zelle"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    }
+  },
+  "result": {
+    "id": "riftverse:flux_zelle"
+  },
+  "loetzinn": 2
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "riftverse:block/fressende_flora"
+  },
+  "render_type": "minecraft:cutout"
+}

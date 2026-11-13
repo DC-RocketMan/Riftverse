@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "PMP",
+    "BLB",
+    "TXT"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "M": {
+      "item": "riftverse:mini_motor"
+    },
+    "B": {
+      "item": "riftverse:basis_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "X": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "id": "riftverse:praezisions_montierer"
+  },
+  "loetzinn": 3
+}

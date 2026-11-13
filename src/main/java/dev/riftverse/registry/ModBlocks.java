@@ -6,7 +6,13 @@ import dev.riftverse.cable.InsulatedCableBlock;
 import dev.riftverse.energy.EnergyPortBlock;
 import dev.riftverse.energy.KreativQuelleBlock;
 import dev.riftverse.energy.VoltageTier;
+import dev.riftverse.block.BiomasseBlock;
+import dev.riftverse.block.FressendeFloraBlock;
 import dev.riftverse.block.KnospenderFluxkristallBlock;
+import dev.riftverse.block.SchwebsteinBlock;
+import dev.riftverse.energy.UmspannerBlock;
+import dev.riftverse.tech.ChronoBeschleunigerBlock;
+import dev.riftverse.tech.FluxZelleBlock;
 import dev.riftverse.block.MeteoritenkernBlock;
 import dev.riftverse.block.RiftAnkerBlock;
 import dev.riftverse.block.SaeureBlock;
@@ -14,11 +20,14 @@ import dev.riftverse.tech.MachineKind;
 import dev.riftverse.tech.ProcessingBlock;
 import dev.riftverse.tech.TechBlock;
 import dev.riftverse.tech.WerkbankBlock;
+import net.minecraft.util.ColorRGBA;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.block.AmethystClusterBlock;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ColoredFallingBlock;
 import net.minecraft.world.level.block.DropExperienceBlock;
+import net.minecraft.world.level.block.TransparentBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -153,7 +162,79 @@ public final class ModBlocks {
                     .requiresCorrectToolForDrops().sound(SoundType.METAL).noOcclusion().lightLevel(state -> 7)
                     .pushReaction(PushReaction.BLOCK)));
 
+    // =====================================================================
+    // Meilenstein 3 – T2 Rift-Labor
+    // =====================================================================
+
+    // --- Energienetz Stufe II ---
+    public static final DeferredBlock<CableBlock> FLUX_LEITUNG = BLOCKS.register("flux_leitung",
+            () -> new CableBlock(cableProps(SoundType.METAL), VoltageTier.II, 1.0, 4, false));
+    public static final DeferredBlock<InsulatedCableBlock> FLUX_LEITUNG_ISOLIERT = BLOCKS.register("flux_leitung_isoliert",
+            () -> new InsulatedCableBlock(cableProps(SoundType.WOOL), VoltageTier.II, 1.0, 6));
+    public static final DeferredBlock<UmspannerBlock> UMSPANNER = BLOCKS.register("umspanner",
+            () -> new UmspannerBlock(laborProps().lightLevel(activeLight(5)), VoltageTier.I));
+    public static final DeferredBlock<FluxZelleBlock> FLUX_ZELLE = BLOCKS.register("flux_zelle",
+            () -> new FluxZelleBlock(laborProps().lightLevel(state -> state.getValue(FluxZelleBlock.FUELLUNG) * 3)));
+
+    // --- Gehäuse und Multiblock-Hüllen ---
+    public static final DeferredBlock<Block> LABOR_GEHAEUSE = BLOCKS.register("labor_gehaeuse", () -> new Block(laborProps()));
+    public static final DeferredBlock<Block> LABOR_HUELLE = BLOCKS.register("labor_huelle", () -> new Block(laborProps()));
+
+    // --- T2-Maschinen ---
+    public static final DeferredBlock<ProcessingBlock> PRAEZISIONS_MONTIERER = BLOCKS.register("praezisions_montierer",
+            () -> new ProcessingBlock(laborProps().lightLevel(activeLight(6)), MachineKind.PRAEZISIONS_MONTIERER));
+    public static final DeferredBlock<ProcessingBlock> QUANTENZENTRIFUGE = BLOCKS.register("quantenzentrifuge",
+            () -> new ProcessingBlock(laborProps().lightLevel(activeLight(8)), MachineKind.QUANTENZENTRIFUGE));
+    public static final DeferredBlock<ProcessingBlock> GRAVITATIONSPRESSE = BLOCKS.register("gravitationspresse",
+            () -> new ProcessingBlock(laborProps().lightLevel(activeLight(6)), MachineKind.GRAVITATIONSPRESSE));
+    public static final DeferredBlock<ProcessingBlock> DIMENSIONS_SCANNER = BLOCKS.register("dimensions_scanner",
+            () -> new ProcessingBlock(laborProps().lightLevel(activeLight(9)), MachineKind.DIMENSIONS_SCANNER));
+    public static final DeferredBlock<ChronoBeschleunigerBlock> CHRONO_BESCHLEUNIGER = BLOCKS.register("chrono_beschleuniger",
+            () -> new ChronoBeschleunigerBlock(laborProps().lightLevel(activeLight(10))));
+    public static final DeferredBlock<TechBlock> PORTALFLUID_RAFFINERIE = BLOCKS.register("portalfluid_raffinerie",
+            () -> new TechBlock(laborProps().lightLevel(activeLight(10)), ModBlockEntities.RAFFINERIE, true));
+
+    // --- Generatoren ---
+    public static final DeferredBlock<TechBlock> BIOMASSE_KESSEL = BLOCKS.register("biomasse_kessel",
+            () -> new TechBlock(techProps().lightLevel(activeLight(10)), ModBlockEntities.BIOMASSE_KESSEL, true));
+    public static final DeferredBlock<TechBlock> ZEITSCHLEIFEN_SOLAR = BLOCKS.register("zeitschleifen_solar",
+            () -> new TechBlock(laborProps().lightLevel(activeLight(7)), ModBlockEntities.ZEITSCHLEIFEN_SOLAR, true));
+    public static final DeferredBlock<TechBlock> FLUXKRISTALL_RESONATOR = BLOCKS.register("fluxkristall_resonator",
+            () -> new TechBlock(laborProps().lightLevel(activeLight(13)), ModBlockEntities.FLUXKRISTALL_RESONATOR, true));
+    public static final DeferredBlock<Block> RESONATOR_KAMMER = BLOCKS.register("resonator_kammer", () -> new Block(laborProps()));
+    public static final DeferredBlock<TechBlock> GRAVITATIONS_PENDEL = BLOCKS.register("gravitations_pendel",
+            () -> new TechBlock(laborProps().lightLevel(activeLight(8)), ModBlockEntities.GRAVITATIONS_PENDEL, true));
+    public static final DeferredBlock<SchwebsteinBlock> SCHWEBSTEIN_KERN = BLOCKS.register("schwebstein_kern",
+            () -> new SchwebsteinBlock(BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).strength(4.0f, 6.0f)
+                    .requiresCorrectToolForDrops().sound(SoundType.AMETHYST).lightLevel(state -> 9)));
+
+    // --- Universen: Niedriggravitation, Zeitdilatation, Organisch ---
+    public static final DeferredBlock<SchwebsteinBlock> SCHWEBSTEIN = BLOCKS.register("schwebstein",
+            () -> new SchwebsteinBlock(BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).strength(1.8f, 6.0f)
+                    .requiresCorrectToolForDrops().sound(SoundType.CALCITE).lightLevel(state -> 3)));
+    public static final DeferredBlock<ColoredFallingBlock> CHRONOGLAS_SAND = BLOCKS.register("chronoglas_sand",
+            () -> new ColoredFallingBlock(new ColorRGBA(0x9A6BFF), BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE)
+                    .strength(0.6f).sound(SoundType.SAND).lightLevel(state -> 4)));
+    public static final DeferredBlock<TransparentBlock> CHRONOGLAS = BLOCKS.register("chronoglas",
+            () -> new TransparentBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(0.5f)
+                    .sound(SoundType.GLASS).noOcclusion().lightLevel(state -> 6)
+                    .isValidSpawn((state, level, pos, type) -> false).isRedstoneConductor((state, level, pos) -> false)
+                    .isSuffocating((state, level, pos) -> false).isViewBlocking((state, level, pos) -> false)));
+    public static final DeferredBlock<BiomasseBlock> BIOMASSE_BLOCK = BLOCKS.register("biomasse_block",
+            () -> new BiomasseBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).strength(0.8f)
+                    .sound(SoundType.SLIME_BLOCK)));
+    public static final DeferredBlock<FressendeFloraBlock> FRESSENDE_FLORA = BLOCKS.register("fressende_flora",
+            () -> new FressendeFloraBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_RED).noCollission()
+                    .instabreak().sound(SoundType.SWEET_BERRY_BUSH).offsetType(BlockBehaviour.OffsetType.XZ)
+                    .pushReaction(PushReaction.DESTROY)));
+
     // ---------------------------------------------------------------------
+
+    /** T2-Labortechnik: Labor-Weiß, braucht eine Eisenspitzhacke. */
+    private static BlockBehaviour.Properties laborProps() {
+        return BlockBehaviour.Properties.of().mapColor(MapColor.QUARTZ).strength(4.0f, 8.0f)
+                .requiresCorrectToolForDrops().sound(SoundType.METAL);
+    }
 
     private static BlockBehaviour.Properties oreProps(MapColor color, float hardness, SoundType sound) {
         return BlockBehaviour.Properties.of().mapColor(color).strength(hardness, 3.0f)

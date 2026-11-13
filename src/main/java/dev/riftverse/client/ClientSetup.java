@@ -6,6 +6,8 @@ import dev.riftverse.cable.InsulatedCableBlock;
 import dev.riftverse.client.screen.FluidMixerScreen;
 import dev.riftverse.client.screen.GeneratorScreen;
 import dev.riftverse.client.screen.ProcessingScreen;
+import dev.riftverse.client.screen.RaffinerieScreen;
+import dev.riftverse.client.screen.ResonatorScreen;
 import dev.riftverse.client.screen.SpeicherScreen;
 import dev.riftverse.client.screen.WerkbankScreen;
 import dev.riftverse.registry.ModBlocks;
@@ -48,6 +50,8 @@ public final class ClientSetup {
         event.register(ModMenus.WERKBANK.get(), WerkbankScreen::new);
         event.register(ModMenus.FLUID_MIXER.get(), FluidMixerScreen::new);
         event.register(ModMenus.SPEICHER.get(), SpeicherScreen::new);
+        event.register(ModMenus.RAFFINERIE.get(), RaffinerieScreen::new);
+        event.register(ModMenus.RESONATOR.get(), ResonatorScreen::new);
     }
 
     @SubscribeEvent
@@ -86,7 +90,7 @@ public final class ClientSetup {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tintIndex) -> 0xFF000000 | InsulatedCableBlock.tint(state),
-                ModBlocks.KUPFERKABEL_ISOLIERT.get());
+                ModBlocks.KUPFERKABEL_ISOLIERT.get(), ModBlocks.FLUX_LEITUNG_ISOLIERT.get());
     }
 
     /** Fluid-Texturen sind schon farbig, daher kein Tint. */
@@ -94,6 +98,7 @@ public final class ClientSetup {
     public static void registerClientExtensions(RegisterClientExtensionsEvent event) {
         event.registerFluidType(fluid("saeure"), ModFluids.SAEURE_TYPE.get());
         event.registerFluidType(fluid("roh_portalfluid"), ModFluids.ROH_PORTALFLUID_TYPE.get());
+        event.registerFluidType(fluid("portalfluid"), ModFluids.PORTALFLUID_TYPE.get());
     }
 
     private static IClientFluidTypeExtensions fluid(String name) {

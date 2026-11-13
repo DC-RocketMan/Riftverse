@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "PHP",
+    "HKH",
+    "PHP"
+  ],
+  "key": {
+    "P": {
+      "tag": "c:plates/steel"
+    },
+    "H": {
+      "item": "riftverse:labor_huelle"
+    },
+    "K": {
+      "item": "riftverse:kuehlkoerper"
+    }
+  },
+  "result": {
+    "id": "riftverse:resonator_kammer"
+  },
+  "hammer": 1
+}

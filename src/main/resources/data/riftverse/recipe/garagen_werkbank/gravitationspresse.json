@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SAS",
+    "RLR",
+    "TPT"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:plates/steel"
+    },
+    "A": {
+      "item": "minecraft:anvil"
+    },
+    "R": {
+      "item": "riftverse:rift_schaltkreis"
+    },
+    "L": {
+      "item": "riftverse:labor_gehaeuse"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "P": {
+      "item": "minecraft:piston"
+    }
+  },
+  "result": {
+    "id": "riftverse:gravitationspresse"
+  },
+  "loetzinn": 3
+}

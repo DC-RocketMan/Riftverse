@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:organische_welt",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "organische_welt",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "organische_welt",
+      "biomes": [
+        "riftverse:organisch_rosa",
+        "riftverse:organisch_purpur"
+      ]
+    }
+  }
+}

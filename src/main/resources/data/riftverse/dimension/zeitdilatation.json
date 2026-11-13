@@ -1,0 +1,15 @@
+{
+  "type": "riftverse:zeitdilatation",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "zeitdilatation",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "zeitdilatation",
+      "biomes": [
+        "riftverse:zeit_bernstein",
+        "riftverse:zeit_violett"
+      ]
+    }
+  }
+}

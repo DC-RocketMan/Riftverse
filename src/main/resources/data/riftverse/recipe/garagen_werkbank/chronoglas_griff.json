@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "CXC",
+    " X ",
+    " P "
+  ],
+  "key": {
+    "C": {
+      "item": "riftverse:chronoglas_scheibe"
+    },
+    "X": {
+      "tag": "c:rods/xenit"
+    },
+    "P": {
+      "item": "riftverse:polymerfetzen"
+    }
+  },
+  "result": {
+    "id": "riftverse:chronoglas_griff"
+  },
+  "hammer": 1
+}

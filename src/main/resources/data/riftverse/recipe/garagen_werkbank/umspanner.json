@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "IKI",
+    "SXT",
+    "IFI"
+  ],
+  "key": {
+    "I": {
+      "tag": "c:plates/iron"
+    },
+    "K": {
+      "item": "riftverse:kupferkabel_isoliert"
+    },
+    "F": {
+      "item": "riftverse:flux_leitung_isoliert"
+    },
+    "S": {
+      "item": "riftverse:xenit_spule"
+    },
+    "T": {
+      "item": "riftverse:flux_spule"
+    },
+    "X": {
+      "item": "riftverse:xenit_gehaeuse"
+    }
+  },
+  "result": {
+    "id": "riftverse:umspanner"
+  },
+  "loetzinn": 2
+}

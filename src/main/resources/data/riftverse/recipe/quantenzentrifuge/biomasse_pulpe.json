@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:quantenzentrifuge",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:biomasse_pulpe"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:naehrserum"
+  },
+  "time": 160,
+  "byproducts": [
+    {
+      "result": {
+        "id": "riftverse:polymerfetzen"
+      },
+      "chance": 0.3
+    },
+    {
+      "result": {
+        "id": "minecraft:bone_meal"
+      },
+      "chance": 0.5
+    }
+  ]
+}

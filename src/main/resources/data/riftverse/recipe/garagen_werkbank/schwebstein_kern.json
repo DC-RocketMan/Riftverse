@@ -1,0 +1,23 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "SAS",
+    "AXA",
+    "SAS"
+  ],
+  "key": {
+    "S": {
+      "item": "riftverse:schwebstein"
+    },
+    "A": {
+      "item": "riftverse:antigrav_platte"
+    },
+    "X": {
+      "tag": "c:storage_blocks/iron"
+    }
+  },
+  "result": {
+    "id": "riftverse:schwebstein_kern"
+  },
+  "hammer": 2
+}

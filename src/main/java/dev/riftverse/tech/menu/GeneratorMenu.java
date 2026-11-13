@@ -2,8 +2,9 @@ package dev.riftverse.tech.menu;
 
 import dev.riftverse.energy.ItemEnergy;
 import dev.riftverse.registry.ModMenus;
+import dev.riftverse.energy.VoltageTier;
+import dev.riftverse.tech.BrennstoffGenerator;
 import dev.riftverse.tech.GeneratorBlockEntity;
-import dev.riftverse.tech.TonnenreaktorBlockEntity;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +19,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import org.jetbrains.annotations.Nullable;
 
-/** GUI von Kurbel-Dynamo und Tonnenreaktor. */
+/** GUI der einfachen Generatoren: Kurbel-Dynamo, Tonnenreaktor, Biomasse-Kessel, Zeitschleifen-Solarpanel, Gravitations-Pendel. */
 public class GeneratorMenu extends AbstractContainerMenu {
     public static final int FUEL_X = 56, FUEL_Y = 53, OUT_X = 116, OUT_Y = 35;
     public static final int BATTERY_X = 9, BATTERY_Y = 62;
@@ -44,23 +45,42 @@ public class GeneratorMenu extends AbstractContainerMenu {
         super(ModMenus.GENERATOR.get(), containerId);
         this.generator = generator;
         this.data = data;
-        this.reactor = generator instanceof TonnenreaktorBlockEntity;
+        this.reactor = generator instanceof BrennstoffGenerator;
         IItemHandler handler = generator != null ? generator.items() : new ItemStackHandler(1);
 
         if (reactor) {
-            addSlot(new SlotItemHandler(handler, TonnenreaktorBlockEntity.SLOT_FUEL, FUEL_X, FUEL_Y));
-            addSlot(new SlotItemHandler(handler, TonnenreaktorBlockEntity.SLOT_OUT, OUT_X, OUT_Y));
-            addSlot(new SlotItemHandler(handler, TonnenreaktorBlockEntity.SLOT_BATTERY, BATTERY_X, BATTERY_Y));
+            addSlot(new SlotItemHandler(handler, BrennstoffGenerator.SLOT_FUEL, FUEL_X, FUEL_Y));
+            addSlot(new SlotItemHandler(handler, BrennstoffGenerator.SLOT_OUT, OUT_X, OUT_Y));
+            addSlot(new SlotItemHandler(handler, BrennstoffGenerator.SLOT_BATTERY, BATTERY_X, BATTERY_Y));
         } else {
-            addSlot(new SlotItemHandler(handler, 0, DYNAMO_BATTERY_X, DYNAMO_BATTERY_Y));
+            addSlot(new SlotItemHandler(handler, generator != null ? generator.batterySlot() : 0, DYNAMO_BATTERY_X, DYNAMO_BATTERY_Y));
         }
         machineSlots = slots.size();
         MenuHelper.addPlayerInventory(inventory, this::addSlot);
         addDataSlots(data);
     }
 
+    /** Generator mit Brennstoff-Slot (Tonnenreaktor, Biomasse-Kessel). */
     public boolean isReactor() {
         return reactor;
+    }
+
+    /** Block-Entity auf dem Client: liefert Beschriftungen, aber keine Werte (die kommen über die Daten-Slots). */
+    @Nullable
+    public GeneratorBlockEntity generator() {
+        return generator;
+    }
+
+    public int output() {
+        return data.get(GeneratorBlockEntity.DATA_OUTPUT);
+    }
+
+    public int status() {
+        return data.get(GeneratorBlockEntity.DATA_STATUS);
+    }
+
+    public VoltageTier tier() {
+        return generator != null ? generator.tier() : VoltageTier.I;
     }
 
     public int energy() {
@@ -98,8 +118,8 @@ public class GeneratorMenu extends AbstractContainerMenu {
         } else {
             boolean moved = false;
             if (ItemEnergy.of(stack) != null) moved = moveItemStackTo(stack, machineSlots - 1, machineSlots, false);
-            if (!moved && reactor && TonnenreaktorBlockEntity.burnDuration(stack) > 0) {
-                moved = moveItemStackTo(stack, TonnenreaktorBlockEntity.SLOT_FUEL, TonnenreaktorBlockEntity.SLOT_FUEL + 1, false);
+            if (!moved && reactor && generator instanceof BrennstoffGenerator fuel && fuel.isFuel(stack)) {
+                moved = moveItemStackTo(stack, BrennstoffGenerator.SLOT_FUEL, BrennstoffGenerator.SLOT_FUEL + 1, false);
             }
             if (!moved && !MenuHelper.moveWithinPlayer(this, index, machineSlots, (s, e, r) -> moveItemStackTo(stack, s, e, r))) {
                 return ItemStack.EMPTY;
