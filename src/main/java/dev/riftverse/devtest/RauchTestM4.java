@@ -269,6 +269,7 @@ final class RauchTestM4 {
             check(k.wachstum() > 0 && k.items().getStackInSlot(KlonTankBlockEntity.SLOT_BIOMASSE).isEmpty(),
                     "Klon-Tank: Zutaten verbraucht, Klon wächst (" + k.wachstum() + "/" + KlonTankBlockEntity.WACHSTUM + ")");
             check(dev.riftverse.tech.Klone.get(server).tank(k.owner()) != null, "Klon-Tank ist für seinen Besitzer gemerkt");
+            klonTod(level, k);
         } else check(false, "Klon-Tank steht noch");
 
         if (knotenLevel != null && knotenB != null && knotenLevel.getBlockEntity(knotenB) instanceof RiftKabelknotenBlockEntity kb) {
@@ -302,6 +303,23 @@ final class RauchTestM4 {
         }
 
         kanoneMk3(level);
+    }
+
+    /** Der Besitzer stirbt mit fertigem Klon: Inventar wird beiseitegelegt, der Tank ist danach leer. */
+    private static void klonTod(ServerLevel level, KlonTankBlockEntity k) {
+        net.minecraft.nbt.CompoundTag tag = k.saveWithoutMetadata(level.registryAccess());
+        tag.putBoolean("Bereit", true);
+        k.loadWithComponents(tag, level.registryAccess());
+        FakePlayer player = FakePlayerFactory.getMinecraft(level);
+        player.getInventory().clearContent();
+        player.getInventory().add(new ItemStack(Items.DIAMOND, 3));
+        dev.riftverse.tech.Klone.onDeath(new net.neoforged.neoforge.event.entity.living.LivingDeathEvent(player,
+                level.damageSources().generic()));
+        check(player.getInventory().isEmpty() && player.getPersistentData().contains(dev.riftverse.tech.Klone.INVENTAR)
+                        && dev.riftverse.tech.Klone.hatRespawnZiel(player) && !k.bereit(),
+                "Klon-Tank: Tod mit fertigem Klon behält das Inventar und verbraucht den Klon");
+        player.getPersistentData().remove(dev.riftverse.tech.Klone.INVENTAR);
+        player.getPersistentData().remove(dev.riftverse.tech.Klone.ZIEL);
     }
 
     /** Mk III nimmt nur Konzentrat (50 mB pro Schuss); Mk II schießt mit Konzentrat auch in T3-Welten. */

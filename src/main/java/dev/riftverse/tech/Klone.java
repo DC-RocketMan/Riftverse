@@ -41,8 +41,8 @@ import java.util.UUID;
 @EventBusSubscriber(modid = Riftverse.MODID)
 public final class Klone extends SavedData {
     private static final String NAME = "riftverse_klone";
-    private static final String INVENTAR = "riftverse:klon_inventar";
-    private static final String ZIEL = "riftverse:klon_ziel";
+    public static final String INVENTAR = "riftverse:klon_inventar";
+    public static final String ZIEL = "riftverse:klon_ziel";
 
     private final Map<UUID, GlobalPos> tanks = new HashMap<>();
 

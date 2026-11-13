@@ -4,7 +4,87 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
-## Stand: Meilenstein 3 – T2 Rift-Labor
+## Stand: Meilenstein 4 – T3 Multiversum-Industrie
+
+Mit der Multiversum-Industrie kommen Stufe III, alle T3-Maschinen und -Generatoren, der Chrono-Speicher, die
+Portal-Kanone Mk III, zwei neue Universumstypen und ein Ersatz für die Story-Fragmente dazu.
+
+| Bereich | Inhalt |
+|---|---|
+| **Stufe III** | Gravitit-Leitung blank (6 px, starker Schlag), isoliert (8 px, Schlag) und doppelt isoliert (10 px, sicher); 2 FE Verlust pro Block, verträgt 8.192 FE/t. Umspanner II ↔ III und III ↔ IV |
+| **Chrono-Speicher** | 256 Mio. FE, Stufe III; lädt 2.048 FE/t und gibt 8.192 FE/t ab (4× schneller); behält die Ladung beim Abbauen; Speicher, die sich berühren, bilden einen Verbund |
+| **Gehäuse** | Graphit-Gehäuse (Graphitplatten und Gravitit-Rahmen um ein Labor-Gehäuse) für alle T3-Geräte, Graphit-Hülle für den Parallelzapfer |
+| **T3-Maschinen** | Quanten-Lithograf (1.200 FE/t), Materie-Rekonfigurator (2.000 FE/t + 50 mB Portalfluid), Klon-Tank (1.500 FE/t, 50 FE/t Erhalt), Universums-Destillator (3.500 FE/t), Rift-Kabelknoten (100 FE/t Grundlast, 5 % Verlust, Stufe IV) |
+| **T3-Generatoren** | Mikrokosmos-Zelle (2.000–8.000 FE/t, Stufe III), Parallelzapfer (Multiblock 3 × 3 × 3, 10.000 FE/t, **Stufe IV**, 5 mB Portalfluid pro Tick) |
+| **Zwischenprodukte** | Quanten-Schaltkreis, Chrono-Linse, Gravitit-Spule, Gravitit-Rahmen, Graphitplatte, Fragment-Replik |
+| **Portalfluid-Konzentrat** | Aus der Raffinerie (1.000 mB Roh-Portalfluid + Chronoglas-Scheibe + Flux-Stabilisator → 500 mB), in Konzentrat-Kartuschen |
+| **Kanone Mk III** | Montiert in 6 Schritten aus Mk II, 2 Quanten-Schaltkreisen, Gravitit-Rahmen, Inversionssplitter, Chrono-Linse und einem Story-Fragment; nur Konzentrat, 50 mB pro Schuss; merkt sich 8 Ziele, öffnet Kurzstrecken-Portale in derselben Welt |
+| **Universen** | Hochgravitationswelt (2,5 g, plattgedrückte Ebenen, kaum Sprünge, Fallschaden 3×, Gravitit-Erz), Spiegelwelt (Tag und Nacht vertauscht, an der Mittelachse gespiegeltes Gelände, Spiegelkristall mit Inversionssplittern, Doppelgänger) |
+| **Story-Fragmente** | Rezepte fragen das Tag `riftverse:story_fragmente` ab; bis zum Story-Modus füllt es die **Fragment-Replik** aus dem Quanten-Lithografen |
+
+### So spielt sich Meilenstein 4
+
+1. In der **Raffinerie** Roh-Portalfluid mit Chronoglas-Scheibe und Flux-Stabilisator zu **Portalfluid-Konzentrat**
+   verdichten und Konzentrat-Kartuschen füllen.
+2. Mit Konzentrat springt die **Kanone Mk II** zufällig auch in die T3-Welten. In der **Hochgravitationswelt**
+   Gravitit-Erz mit einer Diamantspitzhacke abbauen, in der **Spiegelwelt** Spiegelkristall (gibt Inversionssplitter).
+3. In der **Gravitationspresse** Gravitit zu **Gravitit-Rahmen** und Kohleblöcke zu **Graphitplatten** pressen,
+   daraus **Graphit-Gehäuse** bauen.
+4. Zuerst den **Quanten-Lithografen** bauen – er kommt mit Rift-Schaltkreisen aus und macht die
+   **Quanten-Schaltkreise** (Rift-Schaltkreis + Chronoglas-Scheibe + 2 Golddraht) und **Chrono-Linsen**.
+5. **Gravitit-Leitungen** legen und mit einem **Umspanner II ↔ III** an das Labor-Netz hängen.
+6. **Fragment-Replik** im Lithografen (2 Inversionssplitter + Chronoglas-Scheibe + Nährserum), dann die
+   **Kanone Mk III** im Präzisions-Montierer: Slot 1 Mk II, Slot 2 zwei Quanten-Schaltkreise, Slot 3 Gravitit-Rahmen,
+   Slot 4 Inversionssplitter, Slot 5 Chrono-Linse, Slot 6 Fragment-Replik.
+7. Mit Koordinatenkarte in der anderen Hand schießen: Die Mk III merkt sich das Ziel. **Taste V** wechselt zwischen
+   Zufall, Kurzstrecke und den gespeicherten Zielen, **Schleichen + V** löscht das gewählte Ziel.
+
+### T3-Geräte
+
+- **Materie-Rekonfigurator:** Material in Slot 1, Musterstück in Slot 2 (wird nicht verbraucht), stabile oder
+  Konzentrat-Kartusche rechts. Umgebaut wird nur innerhalb einer Wertstufe (`riftverse:wertstufe/*`): Erdmetalle
+  (Eisen, Kupfer, Zinn), Rohstoffe der T1-, T2- und T3-Universen.
+- **Klon-Tank:** zwei Blöcke hoch; wer ihn aufstellt, dem gehört er (Schleichen + Rechtsklick bindet ihn neu).
+  Ein Klon braucht 16 Biomasse-Pulpe und 4 Nährserum und wächst 2 Minuten. Stirbt der Besitzer, wacht er vor dem Tank
+  im Klon auf und hat alles dabei, was er bei sich trug; der Tank ist danach leer. Ohne 50 FE/t stirbt der Klon ab.
+- **Universums-Destillator:** gefüllte Universumsprobe hinein, heraus kommt die Ressource ihres Typs (Schrott, Fluxkristall,
+  Säuregel, Schwebstein, Chronoglas-Sand, Biomasse, Gravitit, Inversionssplitter). Eine Probe hält 16 Durchläufe.
+- **Rift-Kabelknoten:** werden paarweise gebaut. Kopplungskarte erst an den sendenden, dann an den empfangenden Knoten
+  halten; Rechtsklick zeigt den Zustand, Schleichen + Rechtsklick tauscht die Rollen. Trichter und Rohre füllen den
+  Sender (Items, Fluids), Strom kommt über Leitungen. Der Empfänger gibt alles wieder heraus, Strom mit **Stufe IV**.
+  Beide Knoten halten ihren Chunk geladen; ein Universum mit Kabelknoten wird nie zurückgesetzt.
+- **Mikrokosmos-Zelle:** Die Bewohner essen alle 10 Sekunden so viel Nahrung, wie ihre Stufe hoch ist, und verbauen alle
+  20 Sekunden Material (Barren, Platten, Bretter, Ziegel, Glas). Der Knopf „Abzug“ (25–100 %) regelt, wie viel Strom man
+  abzweigt. Bei 90 % Zufriedenheit steigt die Zivilisation eine Stufe (bis 4 = 8.000 FE/t), bei 0 % wird gestreikt.
+- **Parallelzapfer (3 × 3 × 3):** Boden aus Graphit-Hülle mit dem Steuerblock vorne in der Mitte, darüber vier
+  Eckpfosten aus Graphit-Hülle, darauf vier Blitzableiter. Über dem Steuerblock in der Mitte bleibt Luft – dort öffnet
+  sich der Riss. Jede Quelle hält 3–5 Stunden, dann „Neu ausrichten“ (1 Minute). Manchmal bemerkt die andere Seite den
+  Diebstahl: Wächter kommen durch den Riss, der Zapfer setzt 30 Sekunden aus.
+
+### Entscheidungen in Meilenstein 4
+
+- **Henne-Ei-Problem wie in Meilenstein 3:** Mk III braucht Material aus T3-Welten. Deshalb springt die Mk II mit
+  **Portalfluid-Konzentrat** zufällig auch dorthin; gezielt geht es erst mit Mk III. Konzentrat entsteht in der T2-Raffinerie.
+- **Kanonen-Fluide:** Mk I nimmt Roh- und stabiles Portalfluid, Mk II stabiles Fluid und Konzentrat, Mk III nur Konzentrat.
+  Geladen wird die erste passende Kartusche im Inventar.
+- **Kanone Mk III:** Zur Liste aus dem Dokument kommt die **Chrono-Linse** (Linsen-Leiter T3). Kurzstrecken-Portale
+  reichen 96 Blöcke weit und kosten einen normalen Schuss. Sind alle 8 Plätze belegt, fliegt das älteste Ziel raus.
+- **Story-Fragmente:** Die Fragment-Replik füllt das Tag `riftverse:story_fragmente`, bis Story-Modus und Grindweg kommen.
+- **Stufe IV ohne Leitung:** Die Null-Leitung kommt erst in Meilenstein 5. Bis dahin sitzt der Parallelzapfer (und der
+  empfangende Kabelknoten) direkt an der Front eines Umspanners III ↔ IV; jede Gravitit-Leitung dazwischen schmilzt.
+- **Chrono-Speicher als Verbund statt Hülle:** Speicher, die sich berühren, gleichen ihre Ladung jeden Tick aus und
+  wirken wie ein großer Speicher (bis 9 × 9 × 9). So zählt jeder Speicher mit, ohne eigene Multiblock-Hülle.
+- **Universums-Destillator ist ein Einzelblock** (offene Frage im Dokument).
+- **Konzentrat im Tank:** Rekonfigurator und Parallelzapfer nehmen stabiles Portalfluid und Konzentrat; Konzentrat zählt doppelt.
+- **Hochgravitation:** Mit 2,5 g springt man nur noch einen halben Block hoch. Damit man nicht in jeder Mulde festsitzt,
+  steigt man dort volle Blöcke ohne Sprung hoch (Schritthöhe 1). Das Gelände ist plattgedrückt.
+- **Spiegelwelt:** Alle Dimensionen teilen sich die Tageszeit der Overworld. Ein kleiner Mixin verschiebt sie für den
+  Dimensionstyp der Spiegelwelt um einen halben Tag (Himmel, Licht und Mob-Spawns passen dazu). Das Gelände ist an der
+  Nord-Süd-Achse durch die Mitte des Universums gespiegelt. Doppelgänger sind Wüstenzombies mit einer Kopie deiner
+  Ausrüstung, die nichts fallen lassen.
+- **Graphitplatte:** Der Graphit fürs T3-Gehäuse entsteht in der Gravitationspresse aus einem Kohleblock (2 Platten).
+
+## Meilenstein 3 – T2 Rift-Labor
 
 Mit dem Rift-Labor kommen Stufe II, die sechs T2-Maschinen, vier neue Generatoren, drei neue Universumstypen
 und die Portal-Kanone Mk II mit Koordinatenkarten dazu.
@@ -201,7 +281,7 @@ wenn dieser Check grün ist; das fertige Jar liegt als Artefakt am Workflow-Lauf
 src/main/java/dev/riftverse/
   energy/       Riftverse-Netz: Graph, Pakete, Spannungsstufen, Überspannung, Ein-/Ausspeiser, Speicher
   cable/        Kupferkabel blank und isoliert
-  tech/         Maschinen, Generatoren, Fluid-Mixer, Xenit-Zelle, Garagen-Werkbank (+ menu/ für die GUIs)
+  tech/         Maschinen, Generatoren, Fluid-Mixer, Speicher, Garagen-Werkbank, T3-Geräte (+ menu/ für die GUIs)
   recipe/       Rezepttypen der Maschinen, des Fluid-Mixers und der Garagen-Werkbank
   universe/     Universumstypen, Modifikatoren, Gelände, Physik und Gefahren, Aufräumen
   worldgen/     Meteoritenkrater, Xenit-Zone, Alien-Wracks, per Config abschaltbare Erze
@@ -209,7 +289,8 @@ src/main/java/dev/riftverse/
   block/        Meteoritenkern, Fluxkristalle, Säure, Rift-Anker
   fluid/        Zerfall von Roh-Portalfluid, Säuregel aus der Glasflasche
   portal/       Rift-Portal, Reise, Heimanker
-  network/      Rückkehr-Taste
+  network/      Rückkehr-Taste, Ziel-Taste der Kanone Mk III
+  mixin/        Vertauschte Tageszeit der Spiegelwelt
   entity/       Schrott-Golem
   client/       Screens (ohne Texturdateien gezeichnet), Kabelfarben, Peiler-Nadel, Nebel, Tasten
   registry/     Registrierung aller Blöcke, Items, Fluids, Rezepttypen …
@@ -218,7 +299,7 @@ src/main/resources/
   assets/riftverse/   Texturen, Modelle, Blockstates, Sprachen
   data/riftverse/     Rezepte (pro Maschine ein Ordner), Loot, Worldgen, Dimensionen, Biome, Tags
 tools/
-  texturen/   Texturgenerator (Python, Pillow + NumPy); meilenstein1.py und meilenstein2.py ergänzen die neuen Texturen
+  texturen/   Texturgenerator (Python, Pillow + NumPy); meilenstein1.py bis meilenstein4.py ergänzen die neuen Texturen
   daten/      generate.py erzeugt Modelle, Blockstates, Loot, Tags, Rezepte, Worldgen, Dimensionen und Sprachen
 ```
 
