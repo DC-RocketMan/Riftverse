@@ -1,9 +1,9 @@
 {
   "type": "riftverse:werkbank_shaped",
   "pattern": [
-    "ZTZ",
-    "QGQ",
-    "ZCZ"
+    "PTP",
+    "ZGZ",
+    "QCQ"
   ],
   "key": {
     "Z": {
@@ -20,6 +20,9 @@
     },
     "C": {
       "item": "riftverse:chrono_linse"
+    },
+    "P": {
+      "item": "riftverse:graphitplatte"
     }
   },
   "result": {

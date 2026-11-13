@@ -4,7 +4,64 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
-## Stand: Meilenstein 6 – Gadgets und Rüstung
+## Stand: Meilenstein 7 – Feinschliff
+
+Mit Meilenstein 7 kommen Rezeptanzeigen für JEI und EMI, Blockinfos für Jade, neue Config-Optionen und ein
+durchgerechnetes Balancing dazu. Alle drei Mods sind optional; Riftverse läuft auch ohne sie.
+
+| Bereich | Inhalt |
+|---|---|
+| **JEI und EMI** | Eine Kategorie pro Maschine (alle 14 Verarbeitungsmaschinen von der Garagenpresse bis zur Rift-Schmiede), dazu Garagen-Werkbank, Fluid-Mixer und Raffinerie; jede mit ihrem Block als Station. Angezeigt werden Dauer, FE/t, Gesamtenergie, Spannungsstufe, Modus der Walzbank, Kurbel-Ticks, Hammer und Lötzinn, Chancen der Nebenprodukte und beim Präzisions-Montierer die Schrittnummer jedes Slots |
+| **Infoseiten** | 59 Seiten für alles ohne eigenes Rezeptfenster: Generatoren, Speicher, Multiblöcke, Sondergeräte aus T3 und T4, Erze mit ihrem Fundort, Kanonen, Werkzeuge, alle Gadgets, Rüstung, Module und Chips |
+| **Jade** | Spannungsstufe (was die Maschine verträgt bzw. abgibt), FE bei Blöcken ohne FE-Schnittstelle, Hitze des Resonators, Zivilisationsstufe und Zufriedenheit der Mikrokosmos-Zelle, Fortschritt, eingebaute Chips, KI-Krise und der Zustand jedes Multiblocks samt fehlendem Teil; bei Leitungen Stufe, Verlust und ob sie blank sind. Fluide, Items und FE mit Schnittstelle zeigt Jade selbst |
+| **Config** | `energie.kabelverlust` und `welt.zinn_dichte`, `welt.xenit_dichte`, `welt.flux_dichte` (siehe unten) |
+| **Zinn** | Genau wie Mekanism: 14 kleine Adern (bis 4 Erz, Y −20 bis 94) und 12 große (bis 9 Erz, Y −32 bis 72) pro Chunk |
+| **Xenit** | 2–4 statt 1–2 Adern pro Chunk am Krater, damit eine Stunde Strip-Mining nahe am Krater rund 20–40 Erz bringt |
+| **Bilanz** | `tools/balance/bilanz.py` rechnet alle Rezepte bis auf Rohstoffe herunter und vergleicht einen Modell-Durchlauf mit der Tabelle aus dem Design-Dokument |
+
+### Materialbilanz
+
+Modell-Durchlauf wie im Design-Dokument (rund 45 Maschinen, alle Generatoren und Speicher je einmal, gut 200
+Leitungen, alle Multiblöcke, Kanone Mk I–IV, vier Rüstungsteile bis „perfektioniert“, 8 Gadgets). In Barren, in
+Klammern der Wert aus dem Dokument:
+
+| Bereich | Xenit | Eisen | Kupfer | Zinn | Gold |
+|---|---|---|---|---|---|
+| Vorher (Meilenstein 6) | 523 | 1.265 | 549 | 684 | 408 |
+| **Jetzt** | **445** (490) | **1.165** (1.090) | **516** (520) | **496** (400) | **290** (255) |
+
+Alle fünf Metalle liegen jetzt innerhalb von 25 % des Plans. Alien-Schrott fiel von ~590 auf ~260 (Plan ~300).
+Zinn bleibt bewusst etwas über dem Plan: Es steckt wie im Dokument vorgesehen vor allem im Mischmetall der
+Labor-Gehäuse. Aufruf: `python3 tools/balance/bilanz.py`, einzelne Teile mit `--baum chrono_speicher`.
+
+### Entscheidungen in Meilenstein 7
+
+- **Gemeinsames Anzeigemodell:** JEI und EMI zeichnen dasselbe Layout aus `compat/RezeptAnsicht`. So sehen beide
+  gleich aus, und der Rauchtest prüft auf dem Server, dass jedes Rezept in seine Kategorie passt.
+- **Keine eigene Rezeptart für Generatoren:** Generatoren, Speicher und Sondergeräte (Klon-Tank, Mikrokosmos-Zelle,
+  Weltenformer …) haben keine festen Ein- und Ausgaben. Sie bekommen Infoseiten statt Kategorien.
+- **Jade über JSON:** Der Server baut die Zeilen mit denselben Texten wie die GUI und schickt sie als Text-JSON.
+  So muss der Client nichts von Maschinenzuständen wissen.
+- **Dichte-Faktoren statt fester Zahlen:** Der Platzierungs-Modifier `riftverse:config_menge` steht vorn in der
+  Platzierung und vervielfacht die Adern (0 = aus, 2 = doppelt, Bruchteile per Zufall). Die Krater selbst bleiben
+  gleich, nur die Zone ändert sich. Gilt nur für neu erzeugte Chunks.
+- **Kabelverlust:** Der Config-Faktor wirkt auf alle Leitungen und kommt zu den Universums-Modifikatoren
+  (supraleitend, hochohmig) hinzu. Die Grundwerte aus dem Dokument (Kupfer 0,5 · Flux 1 · Gravitit 2 · Null 0,05 FE
+  pro Block) waren schon richtig.
+- **Xenit-Dichte:** Bezug ist das Eisen-Band aus Vanilla (10 Adern à 9 Erz im selben Höhenbereich, rund 125 Erz pro
+  Stunde Strip-Mining). Mit 1–2 Adern kam man am Krater nur auf gut 12 Xenit pro Stunde, mit 2–4 sind es ~25, bei
+  50 Blöcken Abstand ~19. Eine ganze Zone hält rund 1.600 Erz, der Durchlauf braucht ~260.
+- **Rezeptmengen:**
+  - *Speicher:* Die Xenit-Zelle braucht 4 statt 6 Energiezellen, der Chrono-Speicher 2 statt 4 Flux-Zellen (vorher
+    kostete ein Chrono-Speicher ~100 Xenit- und ~115 Zinnbarren).
+  - *Isolierfolie:* 1 Polymerfetzen → 2 Folien statt 2 → 1. Jede Isolierschicht kostete sonst 2 Alien-Schrott, bei
+    ~200 Schichten im Durchlauf mehr Schrott als alles andere zusammen.
+  - *Spulen:* Die Flux-Spule ist halb mit Gold-, halb mit Kupferdraht gewickelt, die Gravitit-Spule nimmt zwei
+    Xenit-Stangen statt zwei Golddrähten. Gold lag sonst 50 % über dem Plan.
+  - *Null-Hülle:* zusätzlich 2 Xenit- und 2 Stahlplatten pro 4 Stück, damit die großen T4-Hüllen Masse kosten.
+  - *Rüstung:* Kalibrier-Satz mit 4 Xenit-Barren, Perfektionierung mit 4 Xenit-Platten (vorher fast ohne Xenit).
+
+## Meilenstein 6 – Gadgets und Rüstung
 
 Mit Meilenstein 6 kommen alle Gadgets, die Multiversal-Rüstung mit 18 Modulen, drei Ausbaustufen und Set-Bonus sowie
 die fünf Maschinen-Upgrades dazu.
@@ -413,7 +470,11 @@ Wo das Design-Dokument nichts festlegt oder sich widerspricht, gilt bis auf Weit
 |---|---|---|
 | `energie.overvoltage` | `EXPLODE` | `EXPLODE`, `BURNOUT` oder `OFF` |
 | `energie.cable_shock` | `true` | Schlag an blanken Kabeln unter Strom |
+| `energie.kabelverlust` | `1.0` | Faktor auf den Kabelverlust (0 = verlustfrei, 0–10) |
 | `welt.tin_ore` | `true` | Zinnerz generieren (aus, wenn ein anderer Mod Zinn liefert) |
+| `welt.zinn_dichte` | `1.0` | Faktor auf die Zinnerz-Adern (0 schaltet ab, bis 8) |
+| `welt.xenit_dichte` | `1.0` | Faktor auf die Xenit-Adern rund um die Krater (bis 8) |
+| `welt.flux_dichte` | `1.0` | Faktor auf die Fluxkristall-Adern (bis 8) |
 | `universen.aufraeumen` | `true` | Unbebaute, lange nicht besuchte Universen beim Serverstart zurücksetzen |
 | `universen.tage` | `10` | Ingame-Tage ohne Besuch bis zum Zurücksetzen |
 | `universen.bloecke` | `64` | Ab mehr als so vielen platzierten Blöcken gilt ein Universum als bebaut |
@@ -440,7 +501,7 @@ src/main/java/dev/riftverse/
   tech/         Maschinen, Generatoren, Fluid-Mixer, Speicher, Garagen-Werkbank, T3-Geräte (+ menu/ für die GUIs)
   recipe/       Rezepttypen der Maschinen, des Fluid-Mixers und der Garagen-Werkbank
   universe/     Universumstypen, Modifikatoren, Gelände, Physik und Gefahren, Aufräumen
-  worldgen/     Meteoritenkrater, Xenit-Zone, Alien-Wracks, per Config abschaltbare Erze
+  worldgen/     Meteoritenkrater, Xenit-Zone, Alien-Wracks, per Config abschaltbare und skalierbare Erze
   item/         Portal-Kanone, Fluid-Kartusche, Meteoritenpeiler, Universums-Scanner
   block/        Meteoritenkern, Fluxkristalle, Säure, Rift-Anker
   fluid/        Zerfall von Roh-Portalfluid, Säuregel aus der Glasflasche
@@ -449,6 +510,7 @@ src/main/java/dev/riftverse/
   mixin/        Vertauschte Tageszeit der Spiegelwelt
   entity/       Schrott-Golem
   client/       Screens (ohne Texturdateien gezeichnet), Kabelfarben, Peiler-Nadel, Nebel, Tasten
+  compat/       JEI, EMI und Jade (nur geladen, wenn der Mod da ist); RezeptAnsicht, Infoseiten, BlockInfo
   registry/     Registrierung aller Blöcke, Items, Fluids, Rezepttypen …
   boss/, story/ Bosse und Story-Generator aus dem ersten Entwurf (ruhen bis Phase 3)
 src/main/resources/
@@ -457,6 +519,7 @@ src/main/resources/
 tools/
   texturen/   Texturgenerator (Python, Pillow + NumPy); meilenstein1.py bis meilenstein4.py ergänzen die neuen Texturen
   daten/      generate.py erzeugt Modelle, Blockstates, Loot, Tags, Rezepte, Worldgen, Dimensionen und Sprachen
+  balance/    bilanz.py rechnet den Materialbedarf eines Durchlaufs und die Erzausbeute nach
 ```
 
 Rezepte ändern: in `tools/daten/generate.py` eintragen und `python3 tools/daten/generate.py` laufen lassen.

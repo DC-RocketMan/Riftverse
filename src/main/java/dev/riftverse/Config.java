@@ -12,6 +12,14 @@ public final class Config {
     public static final ModConfigSpec.EnumValue<OvervoltageMode> OVERVOLTAGE;
     /** Blanke Kabel unter Strom verpassen einen Schlag. */
     public static final ModConfigSpec.BooleanValue CABLE_SHOCK;
+    /** Faktor auf den Kabelverlust aller Leitungen (0 = verlustfrei). */
+    public static final ModConfigSpec.DoubleValue CABLE_LOSS;
+    /** Faktor auf die Menge an Zinnerz-Adern. */
+    public static final ModConfigSpec.DoubleValue TIN_DENSITY;
+    /** Faktor auf die Menge an Xenit-Adern in der Krater-Zone. */
+    public static final ModConfigSpec.DoubleValue XENIT_DENSITY;
+    /** Faktor auf die Menge an Fluxkristall-Adern. */
+    public static final ModConfigSpec.DoubleValue FLUX_DENSITY;
     /** Zinnerz in der Oberwelt erzeugen (im Pack ggf. aus, wenn ein anderer Mod Zinn liefert). */
     public static final ModConfigSpec.BooleanValue TIN_ORE;
     /** Unbebaute, lange nicht besuchte Universen beim Serverstart zurücksetzen. */
@@ -36,12 +44,27 @@ public final class Config {
         CABLE_SHOCK = b
                 .comment("Blanke Kabel unter Strom geben bei Berührung einen Schlag.")
                 .define("cable_shock", true);
+        CABLE_LOSS = b
+                .comment("Faktor auf den Kabelverlust (Kupfer 0,5 · Flux 1 · Gravitit 2 · Null 0,05 FE pro Block).",
+                        "0 = verlustfrei, 2 = doppelter Verlust. Universums-Modifikatoren (supraleitend, hochohmig) kommen dazu.")
+                .defineInRange("kabelverlust", 1.0, 0.0, 10.0);
         b.pop();
 
         b.push("welt");
         TIN_ORE = b
                 .comment("Zinnerz in der Oberwelt erzeugen. Wirkt beim nächsten Start der Welt.")
                 .define("tin_ore", true);
+        TIN_DENSITY = b
+                .comment("Faktor auf die Zahl der Zinnerz-Adern (1 = 14 Adern à bis zu 9 Erz pro Chunk wie bei Mekanism).",
+                        "0 schaltet Zinnerz ebenfalls ab. Wirkt nur auf neu erzeugte Chunks.")
+                .defineInRange("zinn_dichte", 1.0, 0.0, 8.0);
+        XENIT_DENSITY = b
+                .comment("Faktor auf die Xenit-Adern rund um die Meteoritenkrater (der Krater selbst bleibt gleich).",
+                        "Wirkt nur auf neu erzeugte Chunks.")
+                .defineInRange("xenit_dichte", 1.0, 0.0, 8.0);
+        FLUX_DENSITY = b
+                .comment("Faktor auf die Fluxkristall-Adern unter Y 0. Wirkt nur auf neu erzeugte Chunks.")
+                .defineInRange("flux_dichte", 1.0, 0.0, 8.0);
         b.pop();
 
         b.push("universen");
@@ -71,8 +94,18 @@ public final class Config {
     /** Für datengetriebene Schalter (z. B. Biome-Modifier mit "config": "tin_ore"). */
     public static boolean isEnabled(String option) {
         return switch (option) {
-            case "tin_ore" -> TIN_ORE.get();
+            case "tin_ore" -> TIN_ORE.get() && TIN_DENSITY.get() > 0;
             default -> true;
+        };
+    }
+
+    /** Mengenfaktor für den Platzierungs-Modifier {@code riftverse:config_menge}. */
+    public static double density(String option) {
+        return switch (option) {
+            case "zinn_dichte" -> TIN_DENSITY.get();
+            case "xenit_dichte" -> XENIT_DENSITY.get();
+            case "flux_dichte" -> FLUX_DENSITY.get();
+            default -> 1.0;
         };
     }
 

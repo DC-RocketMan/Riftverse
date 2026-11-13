@@ -83,7 +83,8 @@ public final class EnergyNetwork {
         sinks.sort(order);
 
         // Universums-Modifikatoren: supraleitend (kein Verlust) oder hochohmig (doppelter Verlust)
-        double lossFactor = sources.isEmpty() ? 1.0 : Multiverse.cableLossFactor(level, sources.get(0));
+        double lossFactor = (sources.isEmpty() ? 1.0 : Multiverse.cableLossFactor(level, sources.get(0)))
+                * dev.riftverse.Config.CABLE_LOSS.get();
         for (BlockPos source : sources) {
             paths.put(source, findPaths(source, kinds, states, adjacency, sinkSet, faces, lossFactor));
         }

@@ -125,6 +125,15 @@ public class ProcessingBlockEntity extends RiftEnergyBlockEntity
         return state.getBlock() instanceof ProcessingBlock block ? block.kind() : MachineKind.ERZMUEHLE;
     }
 
+    /** Fortschritt des laufenden Vorgangs (für Jade). */
+    public int arbeit() {
+        return progress;
+    }
+
+    public int arbeitMax() {
+        return maxProgress;
+    }
+
     public MachineKind kind() {
         return kind;
     }

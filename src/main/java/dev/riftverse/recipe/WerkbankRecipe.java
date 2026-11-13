@@ -52,6 +52,19 @@ public class WerkbankRecipe implements Recipe<CraftingInput> {
         return new WerkbankRecipe(null, ingredients, result, hammer, loetzinn);
     }
 
+    /** Geformtes Rezept: Breite und Höhe des Musters (formlos: 0). */
+    public int breite() {
+        return pattern == null ? 0 : pattern.width();
+    }
+
+    public int hoehe() {
+        return pattern == null ? 0 : pattern.height();
+    }
+
+    public boolean geformt() {
+        return pattern != null;
+    }
+
     public int hammer() {
         return hammer;
     }

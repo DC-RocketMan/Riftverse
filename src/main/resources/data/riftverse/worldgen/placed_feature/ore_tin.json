@@ -2,8 +2,12 @@
   "feature": "riftverse:ore_tin",
   "placement": [
     {
+      "type": "riftverse:config_menge",
+      "option": "zinn_dichte"
+    },
+    {
       "type": "minecraft:count",
-      "count": 14
+      "count": 12
     },
     {
       "type": "minecraft:in_square"
@@ -13,10 +17,10 @@
       "height": {
         "type": "minecraft:trapezoid",
         "min_inclusive": {
-          "absolute": -24
+          "absolute": -32
         },
         "max_inclusive": {
-          "absolute": 112
+          "absolute": 72
         }
       }
     },

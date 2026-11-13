@@ -1,7 +1,10 @@
 {
   "type": "riftverse:add_features_if",
   "biomes": "#minecraft:is_overworld",
-  "features": "riftverse:ore_tin",
+  "features": [
+    "riftverse:ore_tin_small",
+    "riftverse:ore_tin"
+  ],
   "step": "underground_ores",
   "config": "tin_ore"
 }

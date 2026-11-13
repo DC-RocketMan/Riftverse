@@ -2,6 +2,10 @@
   "feature": "riftverse:ore_fluxkristall",
   "placement": [
     {
+      "type": "riftverse:config_menge",
+      "option": "flux_dichte"
+    },
+    {
       "type": "minecraft:count",
       "count": 2
     },

@@ -58,7 +58,7 @@ final class RauchTestM5 {
                 .anyMatch(h -> h.value().result().is(ModItems.PORTAL_KANONE_MK4.get())), "Rift-Schmiede kennt die Kanone Mk IV");
         check(recipes.getRecipeFor(ModRecipes.RIFT_SCHMIEDE_TYPE.get(), new MachineRecipeInput(hullZutaten(), ""), level)
                 .map(h -> h.value().result().is(ModItems.NULL_HUELLE.get()) && h.value().result().getCount() == 4).orElse(false),
-                "Rift-Schmiede: 4 Graphit-Hülle + Gravitit + 2 Obsidian -> 4 Null-Hülle");
+                "Rift-Schmiede: 4 Graphit-Hülle + Gravitit + 2 Obsidian + Xenit- und Stahlplatten -> 4 Null-Hülle");
         check(UniverseType.reachableWith(4).size() == 10, "Kanone Mk IV erreicht zehn Universumstypen");
         check(UniverseType.randomWith(4).contains(UniverseType.LEERE) && !UniverseType.randomWith(4).contains(UniverseType.GEZUECHTET),
                 "Zufallssprünge: Leere Welt ja, gezüchtete Universen nie");
@@ -288,7 +288,8 @@ final class RauchTestM5 {
 
     private static List<ItemStack> hullZutaten() {
         return new ArrayList<>(List.of(new ItemStack(ModItems.GRAPHIT_HUELLE.get(), 4), new ItemStack(ModItems.GRAVITIT.get()),
-                new ItemStack(Items.OBSIDIAN, 2)));
+                new ItemStack(Items.OBSIDIAN, 2), new ItemStack(ModItems.XENIT_PLATTE.get(), 2),
+                new ItemStack(ModItems.STAHL_PLATTE.get(), 2)));
     }
 
     private static void buildSchmiede(ServerLevel level, BlockPos controller, boolean komplett) {

@@ -28,6 +28,12 @@
       "ingredient": {
         "item": "riftverse:quanten_schaltkreis"
       }
+    },
+    {
+      "ingredient": {
+        "tag": "c:ingots/xenit"
+      },
+      "count": 4
     }
   ],
   "result": {

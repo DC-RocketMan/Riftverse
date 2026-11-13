@@ -17,6 +17,18 @@
         "item": "minecraft:obsidian"
       },
       "count": 2
+    },
+    {
+      "ingredient": {
+        "tag": "c:plates/xenit"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "tag": "c:plates/steel"
+      },
+      "count": 2
     }
   ],
   "result": {

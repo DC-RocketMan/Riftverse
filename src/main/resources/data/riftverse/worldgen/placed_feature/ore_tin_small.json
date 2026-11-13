@@ -1,0 +1,31 @@
+{
+  "feature": "riftverse:ore_tin_small",
+  "placement": [
+    {
+      "type": "riftverse:config_menge",
+      "option": "zinn_dichte"
+    },
+    {
+      "type": "minecraft:count",
+      "count": 14
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:height_range",
+      "height": {
+        "type": "minecraft:trapezoid",
+        "min_inclusive": {
+          "absolute": -20
+        },
+        "max_inclusive": {
+          "absolute": 94
+        }
+      }
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}
