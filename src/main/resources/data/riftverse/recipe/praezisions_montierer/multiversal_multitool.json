@@ -1,0 +1,44 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:stahl_platte"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:xenit_stange"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:universe_scanner"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:energiezelle"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:multiversal_multitool"
+  },
+  "time": 400
+}

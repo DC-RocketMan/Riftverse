@@ -1,0 +1,37 @@
+{
+  "type": "riftverse:rift_schmiede",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:exo_rahmen_kalibriert"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:nullmaterie"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:multiversal_prozessor"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:multiversum_legierung"
+      }
+    },
+    {
+      "ingredient": {
+        "tag": "riftverse:story_fragmente"
+      },
+      "count": 3
+    }
+  ],
+  "result": {
+    "id": "riftverse:exo_rahmen_perfektioniert"
+  },
+  "time": 2400
+}

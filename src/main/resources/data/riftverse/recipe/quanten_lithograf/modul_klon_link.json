@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:naehrserum"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:biomasse_pulpe"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_klon_link"
+  },
+  "time": 400
+}

@@ -93,7 +93,13 @@ public final class UniverseEffects {
     }
 
     private static void toxicAir(Player player) {
-        if (!player.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) return;
+        // Das Atemfilter-Modul schützt ganz; jeder andere Helm schützt auch, nutzt sich aber ab
+        if (dev.riftverse.ruestung.Ruestung.aktiv(player, dev.riftverse.ruestung.Modul.ATEMFILTER)) return;
+        ItemStack helm = player.getItemBySlot(EquipmentSlot.HEAD);
+        if (!helm.isEmpty()) {
+            if (helm.isDamageableItem()) helm.hurtAndBreak(1, player, EquipmentSlot.HEAD);
+            return;
+        }
         player.addEffect(new MobEffectInstance(MobEffects.POISON, 60, 0, false, true));
         warn(player, "toxic_air", Component.translatable("message.riftverse.toxic_air").withStyle(ChatFormatting.DARK_GREEN));
     }
@@ -218,7 +224,12 @@ public final class UniverseEffects {
 
     public static void applyGravity(LivingEntity e, @Nullable UniverseProfile p) {
         double g = p == null ? 1.0 : p.gravity;
-        boolean heavy = p != null && p.gravity >= 2.0;
+        // Gravitationsregler (Exo-Rahmen): eigene Gravitation statt der Physik des Universums
+        if (e instanceof Player pl) {
+            double eigen = dev.riftverse.ruestung.Ruestung.gravitation(pl);
+            if (eigen > 0) g = eigen;
+        }
+        boolean heavy = g >= 2.0;
         set(e, Attributes.GRAVITY, GRAVITY, g - 1.0);
         set(e, Attributes.SAFE_FALL_DISTANCE, SAFE_FALL, 1.0 / g - 1.0);
         // Hochgravitation: Fallschaden 3×, schon kleine Stürze sind tödlich

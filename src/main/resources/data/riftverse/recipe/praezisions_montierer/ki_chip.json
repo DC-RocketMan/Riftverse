@@ -1,0 +1,36 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:book"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:fluxkristall"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:redstone"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "riftverse:ki_chip"
+  },
+  "time": 400
+}

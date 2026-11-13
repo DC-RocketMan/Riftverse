@@ -71,6 +71,10 @@ public final class ModRecipes {
             SERIALIZERS.register("quanten_lithograf", () -> new MachineRecipeSerializer(MachineKind.QUANTEN_LITHOGRAF));
     public static final DeferredHolder<RecipeSerializer<?>, MachineRecipeSerializer> RIFT_SCHMIEDE =
             SERIALIZERS.register("rift_schmiede", () -> new MachineRecipeSerializer(MachineKind.RIFT_SCHMIEDE));
+    // Meilenstein 6 – Module an der Werkbank ein- und ausbauen
+    public static final DeferredHolder<RecipeSerializer<?>, net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<dev.riftverse.ruestung.ModulEinbauRecipe>> MODUL_EINBAU =
+            SERIALIZERS.register("modul_einbau",
+                    () -> new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(dev.riftverse.ruestung.ModulEinbauRecipe::new));
     public static final DeferredHolder<RecipeSerializer<?>, WerkbankRecipe.ShapedSerializer> WERKBANK_SHAPED =
             SERIALIZERS.register("werkbank_shaped", WerkbankRecipe.ShapedSerializer::new);
     public static final DeferredHolder<RecipeSerializer<?>, WerkbankRecipe.ShapelessSerializer> WERKBANK_SHAPELESS =

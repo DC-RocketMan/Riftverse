@@ -1,0 +1,32 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:basis_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:kupferdraht"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:parallel_chip"
+  },
+  "time": 300
+}

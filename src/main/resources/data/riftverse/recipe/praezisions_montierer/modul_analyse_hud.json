@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:fluxlinse"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_analyse_hud"
+  },
+  "time": 300
+}

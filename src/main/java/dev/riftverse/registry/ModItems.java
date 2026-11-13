@@ -318,6 +318,117 @@ public final class ModItems {
             () -> new BlockItem(ModBlocks.NULLMATERIE_BLOCK.get(), new Item.Properties().rarity(Rarity.RARE).fireResistant()));
     public static final DeferredItem<BlockItem> LEERSTEIN = blockItem("leerstein", ModBlocks.LEERSTEIN);
 
+    // =====================================================================
+    // Meilenstein 6 – Gadgets und Rüstung
+    // =====================================================================
+
+    // --- Gadgets ---
+    public static final DeferredItem<dev.riftverse.gadget.EinzweckDrohneItem> EINZWECK_DROHNE = ITEMS.register("einzweck_drohne",
+            () -> new dev.riftverse.gadget.EinzweckDrohneItem(new Item.Properties()));
+    public static final DeferredItem<dev.riftverse.gadget.HoloKoederItem> HOLO_KOEDER = ITEMS.register("holo_koeder",
+            () -> new dev.riftverse.gadget.HoloKoederItem(new Item.Properties()));
+    public static final DeferredItem<dev.riftverse.gadget.SchrumpfstrahlerItem> SCHRUMPFSTRAHLER = ITEMS.register("schrumpfstrahler",
+            () -> new dev.riftverse.gadget.SchrumpfstrahlerItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<dev.riftverse.gadget.AntiGravGranateItem> ANTI_GRAV_GRANATE = ITEMS.register("anti_grav_granate",
+            () -> new dev.riftverse.gadget.AntiGravGranateItem(new Item.Properties()));
+    public static final DeferredItem<dev.riftverse.gadget.UebersetzerHalsbandItem> UEBERSETZER_HALSBAND = ITEMS.register("uebersetzer_halsband",
+            () -> new dev.riftverse.gadget.UebersetzerHalsbandItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<dev.riftverse.gadget.ErinnerungsphioleItem> ERINNERUNGSPHIOLE = ITEMS.register("erinnerungsphiole",
+            () -> new dev.riftverse.gadget.ErinnerungsphioleItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<dev.riftverse.gadget.TarnDetektorItem> TARN_DETEKTOR = ITEMS.register("tarn_detektor",
+            () -> new dev.riftverse.gadget.TarnDetektorItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<dev.riftverse.gadget.MultitoolItem> MULTIVERSAL_MULTITOOL = ITEMS.register("multiversal_multitool",
+            () -> new dev.riftverse.gadget.MultitoolItem(new Item.Properties().rarity(Rarity.UNCOMMON), 1));
+    public static final DeferredItem<dev.riftverse.gadget.MultitoolItem> MULTIVERSAL_MULTITOOL_MK2 = ITEMS.register("multiversal_multitool_mk2",
+            () -> new dev.riftverse.gadget.MultitoolItem(new Item.Properties().rarity(Rarity.RARE), 2));
+    public static final DeferredItem<dev.riftverse.gadget.MultitoolItem> MULTIVERSAL_MULTITOOL_MK3 = ITEMS.register("multiversal_multitool_mk3",
+            () -> new dev.riftverse.gadget.MultitoolItem(new Item.Properties().rarity(Rarity.EPIC).fireResistant(), 3));
+    public static final DeferredItem<dev.riftverse.gadget.ZeitstopperItem> ZEITSTOPPER = ITEMS.register("zeitstopper",
+            () -> new dev.riftverse.gadget.ZeitstopperItem(new Item.Properties().rarity(Rarity.RARE)));
+    public static final DeferredItem<dev.riftverse.gadget.MutagenSpritzeItem> MUTAGEN_SPRITZE = ITEMS.register("mutagen_spritze",
+            () -> new dev.riftverse.gadget.MutagenSpritzeItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<dev.riftverse.gadget.AufgabenBoxItem> AUFGABEN_BOX = ITEMS.register("aufgaben_box",
+            () -> new dev.riftverse.gadget.AufgabenBoxItem(new Item.Properties().rarity(Rarity.UNCOMMON)));
+
+    // --- Maschinen-Upgrades ---
+    public static final java.util.Map<dev.riftverse.tech.upgrade.UpgradeChip, DeferredItem<dev.riftverse.tech.upgrade.UpgradeChipItem>> CHIPS =
+            chips();
+
+    // --- Multiversal-Rüstung: vier Teile in drei Ausbaustufen ---
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> ANALYSE_VISIER_ROHLING = armor("analyse_visier_rohling",
+            net.minecraft.world.item.ArmorItem.Type.HELMET, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.ROHLING);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> KERNMANTEL_ROHLING = armor("kernmantel_rohling",
+            net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.ROHLING);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> EXO_RAHMEN_ROHLING = armor("exo_rahmen_rohling",
+            net.minecraft.world.item.ArmorItem.Type.LEGGINGS, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.ROHLING);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> GRAVI_STIEFEL_ROHLING = armor("gravi_stiefel_rohling",
+            net.minecraft.world.item.ArmorItem.Type.BOOTS, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.ROHLING);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> ANALYSE_VISIER_KALIBRIERT = armor("analyse_visier_kalibriert",
+            net.minecraft.world.item.ArmorItem.Type.HELMET, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.KALIBRIERT);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> KERNMANTEL_KALIBRIERT = armor("kernmantel_kalibriert",
+            net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.KALIBRIERT);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> EXO_RAHMEN_KALIBRIERT = armor("exo_rahmen_kalibriert",
+            net.minecraft.world.item.ArmorItem.Type.LEGGINGS, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.KALIBRIERT);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> GRAVI_STIEFEL_KALIBRIERT = armor("gravi_stiefel_kalibriert",
+            net.minecraft.world.item.ArmorItem.Type.BOOTS, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.KALIBRIERT);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> ANALYSE_VISIER_PERFEKTIONIERT = armor("analyse_visier_perfektioniert",
+            net.minecraft.world.item.ArmorItem.Type.HELMET, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.PERFEKTIONIERT);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> KERNMANTEL_PERFEKTIONIERT = armor("kernmantel_perfektioniert",
+            net.minecraft.world.item.ArmorItem.Type.CHESTPLATE, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.PERFEKTIONIERT);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> EXO_RAHMEN_PERFEKTIONIERT = armor("exo_rahmen_perfektioniert",
+            net.minecraft.world.item.ArmorItem.Type.LEGGINGS, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.PERFEKTIONIERT);
+    public static final DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> GRAVI_STIEFEL_PERFEKTIONIERT = armor("gravi_stiefel_perfektioniert",
+            net.minecraft.world.item.ArmorItem.Type.BOOTS, dev.riftverse.ruestung.MultiversalArmorItem.Ausbau.PERFEKTIONIERT);
+
+    // --- Module ---
+    public static final java.util.Map<dev.riftverse.ruestung.Modul, DeferredItem<dev.riftverse.ruestung.ModulItem>> MODULE = module();
+
+    // --- Zwischenprodukte der Rüstung ---
+    /** Material aus drei Universumstypen und ein Story-Fragment, für die Kalibrierung am Quanten-Lithografen. */
+    public static final DeferredItem<Item> KALIBRIER_SATZ = ITEMS.register("kalibrier_satz",
+            () -> new LoreItem(new Item.Properties().rarity(Rarity.UNCOMMON), "item.riftverse.kalibrier_satz.lore"));
+    /** Material aus sechs Universumstypen, für die Perfektionierung an der Rift-Schmiede. */
+    public static final DeferredItem<Item> MULTIVERSUM_LEGIERUNG = ITEMS.register("multiversum_legierung",
+            () -> new LoreItem(new Item.Properties().rarity(Rarity.RARE), "item.riftverse.multiversum_legierung.lore"));
+
+    public static Item modul(dev.riftverse.ruestung.Modul m) {
+        return MODULE.get(m).get();
+    }
+
+    public static Item chip(dev.riftverse.tech.upgrade.UpgradeChip c) {
+        return CHIPS.get(c).get();
+    }
+
+    private static java.util.Map<dev.riftverse.tech.upgrade.UpgradeChip, DeferredItem<dev.riftverse.tech.upgrade.UpgradeChipItem>> chips() {
+        java.util.EnumMap<dev.riftverse.tech.upgrade.UpgradeChip, DeferredItem<dev.riftverse.tech.upgrade.UpgradeChipItem>> map =
+                new java.util.EnumMap<>(dev.riftverse.tech.upgrade.UpgradeChip.class);
+        for (dev.riftverse.tech.upgrade.UpgradeChip c : dev.riftverse.tech.upgrade.UpgradeChip.values()) {
+            map.put(c, ITEMS.register(c.itemName(), () -> new dev.riftverse.tech.upgrade.UpgradeChipItem(
+                    new Item.Properties().rarity(c == dev.riftverse.tech.upgrade.UpgradeChip.KI ? Rarity.RARE : Rarity.COMMON), c)));
+        }
+        return java.util.Collections.unmodifiableMap(map);
+    }
+
+    private static java.util.Map<dev.riftverse.ruestung.Modul, DeferredItem<dev.riftverse.ruestung.ModulItem>> module() {
+        java.util.EnumMap<dev.riftverse.ruestung.Modul, DeferredItem<dev.riftverse.ruestung.ModulItem>> map =
+                new java.util.EnumMap<>(dev.riftverse.ruestung.Modul.class);
+        for (dev.riftverse.ruestung.Modul m : dev.riftverse.ruestung.Modul.values()) {
+            map.put(m, ITEMS.register(m.itemName(), () -> new dev.riftverse.ruestung.ModulItem(new Item.Properties().stacksTo(1)
+                    .rarity(m == dev.riftverse.ruestung.Modul.UNIVERSUMS_KERN ? Rarity.EPIC : Rarity.UNCOMMON), m)));
+        }
+        return java.util.Collections.unmodifiableMap(map);
+    }
+
+    private static DeferredItem<dev.riftverse.ruestung.MultiversalArmorItem> armor(String name, net.minecraft.world.item.ArmorItem.Type type,
+                                                                                 dev.riftverse.ruestung.MultiversalArmorItem.Ausbau ausbau) {
+        var material = switch (ausbau) {
+            case ROHLING -> ModArmorMaterials.ROHLING;
+            case KALIBRIERT -> ModArmorMaterials.KALIBRIERT;
+            case PERFEKTIONIERT -> ModArmorMaterials.PERFEKTIONIERT;
+        };
+        return ITEMS.register(name, () -> new dev.riftverse.ruestung.MultiversalArmorItem(material, type, ausbau));
+    }
+
     private static DeferredItem<Item> simple(String name) {
         return ITEMS.register(name, () -> new Item(new Item.Properties()));
     }

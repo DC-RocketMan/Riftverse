@@ -1,0 +1,45 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      },
+      "count": 6
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_rahmen"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:energiezelle"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:white_wool"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "id": "riftverse:kernmantel_rohling"
+  },
+  "time": 600
+}

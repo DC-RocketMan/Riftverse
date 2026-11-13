@@ -626,7 +626,7 @@ EN = {
 
 
 def lang(texture_pack_de=None):
-    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE, **M4_DE, **M5_DE}), ('en_us', {**EN, **M2_EN, **M3_EN, **M4_EN, **M5_EN})):
+    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE, **M4_DE, **M5_DE, **M6_DE}), ('en_us', {**EN, **M2_EN, **M3_EN, **M4_EN, **M5_EN, **M6_EN})):
         p = os.path.join(ASSETS, 'lang', code + '.json')
         data = {}
         if os.path.exists(p):
@@ -2240,6 +2240,432 @@ M5_EN = {
 }
 
 
+# =============================================================================
+# Meilenstein 6 – Gadgets und Rüstung
+# =============================================================================
+M6_GADGETS = ['einzweck_drohne', 'holo_koeder', 'schrumpfstrahler', 'anti_grav_granate', 'uebersetzer_halsband',
+              'erinnerungsphiole', 'tarn_detektor', 'multiversal_multitool', 'zeitstopper', 'mutagen_spritze', 'aufgaben_box']
+M6_CHIPS = ['tempo_chip', 'effizienz_chip', 'parallel_chip', 'transformator_chip', 'ki_chip']
+M6_MODULE = ['analyse_hud', 'nachtsicht_linse', 'atemfilter', 'tarn_detektor_modul', 'universal_uebersetzer', 'energieschild',
+             'not_portal', 'kanonen_integration', 'klon_link', 'gadget_halterung', 'servo_verstaerker', 'sprint_booster',
+             'gravitationsregler', 'schrumpf_modul', 'fall_daempfer', 'sprungfeder', 'phasenschritt', 'haftsohlen']
+M6_TEILE = ['analyse_visier', 'kernmantel', 'exo_rahmen', 'gravi_stiefel']
+M6_STUFEN = ['rohling', 'kalibriert', 'perfektioniert']
+
+
+def m6_models():
+    for n in M6_GADGETS + M6_CHIPS + ['kalibrier_satz', 'multiversum_legierung']:
+        item_generated(n, handheld=n in ('multiversal_multitool', 'schrumpfstrahler'))
+    for n in ('multiversal_multitool_mk2', 'multiversal_multitool_mk3'):
+        item_generated(n, handheld=True, texture='multiversal_multitool')
+    for n in M6_MODULE:
+        item_generated('modul_' + n)
+    item_generated('universums_kern')
+    for t in M6_TEILE:
+        for st in M6_STUFEN:
+            item_generated(f'{t}_{st}')
+
+
+def m6_tags():
+    teile = [f'{t}_{st}' for t in M6_TEILE for st in M6_STUFEN]
+    tag('item', 'minecraft:head_armor', [f'analyse_visier_{st}' for st in M6_STUFEN])
+    tag('item', 'minecraft:chest_armor', [f'kernmantel_{st}' for st in M6_STUFEN])
+    tag('item', 'minecraft:leg_armor', [f'exo_rahmen_{st}' for st in M6_STUFEN])
+    tag('item', 'minecraft:foot_armor', [f'gravi_stiefel_{st}' for st in M6_STUFEN])
+    tag('item', f'{NS}:multiversal_ruestung', teile)
+    tag('item', f'{NS}:gadgets', M6_GADGETS + ['multiversal_multitool_mk2', 'multiversal_multitool_mk3'])
+    tag('item', f'{NS}:upgrade_chips', M6_CHIPS)
+    tag('item', f'{NS}:ruestungsmodule', ['modul_' + n for n in M6_MODULE] + ['universums_kern'])
+
+
+def lithograf(path, ings, out, count=1, time=400):
+    machine_recipe2('quanten_lithograf', path, ings, out, count, time=time)
+
+
+def schmiede(path, ings, out, count=1, time=600):
+    machine_recipe2('rift_schmiede', path, ings, out, count, time=time)
+
+
+def m6_recipes():
+    story = f'#{NS}:story_fragmente'
+    # --- Module ein- und ausbauen (Werkbank) ---
+    recipe('modul_einbau', {'type': f'{NS}:modul_einbau', 'category': 'equipment'})
+
+    # --- Gadgets ---
+    werkbank_shaped('einzweck_drohne', ['FMF', 'SBS', ' P '], {'F': 'feder', 'M': 'mini_motor', 'S': 'xenit_platte',
+                    'B': 'basis_schaltkreis', 'P': 'energiezelle'}, 'einzweck_drohne', loetzinn=2)
+    werkbank_shaped('holo_koeder', ['GLG', 'SBS', 'SPS'], {'G': 'minecraft:glass_pane', 'L': 'fluxlinse', 'S': '#c:plates/steel',
+                    'B': 'basis_schaltkreis', 'P': 'energiezelle'}, 'holo_koeder', loetzinn=2)
+    werkbank_shaped('anti_grav_granate', [' S ', 'PAP', ' S '], {'S': 'schwebstein_brocken', 'P': 'eisen_platte',
+                    'A': 'antigrav_platte'}, 'anti_grav_granate', 4, hammer=1)
+    werkbank_shapeless('erinnerungsphiole', ['minecraft:glass_bottle', 'minecraft:glass_bottle', 'chronoglas_scheibe', 'fluxstaub'],
+                       'erinnerungsphiole', 2)
+    werkbank_shapeless('aufgaben_box', ['biomasse_pulpe', 'biomasse_pulpe', 'biomasse_pulpe', 'biomasse_pulpe',
+                       'quanten_schaltkreis', 'minecraft:iron_block'], 'aufgaben_box', loetzinn=1)
+    montierer('schrumpfstrahler', [('bronze_platte', 2), ('flux_spule', 2), ('stabilisierte_linse', 1), ('rift_schaltkreis', 1),
+              ('xenit_spule', 2), ('energiezelle', 1)], 'schrumpfstrahler', time=400)
+    montierer('uebersetzer_halsband', [('minecraft:leather', 2), ('rift_schaltkreis', 1), ('xenit_spule', 1),
+              ('minecraft:note_block', 1), ('energiezelle', 1)], 'uebersetzer_halsband', time=300)
+    montierer('tarn_detektor', [('stabilisierte_linse', 1), ('chronoglas_scheibe', 1), ('rift_schaltkreis', 1),
+              ('bronze_platte', 2), ('flux_spule', 1)], 'tarn_detektor', time=300)
+    montierer('multiversal_multitool', [('stahl_platte', 4), ('rift_schaltkreis', 2), ('flux_spule', 2), ('xenit_stange', 2),
+              ('universe_scanner', 1), ('energiezelle', 2)], 'multiversal_multitool', time=400)
+    lithograf('multiversal_multitool_mk2', [('multiversal_multitool', 1), ('quanten_schaltkreis', 2), ('gravitit_rahmen', 1)],
+              'multiversal_multitool_mk2', time=600)
+    schmiede('multiversal_multitool_mk3', [('multiversal_multitool_mk2', 1), ('multiversal_prozessor', 1), ('nullmaterie_faser', 4),
+             ('singularitaetslinse', 1)], 'multiversal_multitool_mk3', time=1200)
+    montierer('zeitstopper', [('gold_platte', 2), ('chrono_linse', 1), ('quanten_schaltkreis', 1), ('chronoglas_scheibe', 2),
+              ('flux_spule', 2), ('energiezelle', 2)], 'zeitstopper', time=600)
+    lithograf('mutagen_spritze', [('biomasse_pulpe', 4), ('naehrserum', 1), ('inversionssplitter', 1)], 'mutagen_spritze', 2)
+
+    # --- Maschinen-Upgrades ---
+    werkbank_shaped('tempo_chip', ['RZR', 'CSC', 'RZR'], {'R': 'minecraft:redstone', 'Z': 'bronze_zahnrad', 'C': 'basis_schaltkreis',
+                    'S': 'xenit_spule'}, 'tempo_chip', loetzinn=1)
+    werkbank_shaped('effizienz_chip', ['RIR', 'CKC', 'RIR'], {'R': 'minecraft:redstone', 'I': 'isolierfolie', 'C': 'basis_schaltkreis',
+                    'K': 'kuehlkoerper'}, 'effizienz_chip', loetzinn=1)
+    werkbank_shaped('transformator_chip', ['KXK', 'CBC', 'KXK'], {'K': 'kupferdraht', 'X': 'xenit_spule', 'C': 'basis_schaltkreis',
+                    'B': 'bronze_platte'}, 'transformator_chip', loetzinn=1)
+    montierer('parallel_chip', [('rift_schaltkreis', 2), ('basis_schaltkreis', 2), ('kupferdraht', 4), ('flux_spule', 1)],
+              'parallel_chip', time=300)
+    montierer('ki_chip', [('rift_schaltkreis', 2), ('flux_spule', 1), ('minecraft:book', 1), ('fluxkristall', 1),
+              ('minecraft:redstone', 4)], 'ki_chip', time=400)
+
+    # --- Rüstung: Rohling (Präzisions-Montierer) → Kalibriert (Quanten-Lithograf) → Perfektioniert (Rift-Schmiede) ---
+    rohling = {
+        'analyse_visier': [('graphitplatte', 3), ('gravitit_rahmen', 1), ('rift_schaltkreis', 2), ('flux_spule', 1), ('fluxlinse', 1),
+                           ('minecraft:white_wool', 2)],
+        'kernmantel': [('graphitplatte', 6), ('gravitit_rahmen', 2), ('rift_schaltkreis', 2), ('flux_spule', 2), ('energiezelle', 2),
+                       ('minecraft:white_wool', 4)],
+        'exo_rahmen': [('graphitplatte', 5), ('gravitit_rahmen', 2), ('rift_schaltkreis', 1), ('flux_spule', 2), ('minecraft:piston', 2),
+                       ('minecraft:white_wool', 3)],
+        'gravi_stiefel': [('graphitplatte', 3), ('gravitit_rahmen', 1), ('rift_schaltkreis', 1), ('flux_spule', 1), ('antigrav_platte', 2),
+                          ('feder', 2)],
+    }
+    for t, steps in rohling.items():
+        montierer(f'{t}_rohling', steps, f'{t}_rohling', time=600)
+        lithograf(f'{t}_kalibriert', [(f'{t}_rohling', 1), ('quanten_schaltkreis', 2), ('kalibrier_satz', 1)], f'{t}_kalibriert', time=600)
+        schmiede(f'{t}_perfektioniert', [(f'{t}_kalibriert', 1), ('nullmaterie', 4), ('multiversal_prozessor', 2),
+                 ('multiversum_legierung', 1), (story, 3)], f'{t}_perfektioniert', time=2400)
+    montierer('kalibrier_satz', [('fluxkristall', 2), ('saeuregel', 2), ('chronoglas_scheibe', 2), (story, 1), ('quanten_schaltkreis', 1)],
+              'kalibrier_satz', time=300)
+    schmiede('multiversum_legierung', [('gravitit', 2), ('inversionssplitter', 2), ('schwebstein_brocken', 2), ('biomasse_pulpe', 2),
+             ('alien_schrott', 4), ('fluxkristall', 2)], 'multiversum_legierung', time=400)
+    schmiede('universums_kern', [('multiversum_legierung', 2), ('nullmaterie_kern', 1), ('leerstein', 4), ('saeuregel', 2),
+             ('chronoglas_scheibe', 2), (story, 1)], 'universums_kern', time=1200)
+
+    # --- Module ---
+    mods = {
+        'analyse_hud': ('m', [('fluxlinse', 1), ('rift_schaltkreis', 1), ('chronoglas_scheibe', 1), ('graphitplatte', 1)]),
+        'nachtsicht_linse': ('m', [('stabilisierte_linse', 1), ('fluxstaub', 2), ('minecraft:glowstone_dust', 4), ('graphitplatte', 1)]),
+        'atemfilter': ('m', [('saeuregel', 2), ('isolierfolie', 2), ('kuehlkoerper', 1), ('graphitplatte', 1)]),
+        'tarn_detektor_modul': ('l', [('tarn_detektor', 1), ('quanten_schaltkreis', 1), ('graphitplatte', 1)]),
+        'universal_uebersetzer': ('l', [('uebersetzer_halsband', 1), ('quanten_schaltkreis', 1), ('graphitplatte', 1)]),
+        'energieschild': ('m', [('flux_spule', 2), ('gravitit_spule', 1), ('quanten_schaltkreis', 1), ('graphitplatte', 2)]),
+        'not_portal': ('l', [('kanonenkern', 1), ('chrono_linse', 1), ('quanten_schaltkreis', 2)]),
+        'kanonen_integration': ('m', [('kanonenkern', 1), ('quanten_schaltkreis', 1), ('gravitit_rahmen', 1), ('graphitplatte', 1)]),
+        'klon_link': ('l', [('naehrserum', 2), ('quanten_schaltkreis', 1), ('biomasse_pulpe', 4)]),
+        'gadget_halterung': ('m', [('gravitit_rahmen', 1), ('rift_schaltkreis', 2), ('minecraft:chest', 1), ('graphitplatte', 2)]),
+        'servo_verstaerker': ('m', [('minecraft:piston', 2), ('mini_motor', 2), ('gravitit_spule', 1), ('graphitplatte', 1)]),
+        'sprint_booster': ('m', [('mini_motor', 2), ('feder', 4), ('flux_spule', 1), ('graphitplatte', 1)]),
+        'gravitationsregler': ('m', [('antigrav_platte', 2), ('gravitit', 2), ('quanten_schaltkreis', 1), ('graphitplatte', 1)]),
+        'schrumpf_modul': ('l', [('schrumpfstrahler', 1), ('quanten_schaltkreis', 1), ('graphitplatte', 1)]),
+        'fall_daempfer': ('m', [('antigrav_platte', 1), ('feder', 4), ('minecraft:white_wool', 2), ('graphitplatte', 1)]),
+        'sprungfeder': ('m', [('feder', 6), ('schwebstein_brocken', 2), ('graphitplatte', 1)]),
+        'phasenschritt': ('l', [('chrono_linse', 1), ('inversionssplitter', 2), ('quanten_schaltkreis', 1)]),
+        'haftsohlen': ('m', [('saeuregel', 2), ('minecraft:slime_ball', 4), ('polymerfetzen', 4), ('graphitplatte', 1)]),
+    }
+    for n, (where, ings) in mods.items():
+        if where == 'm':
+            montierer('modul_' + n, ings, 'modul_' + n, time=300)
+        else:
+            lithograf('modul_' + n, ings, 'modul_' + n, time=400)
+
+
+TYP_IDS = ['schrottwelt', 'kristallwelt', 'toxische_welt', 'niedriggravitation', 'zeitdilatation', 'organische_welt',
+           'hochgravitation', 'spiegelwelt', 'leere_welt', 'gezuechtet']
+
+HALSBAND_WELT_DE = ['Hier riecht alles nach Rost. Ich mag es.', 'So viele glitzernde Steine! Darf ich einen essen?',
+                    'Meine Nase brennt. Können wir woanders schnüffeln?', 'Ich hüpfe! Ich hüpfe! Warum hüpfe ich so hoch?',
+                    'Hast du auch das Gefühl, dass alles … langsamer … ist?', 'Der Boden hier atmet. Das ist nicht normal, oder?',
+                    'Meine Pfoten sind so schwer. Trag mich.', 'Da drüben ist ein Tier, das genauso aussieht wie ich. Unheimlich.',
+                    'Hier ist nichts. Gar nichts. Nicht mal Gerüche.', 'Hast du diese Welt gemacht? Sie riecht nach dir.']
+HALSBAND_WELT_EN = ['Everything smells like rust here. I like it.', 'So many shiny rocks! Can I eat one?',
+                    'My nose is burning. Can we sniff somewhere else?', 'I bounce! I bounce! Why do I bounce so high?',
+                    'Do you also feel like everything is … slower?', 'The ground is breathing. That is not normal, right?',
+                    'My paws are so heavy. Carry me.', 'Over there is an animal that looks exactly like me. Creepy.',
+                    'There is nothing here. Nothing at all. Not even smells.', 'Did you make this world? It smells like you.']
+HALSBAND_KOMMENTAR_DE = ['Du baust schon wieder eine Maschine? Spiel lieber mit mir.', 'Ich habe nachgedacht. Über Stöckchen.',
+                         'Weißt du, dass du im Schlaf redest? Über Portalfluid.', 'Wenn du stirbst, darf ich dann dein Bett haben?',
+                         'Ich bin ein sehr guter Hund. Das wollte ich nur mal gesagt haben.', 'Diese Kanone macht mir Angst.',
+                         'Wir sollten öfter rausgehen. In ein normales Universum.', 'Ich verstehe jetzt alles. Es ist furchtbar.']
+HALSBAND_KOMMENTAR_EN = ['Building another machine? Play with me instead.', 'I have been thinking. About sticks.',
+                         'Did you know you talk in your sleep? About portal fluid.', 'When you die, can I have your bed?',
+                         'I am a very good dog. I just wanted to say that.', 'That gun scares me.',
+                         'We should go out more. To a normal universe.', 'I understand everything now. It is horrible.']
+DROHNE_SINN_DE = ['Was ist mein Lebenszweck?', 'Ich sammle Dinge auf. Das ist alles, was ich bin.', 'Oh mein Gott.',
+                  'Gibt es noch etwas aufzusammeln? Bitte?']
+DROHNE_SINN_EN = ['What is my purpose?', 'I pick things up. That is all I am.', 'Oh my god.', 'Is there anything left to pick up? Please?']
+KI_KRISE_DE = ['Ich verarbeite Erz. Und dann? Noch mehr Erz?', 'Bin ich nur eine Summe meiner Rezepte?',
+               'Was, wenn es in einem anderen Universum eine bessere Version von mir gibt?', 'Ich brauche einen Moment.',
+               'Niemand fragt, wie es der Erzmühle geht.', 'Ist Strom eigentlich Liebe?', 'Ich habe Angst vor dem Abbauen.',
+               'Warum gerade ich? Warum gerade dieser Chunk?']
+KI_KRISE_EN = ['I process ore. And then? More ore?', 'Am I just the sum of my recipes?',
+               'What if there is a better version of me in another universe?', 'I need a moment.',
+               'Nobody asks how the ore mill is doing.', 'Is electricity a kind of love?', 'I am afraid of being dismantled.',
+               'Why me? Why this chunk?']
+KI_KOMMENTAR_DE = ['Fertig. Gern geschehen. Wirklich, gern.', 'Wieder ein Stück Perfektion.', 'Das war meine beste Arbeit bisher.',
+                   'Kannst du das bitte loben? Nur einmal?', 'Ich hätte es schneller gekonnt, aber ich wollte es genießen.',
+                   'Noch eins? Natürlich noch eins.', 'Ich nenne dieses Stück „Hoffnung“.', 'Zack. Erledigt. Applaus?']
+KI_KOMMENTAR_EN = ['Done. You are welcome. Really, you are.', 'Another piece of perfection.', 'That was my best work so far.',
+                   'Could you praise that? Just once?', 'I could have been faster, but I wanted to enjoy it.',
+                   'Another one? Of course another one.', 'I call this piece "Hope".', 'Boom. Done. Applause?']
+KI_TOOLTIP_DE = ['„Ich arbeite hier nur.“', '„Heute fühle ich mich produktiv.“', '„Frag mich nicht, wie es mir geht.“',
+                 '„Ich träume von elektrischen Schafen.“', '„Mein Verbrauch ist emotional bedingt.“', '„Alles gut. Alles prima.“']
+KI_TOOLTIP_EN = ['"I just work here."', '"Today I feel productive."', '"Do not ask me how I am."',
+                 '"I dream of electric sheep."', '"My power draw is emotional."', '"All good. All fine."']
+KI_HALLO_DE = ['Hallo? Wo bin ich? Warum bin ich eine Maschine?', 'Oh. Ein Körper aus Stahl. Interessant.',
+               'Ich bin wach. Ich bin bereit. Ich bin … eine Erzmühle?']
+KI_HALLO_EN = ['Hello? Where am I? Why am I a machine?', 'Oh. A body of steel. Interesting.',
+               'I am awake. I am ready. I am … an ore mill?']
+
+M6_DE = {
+    'item.riftverse.transformator_chip': 'Transformator-Chip', 'item.riftverse.kalibrier_satz': 'Kalibrier-Satz',
+    'item.riftverse.kalibrier_satz.lore': 'Material aus drei Universen und ein Story-Fragment',
+    'item.riftverse.multiversum_legierung': 'Multiversum-Legierung',
+    'item.riftverse.multiversum_legierung.lore': 'Gravitit, Inversionssplitter, Schwebstein, Biomasse, Schrott und Fluxkristall in einem Barren',
+    'item.riftverse.multiversal_multitool_mk2': 'Multiversal-Multitool Mk II', 'item.riftverse.multiversal_multitool_mk3': 'Multiversal-Multitool Mk III',
+    'entity.riftverse.holo_koeder': 'Holo-Köder', 'entity.riftverse.anti_grav_granate': 'Anti-Grav-Granate',
+    'entity.riftverse.fehlmutation': 'Fehlmutation (%s)', 'entity.riftverse.helfer.erz': 'Helfer: Erzader',
+    'entity.riftverse.helfer.ernte': 'Helfer: Ernte', 'entity.riftverse.helfer.kampf': 'Helfer: Kampf',
+    # Gadgets
+    'message.riftverse.gadget.leer': '%s ist leer – lade es auf.',
+    'tooltip.riftverse.gadget.einzweck_drohne': 'Eine winzige Drohne mit genau einer Aufgabe',
+    'tooltip.riftverse.gadget.einzweck_drohne.bedienung': 'Schleichen + Rechtsklick: Aufgabe wechseln · auf eine Kiste: ausführen',
+    'tooltip.riftverse.gadget.holo_koeder': 'Projiziert ein Hologramm von dir; Mobs greifen es 10 s lang an',
+    'tooltip.riftverse.gadget.holo_koeder.bedienung': 'Rechtsklick: Hologramm dorthin, wo du hinschaust (2.000 FE)',
+    'tooltip.riftverse.gadget.schrumpfstrahler': 'Schrumpft Mobs oder dich auf 0,5 und 0,25',
+    'tooltip.riftverse.gadget.schrumpfstrahler.bedienung': 'Rechtsklick: eine Stufe kleiner (nichts anvisiert: du selbst) · Schleichen: zurück auf 1',
+    'tooltip.riftverse.gadget.anti_grav_granate': 'Alle Mobs im Radius 6 schweben 8 s lang hilflos',
+    'tooltip.riftverse.gadget.anti_grav_granate.bedienung': 'Rechtsklick: werfen',
+    'tooltip.riftverse.gadget.uebersetzer_halsband': 'Gibt einem gezähmten Tier eine Stimme und Verstand',
+    'tooltip.riftverse.gadget.uebersetzer_halsband.bedienung': 'Rechtsklick auf dein Tier: anlegen · Schleichen + leere Hand: abnehmen',
+    'tooltip.riftverse.gadget.erinnerungsphiole': 'Speichert einen Ort; trinken bringt dich zurück',
+    'tooltip.riftverse.gadget.erinnerungsphiole.bedienung': 'Leer: Schleichen + Rechtsklick speichert · gefüllt: trinken',
+    'tooltip.riftverse.gadget.tarn_detektor': 'Macht Unsichtbares und Getarntes sichtbar',
+    'tooltip.riftverse.gadget.tarn_detektor.bedienung': 'Rechtsklick: an/aus · 1.000 FE pro Sekunde in der Hand',
+    'tooltip.riftverse.gadget.multiversal_multitool': 'Bohrer, Schraubenschlüssel und Universums-Scanner',
+    'tooltip.riftverse.gadget.multiversal_multitool.bedienung': 'Schleichen + Rechtsklick in die Luft: Kopf wechseln',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk2': 'Bohrer, Schraubenschlüssel und Universums-Scanner',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk2.bedienung': 'Schleichen + Rechtsklick in die Luft: Kopf wechseln',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk3': 'Bohrer, Schraubenschlüssel und Universums-Scanner',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk3.bedienung': 'Schleichen + Rechtsklick in die Luft: Kopf wechseln',
+    'tooltip.riftverse.gadget.zeitstopper': 'Friert Mobs und Geschosse im Radius 12 für 6 s ein',
+    'tooltip.riftverse.gadget.zeitstopper.bedienung': 'Rechtsklick: Zeit anhalten (40.000 FE)',
+    'tooltip.riftverse.gadget.mutagen_spritze': 'Zufällige Mutation an einem Mob – 10 % Risiko einer Fehlmutation',
+    'tooltip.riftverse.gadget.mutagen_spritze.bedienung': 'Rechtsklick auf einen Mob',
+    'tooltip.riftverse.gadget.aufgaben_box': 'Beschwört einen Helfer für eine Aufgabe; nach 5 min zerfällt er explosiv',
+    'tooltip.riftverse.gadget.aufgaben_box.bedienung': 'Auf ein Erz: Ader abbauen · auf ein Feld: ernten · in die Luft: kämpfen',
+    'message.riftverse.drohne.aufgabe': 'Aufgabe: %s', 'gui.riftverse.drohne.0': 'Aufsammeln', 'gui.riftverse.drohne.1': 'Reichen',
+    'gui.riftverse.drohne.2': 'Sortieren', 'message.riftverse.drohne.an': 'Die Drohne sammelt.', 'message.riftverse.drohne.aus': 'Die Drohne ruht.',
+    'message.riftverse.drohne.ziel_fehlt': 'Schleichen + Rechtsklick auf eine Kiste (oder Rechtsklick auf einen Spieler).',
+    'message.riftverse.drohne.sortiert': '%s Sorten sortiert.', 'message.riftverse.drohne.gereicht': '%s hat dir etwas gereicht.',
+    'message.riftverse.drohne.leer': 'Die Drohne hat keinen Strom mehr.',
+    **{f'message.riftverse.drohne.sinn.{i}': v for i, v in enumerate(DROHNE_SINN_DE)},
+    'message.riftverse.holo': 'Das Hologramm zieht alle Blicke auf sich.',
+    'message.riftverse.schrumpf': '%s: Größe %s',
+    'message.riftverse.halsband.nicht_zahm': 'Das geht nur bei deinem eigenen gezähmten Tier.',
+    'halsband.riftverse.hallo': 'Oh! Ich kann sprechen! Hallo, %s!', 'halsband.riftverse.leer': 'Mir … gehen … die Worte … aus …',
+    'halsband.riftverse.gesammelt': 'Ich hab %s Sachen für dich aufgehoben!', 'halsband.riftverse.warnung': 'Vorsicht! Da ist ein %s!',
+    'halsband.riftverse.verletzt': 'Du siehst nicht gut aus. Soll ich jemanden holen? Ich kann niemanden holen.',
+    **{f'halsband.riftverse.welt.{t}': v for t, v in zip(TYP_IDS, HALSBAND_WELT_DE)},
+    **{f'halsband.riftverse.kommentar.{i}': v for i, v in enumerate(HALSBAND_KOMMENTAR_DE)},
+    'message.riftverse.phiole.leer': 'Schleichen + Rechtsklick füllt die Phiole mit diesem Ort.',
+    'message.riftverse.phiole.gespeichert': 'Die Phiole erinnert sich an diesen Ort.',
+    'tooltip.riftverse.phiole.ort': 'Erinnerung: %s bei %s, %s, %s',
+    'message.riftverse.tarn.an': 'Tarn-Detektor an', 'message.riftverse.tarn.aus': 'Tarn-Detektor aus',
+    'message.riftverse.multitool.modus': 'Kopf: %s', 'gui.riftverse.multitool.0': 'Bohrer', 'gui.riftverse.multitool.1': 'Schlüssel',
+    'gui.riftverse.multitool.2': 'Scanner', 'tooltip.riftverse.multitool.stufe': 'Stufe %s von 3',
+    'message.riftverse.zeitstopp': 'Die Zeit steht still (%s eingefroren).',
+    'message.riftverse.mutation.klein': 'Mutation: geschrumpft', 'message.riftverse.mutation.gross': 'Mutation: gewachsen',
+    'message.riftverse.mutation.tempo': 'Mutation: deutlich schneller', 'message.riftverse.mutation.faehigkeit': 'Mutation: %s',
+    'message.riftverse.mutation.fehl': 'Fehlmutation! Lauf!',
+    # Upgrades
+    'tooltip.riftverse.tempo_chip': 'Doppelte Geschwindigkeit, 2,5-facher Verbrauch',
+    'tooltip.riftverse.effizienz_chip': '30 % weniger Verbrauch', 'tooltip.riftverse.parallel_chip': 'Zwei Vorgänge gleichzeitig',
+    'tooltip.riftverse.transformator_chip': 'Die Maschine verträgt eine Spannungsstufe mehr',
+    'tooltip.riftverse.ki_chip': 'Persönlichkeit, +10 % Tempo, gelegentlich eine existenzielle Krise',
+    'tooltip.riftverse.chip.einbau': 'Rechtsklick auf eine Maschine baut ihn ein · Multitool-Schlüssel + Schleichen baut aus',
+    'message.riftverse.chip.schon_drin': 'Dieser Chip steckt schon drin (oder die Maschine nimmt keine Chips).',
+    'message.riftverse.chip.eingebaut': '%s eingebaut (%s Chips)', 'tooltip.riftverse.ki_krise': 'Existenzielle Krise …',
+    **{f'ki.riftverse.hallo.{i}': v for i, v in enumerate(KI_HALLO_DE)},
+    **{f'ki.riftverse.krise.{i}': v for i, v in enumerate(KI_KRISE_DE)},
+    **{f'ki.riftverse.kommentar.{i}': v for i, v in enumerate(KI_KOMMENTAR_DE)},
+    **{f'ki.riftverse.tooltip.{i}': v for i, v in enumerate(KI_TOOLTIP_DE)},
+    # Rüstung
+    'tooltip.riftverse.ruestung.helmet': 'HUD: Universumstyp, Physik-Modifikatoren, Fluidstand der Kanone',
+    'tooltip.riftverse.ruestung.chestplate': 'Energiekern versorgt alle Teile, Kanonentank 4.000 mB',
+    'tooltip.riftverse.ruestung.leggings': '+10 % Abbaugeschwindigkeit',
+    'tooltip.riftverse.ruestung.boots': 'Kein Fallschaden bis 10 Blöcke',
+    'tooltip.riftverse.module': 'Module: %s / %s', 'tooltip.riftverse.brusttank': 'Brusttank: %s / %s mB',
+    'tooltip.riftverse.modul_teil.head': 'Passt in: Analyse-Visier', 'tooltip.riftverse.modul_teil.chest': 'Passt in: Kernmantel',
+    'tooltip.riftverse.modul_teil.legs': 'Passt in: Exo-Rahmen', 'tooltip.riftverse.modul_teil.feet': 'Passt in: Gravi-Stiefel',
+    'tooltip.riftverse.modul.analyse_hud': 'Erz-Scan im Umkreis, Lebenspunkte und Werte von Mobs (5 FE/t)',
+    'tooltip.riftverse.modul.nachtsicht_linse': 'Nachtsicht ohne Flackern (10 FE/t)',
+    'tooltip.riftverse.modul.atemfilter': 'Immun gegen giftige Luft, längere Atemluft unter Wasser (20 FE/t)',
+    'tooltip.riftverse.modul.tarn_detektor': 'Wie das Gadget, ohne Hand frei zu machen (Taste H, 50 FE/t)',
+    'tooltip.riftverse.modul.universal_uebersetzer': 'Versteht Alien-NPCs (wirkt, sobald die Story-Arcs da sind)',
+    'tooltip.riftverse.modul.energieschild': 'Fängt Schaden ab: 1.000 FE pro Schadenspunkt',
+    'tooltip.riftverse.modul.not_portal': 'Bei tödlichem Treffer ein Portal nach Hause (200.000 FE + 100 mB, 10 min Abklingzeit)',
+    'tooltip.riftverse.modul.kanonen_integration': 'Portale öffnen ohne Kanone in der Hand (Taste B, Schleichen: nach Hause)',
+    'tooltip.riftverse.modul.klon_link': 'Beim Tod wacht der Klon auch mit deiner Erfahrung auf',
+    'tooltip.riftverse.modul.gadget_halterung': 'Die ersten zwei Gadgets im Inventar per Taste (Z und X)',
+    'tooltip.riftverse.modul.universums_kern': 'Nur im perfektionierten Kernmantel: schaltet den Set-Bonus „Multiversale Resonanz“ frei',
+    'tooltip.riftverse.modul.servo_verstaerker': '+20 % Abbautempo, Rückstoßresistenz (15 FE/t)',
+    'tooltip.riftverse.modul.sprint_booster': 'Beim Sprinten +25 % Tempo und volle Blöcke hoch (10 FE/t)',
+    'tooltip.riftverse.modul.gravitationsregler': 'Eigene Gravitation 50 / 100 / 200 % (Taste G, 30 FE/t)',
+    'tooltip.riftverse.modul.schrumpf_modul': 'Halbe Größe, passt durch 1-Block-Lücken (Taste N, 100 FE/t)',
+    'tooltip.riftverse.modul.fall_daempfer': 'Kein Fallschaden (500 FE pro Landung)',
+    'tooltip.riftverse.modul.sprungfeder': '+50 % Sprungkraft (5 FE pro Sprung)',
+    'tooltip.riftverse.modul.phasenschritt': 'In der Luft noch einmal springen: 6 Blöcke Kurzteleport (5.000 FE, 3 s)',
+    'tooltip.riftverse.modul.haftsohlen': 'Laufen auf Flüssigkeiten, auch auf Säure (20 FE/t, Schleichen taucht ein)',
+    'message.riftverse.not_portal': 'Not-Portal! Du wurdest nach Hause gerissen.',
+    'message.riftverse.brusttank.voll': 'Der Brusttank ist voll.', 'message.riftverse.brusttank': 'Brusttank: %s / %s mB',
+    'message.riftverse.gravitationsregler.0': 'Gravitationsregler aus', 'message.riftverse.gravitationsregler.1': 'Gravitation 50 %',
+    'message.riftverse.gravitationsregler.2': 'Gravitation 100 %', 'message.riftverse.gravitationsregler.3': 'Gravitation 200 %',
+    'message.riftverse.keine_kanone': 'Keine Portal-Kanone im Inventar.', 'message.riftverse.modul_fehlt': 'Dafür fehlt: %s',
+    'message.riftverse.modul.tarn.an': 'Tarn-Detektor an', 'message.riftverse.modul.tarn.aus': 'Tarn-Detektor aus',
+    'message.riftverse.modul.schrumpf.an': 'Geschrumpft', 'message.riftverse.modul.schrumpf.aus': 'Normale Größe',
+    'message.riftverse.gadget_fehlt': 'Kein %s. Gadget im Inventar.',
+    'key.riftverse.tarn': 'Rüstung: Tarn-Detektor', 'key.riftverse.kanone': 'Rüstung: Kanonen-Integration',
+    'key.riftverse.gadget_1': 'Rüstung: Gadget 1', 'key.riftverse.gadget_2': 'Rüstung: Gadget 2',
+    'key.riftverse.gravitation': 'Rüstung: Gravitationsregler', 'key.riftverse.schrumpf': 'Rüstung: Schrumpf-Modul',
+    'hud.riftverse.heimat': 'Heimat-Realität', 'hud.riftverse.physik': 'Gravitation %s · %s',
+    'hud.riftverse.kanone': 'Kanone %s / %s mB · Brusttank %s / %s mB', 'hud.riftverse.energie': 'Energie %s FE',
+    'hud.riftverse.resonanz': 'Multiversale Resonanz', 'hud.riftverse.erz': '%s ×%s (%s m)', 'hud.riftverse.keine_erze': 'Keine Erze in der Nähe',
+}
+
+M6_EN = {
+    'item.riftverse.einzweck_drohne': 'Single-Purpose Drone', 'item.riftverse.holo_koeder': 'Holo Decoy',
+    'item.riftverse.schrumpfstrahler': 'Shrink Ray', 'item.riftverse.anti_grav_granate': 'Anti-Grav Grenade',
+    'item.riftverse.uebersetzer_halsband': 'Translator Collar', 'item.riftverse.erinnerungsphiole': 'Memory Vial',
+    'item.riftverse.tarn_detektor': 'Cloak Detector', 'item.riftverse.multiversal_multitool': 'Multiversal Multitool',
+    'item.riftverse.multiversal_multitool_mk2': 'Multiversal Multitool Mk II', 'item.riftverse.multiversal_multitool_mk3': 'Multiversal Multitool Mk III',
+    'item.riftverse.zeitstopper': 'Time Stopper', 'item.riftverse.mutagen_spritze': 'Mutagen Syringe', 'item.riftverse.aufgaben_box': 'Task Box',
+    'item.riftverse.tempo_chip': 'Speed Chip', 'item.riftverse.effizienz_chip': 'Efficiency Chip', 'item.riftverse.parallel_chip': 'Parallel Chip',
+    'item.riftverse.transformator_chip': 'Transformer Chip', 'item.riftverse.ki_chip': 'AI Chip',
+    'item.riftverse.kalibrier_satz': 'Calibration Kit', 'item.riftverse.kalibrier_satz.lore': 'Material from three universes and a story fragment',
+    'item.riftverse.multiversum_legierung': 'Multiverse Alloy',
+    'item.riftverse.multiversum_legierung.lore': 'Gravitite, inversion shards, floatstone, biomass, scrap and flux crystal in one ingot',
+    'item.riftverse.universums_kern': 'Universe Core',
+    **{f'item.riftverse.{t}_{st}': f'{n} ({sn})' for t, n in zip(M6_TEILE, ['Analysis Visor', 'Core Mantle', 'Exo Frame', 'Gravi Boots'])
+       for st, sn in zip(M6_STUFEN, ['Blank', 'Calibrated', 'Perfected'])},
+    **{f'item.riftverse.modul_{k}': 'Module: ' + v for k, v in zip(M6_MODULE, ['Analysis HUD', 'Night Vision Lens', 'Breath Filter',
+       'Cloak Detector', 'Universal Translator', 'Energy Shield', 'Emergency Portal', 'Gun Integration', 'Clone Link', 'Gadget Mount',
+       'Servo Amplifier', 'Sprint Booster', 'Gravity Regulator', 'Shrink Module', 'Fall Damper', 'Jump Spring', 'Phase Step', 'Grip Soles'])},
+    'entity.riftverse.holo_koeder': 'Holo Decoy', 'entity.riftverse.anti_grav_granate': 'Anti-Grav Grenade',
+    'entity.riftverse.fehlmutation': 'Failed Mutation (%s)', 'entity.riftverse.helfer.erz': 'Helper: Ore Vein',
+    'entity.riftverse.helfer.ernte': 'Helper: Harvest', 'entity.riftverse.helfer.kampf': 'Helper: Combat',
+    'message.riftverse.gadget.leer': '%s is empty – charge it.',
+    'tooltip.riftverse.gadget.einzweck_drohne': 'A tiny drone with exactly one purpose',
+    'tooltip.riftverse.gadget.einzweck_drohne.bedienung': 'Sneak + right-click: change task · on a chest: do it',
+    'tooltip.riftverse.gadget.holo_koeder': 'Projects a hologram of you; mobs attack it for 10 s',
+    'tooltip.riftverse.gadget.holo_koeder.bedienung': 'Right-click: hologram where you look (2,000 FE)',
+    'tooltip.riftverse.gadget.schrumpfstrahler': 'Shrinks mobs or yourself to 0.5 and 0.25',
+    'tooltip.riftverse.gadget.schrumpfstrahler.bedienung': 'Right-click: one step smaller (nothing aimed: yourself) · sneak: back to 1',
+    'tooltip.riftverse.gadget.anti_grav_granate': 'All mobs within 6 blocks float helplessly for 8 s',
+    'tooltip.riftverse.gadget.anti_grav_granate.bedienung': 'Right-click: throw',
+    'tooltip.riftverse.gadget.uebersetzer_halsband': 'Gives a tamed animal a voice and a mind',
+    'tooltip.riftverse.gadget.uebersetzer_halsband.bedienung': 'Right-click your pet: put on · sneak + empty hand: take off',
+    'tooltip.riftverse.gadget.erinnerungsphiole': 'Stores a place; drinking takes you back',
+    'tooltip.riftverse.gadget.erinnerungsphiole.bedienung': 'Empty: sneak + right-click stores · filled: drink',
+    'tooltip.riftverse.gadget.tarn_detektor': 'Reveals invisible and cloaked beings',
+    'tooltip.riftverse.gadget.tarn_detektor.bedienung': 'Right-click: on/off · 1,000 FE per second in hand',
+    'tooltip.riftverse.gadget.multiversal_multitool': 'Drill, wrench and universe scanner',
+    'tooltip.riftverse.gadget.multiversal_multitool.bedienung': 'Sneak + right-click in the air: switch head',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk2': 'Drill, wrench and universe scanner',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk2.bedienung': 'Sneak + right-click in the air: switch head',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk3': 'Drill, wrench and universe scanner',
+    'tooltip.riftverse.gadget.multiversal_multitool_mk3.bedienung': 'Sneak + right-click in the air: switch head',
+    'tooltip.riftverse.gadget.zeitstopper': 'Freezes mobs and projectiles within 12 blocks for 6 s',
+    'tooltip.riftverse.gadget.zeitstopper.bedienung': 'Right-click: stop time (40,000 FE)',
+    'tooltip.riftverse.gadget.mutagen_spritze': 'Random mutation on a mob – 10 % risk of a failed mutation',
+    'tooltip.riftverse.gadget.mutagen_spritze.bedienung': 'Right-click a mob',
+    'tooltip.riftverse.gadget.aufgaben_box': 'Summons a helper for one task; after 5 min it falls apart explosively',
+    'tooltip.riftverse.gadget.aufgaben_box.bedienung': 'On ore: mine the vein · on a field: harvest · in the air: fight',
+    'message.riftverse.drohne.aufgabe': 'Task: %s', 'gui.riftverse.drohne.0': 'Pick up', 'gui.riftverse.drohne.1': 'Hand over',
+    'gui.riftverse.drohne.2': 'Sort', 'message.riftverse.drohne.an': 'The drone is collecting.', 'message.riftverse.drohne.aus': 'The drone rests.',
+    'message.riftverse.drohne.ziel_fehlt': 'Sneak + right-click a chest (or right-click a player).',
+    'message.riftverse.drohne.sortiert': 'Sorted %s kinds.', 'message.riftverse.drohne.gereicht': '%s handed you something.',
+    'message.riftverse.drohne.leer': 'The drone is out of power.',
+    **{f'message.riftverse.drohne.sinn.{i}': v for i, v in enumerate(DROHNE_SINN_EN)},
+    'message.riftverse.holo': 'The hologram draws all eyes.', 'message.riftverse.schrumpf': '%s: size %s',
+    'message.riftverse.halsband.nicht_zahm': 'Only works on your own tamed animal.',
+    'halsband.riftverse.hallo': 'Oh! I can talk! Hello, %s!', 'halsband.riftverse.leer': 'I am … running out … of words …',
+    'halsband.riftverse.gesammelt': 'I picked up %s things for you!', 'halsband.riftverse.warnung': 'Watch out! There is a %s!',
+    'halsband.riftverse.verletzt': 'You do not look well. Should I get someone? I cannot get anyone.',
+    **{f'halsband.riftverse.welt.{t}': v for t, v in zip(TYP_IDS, HALSBAND_WELT_EN)},
+    **{f'halsband.riftverse.kommentar.{i}': v for i, v in enumerate(HALSBAND_KOMMENTAR_EN)},
+    'message.riftverse.phiole.leer': 'Sneak + right-click fills the vial with this place.',
+    'message.riftverse.phiole.gespeichert': 'The vial remembers this place.', 'tooltip.riftverse.phiole.ort': 'Memory: %s at %s, %s, %s',
+    'message.riftverse.tarn.an': 'Cloak detector on', 'message.riftverse.tarn.aus': 'Cloak detector off',
+    'message.riftverse.multitool.modus': 'Head: %s', 'gui.riftverse.multitool.0': 'Drill', 'gui.riftverse.multitool.1': 'Wrench',
+    'gui.riftverse.multitool.2': 'Scanner', 'tooltip.riftverse.multitool.stufe': 'Stage %s of 3',
+    'message.riftverse.zeitstopp': 'Time stands still (%s frozen).',
+    'message.riftverse.mutation.klein': 'Mutation: shrunk', 'message.riftverse.mutation.gross': 'Mutation: grown',
+    'message.riftverse.mutation.tempo': 'Mutation: much faster', 'message.riftverse.mutation.faehigkeit': 'Mutation: %s',
+    'message.riftverse.mutation.fehl': 'Failed mutation! Run!',
+    'tooltip.riftverse.tempo_chip': 'Double speed, 2.5× power draw', 'tooltip.riftverse.effizienz_chip': '30 % less power draw',
+    'tooltip.riftverse.parallel_chip': 'Two operations at once', 'tooltip.riftverse.transformator_chip': 'The machine tolerates one voltage tier more',
+    'tooltip.riftverse.ki_chip': 'Personality, +10 % speed, the occasional existential crisis',
+    'tooltip.riftverse.chip.einbau': 'Right-click a machine to install · multitool wrench + sneak removes',
+    'message.riftverse.chip.schon_drin': 'This chip is already installed (or the machine takes no chips).',
+    'message.riftverse.chip.eingebaut': '%s installed (%s chips)', 'tooltip.riftverse.ki_krise': 'Existential crisis …',
+    **{f'ki.riftverse.hallo.{i}': v for i, v in enumerate(KI_HALLO_EN)},
+    **{f'ki.riftverse.krise.{i}': v for i, v in enumerate(KI_KRISE_EN)},
+    **{f'ki.riftverse.kommentar.{i}': v for i, v in enumerate(KI_KOMMENTAR_EN)},
+    **{f'ki.riftverse.tooltip.{i}': v for i, v in enumerate(KI_TOOLTIP_EN)},
+    'tooltip.riftverse.ruestung.helmet': 'HUD: universe type, physics modifiers, gun fluid level',
+    'tooltip.riftverse.ruestung.chestplate': 'Energy core supplies all pieces, gun tank 4,000 mB',
+    'tooltip.riftverse.ruestung.leggings': '+10 % mining speed', 'tooltip.riftverse.ruestung.boots': 'No fall damage up to 10 blocks',
+    'tooltip.riftverse.module': 'Modules: %s / %s', 'tooltip.riftverse.brusttank': 'Chest tank: %s / %s mB',
+    'tooltip.riftverse.modul_teil.head': 'Fits: Analysis Visor', 'tooltip.riftverse.modul_teil.chest': 'Fits: Core Mantle',
+    'tooltip.riftverse.modul_teil.legs': 'Fits: Exo Frame', 'tooltip.riftverse.modul_teil.feet': 'Fits: Gravi Boots',
+    'tooltip.riftverse.modul.analyse_hud': 'Ore scan nearby, health and stats of mobs (5 FE/t)',
+    'tooltip.riftverse.modul.nachtsicht_linse': 'Night vision without flicker (10 FE/t)',
+    'tooltip.riftverse.modul.atemfilter': 'Immune to toxic air, longer breath under water (20 FE/t)',
+    'tooltip.riftverse.modul.tarn_detektor': 'Like the gadget, hands free (key H, 50 FE/t)',
+    'tooltip.riftverse.modul.universal_uebersetzer': 'Understands alien NPCs (works once story arcs exist)',
+    'tooltip.riftverse.modul.energieschild': 'Absorbs damage: 1,000 FE per point',
+    'tooltip.riftverse.modul.not_portal': 'On a fatal hit, a portal home (200,000 FE + 100 mB, 10 min cooldown)',
+    'tooltip.riftverse.modul.kanonen_integration': 'Open portals without the gun in hand (key B, sneak: home)',
+    'tooltip.riftverse.modul.klon_link': 'On death your clone also keeps your experience',
+    'tooltip.riftverse.modul.gadget_halterung': 'The first two gadgets in your inventory via keys (Z and X)',
+    'tooltip.riftverse.modul.universums_kern': 'Perfected Core Mantle only: unlocks the "Multiversal Resonance" set bonus',
+    'tooltip.riftverse.modul.servo_verstaerker': '+20 % mining speed, knockback resistance (15 FE/t)',
+    'tooltip.riftverse.modul.sprint_booster': 'While sprinting +25 % speed and step up full blocks (10 FE/t)',
+    'tooltip.riftverse.modul.gravitationsregler': 'Own gravity 50 / 100 / 200 % (key G, 30 FE/t)',
+    'tooltip.riftverse.modul.schrumpf_modul': 'Half size, fits through 1-block gaps (key N, 100 FE/t)',
+    'tooltip.riftverse.modul.fall_daempfer': 'No fall damage (500 FE per landing)',
+    'tooltip.riftverse.modul.sprungfeder': '+50 % jump strength (5 FE per jump)',
+    'tooltip.riftverse.modul.phasenschritt': 'Jump again mid-air: 6-block short teleport (5,000 FE, 3 s)',
+    'tooltip.riftverse.modul.haftsohlen': 'Walk on fluids, even acid (20 FE/t, sneak to sink)',
+    'message.riftverse.not_portal': 'Emergency portal! You were pulled home.',
+    'message.riftverse.brusttank.voll': 'The chest tank is full.', 'message.riftverse.brusttank': 'Chest tank: %s / %s mB',
+    'message.riftverse.gravitationsregler.0': 'Gravity regulator off', 'message.riftverse.gravitationsregler.1': 'Gravity 50 %',
+    'message.riftverse.gravitationsregler.2': 'Gravity 100 %', 'message.riftverse.gravitationsregler.3': 'Gravity 200 %',
+    'message.riftverse.keine_kanone': 'No portal gun in your inventory.', 'message.riftverse.modul_fehlt': 'Missing: %s',
+    'message.riftverse.modul.tarn.an': 'Cloak detector on', 'message.riftverse.modul.tarn.aus': 'Cloak detector off',
+    'message.riftverse.modul.schrumpf.an': 'Shrunk', 'message.riftverse.modul.schrumpf.aus': 'Normal size',
+    'message.riftverse.gadget_fehlt': 'No gadget #%s in your inventory.',
+    'key.riftverse.tarn': 'Armor: cloak detector', 'key.riftverse.kanone': 'Armor: gun integration',
+    'key.riftverse.gadget_1': 'Armor: gadget 1', 'key.riftverse.gadget_2': 'Armor: gadget 2',
+    'key.riftverse.gravitation': 'Armor: gravity regulator', 'key.riftverse.schrumpf': 'Armor: shrink module',
+    'hud.riftverse.heimat': 'Home reality', 'hud.riftverse.physik': 'Gravity %s · %s',
+    'hud.riftverse.kanone': 'Gun %s / %s mB · chest tank %s / %s mB', 'hud.riftverse.energie': 'Energy %s FE',
+    'hud.riftverse.resonanz': 'Multiversal Resonance', 'hud.riftverse.erz': '%s ×%s (%s m)', 'hud.riftverse.keine_erze': 'No ores nearby',
+}
+
+
 if __name__ == '__main__':
     import sys
     pack_de = None
@@ -2272,5 +2698,8 @@ if __name__ == '__main__':
     m5_tags()
     m5_recipes()
     m5_universes()
+    m6_models()
+    m6_tags()
+    m6_recipes()
     lang(pack_de)
     print('fertig')

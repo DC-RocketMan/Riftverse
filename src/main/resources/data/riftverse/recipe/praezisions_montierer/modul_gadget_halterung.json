@@ -1,0 +1,31 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_rahmen"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:chest"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      },
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_gadget_halterung"
+  },
+  "time": 300
+}

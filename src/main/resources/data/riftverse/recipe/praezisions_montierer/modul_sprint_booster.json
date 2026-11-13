@@ -1,0 +1,31 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:mini_motor"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:feder"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_sprint_booster"
+  },
+  "time": 300
+}

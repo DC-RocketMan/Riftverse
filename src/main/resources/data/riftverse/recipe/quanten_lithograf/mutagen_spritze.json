@@ -1,0 +1,26 @@
+{
+  "type": "riftverse:quanten_lithograf",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:biomasse_pulpe"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:naehrserum"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:inversionssplitter"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:mutagen_spritze",
+    "count": 2
+  },
+  "time": 400
+}

@@ -271,7 +271,17 @@ public class PortalKanoneItem extends Item {
             player.displayClientMessage(Component.translatable("message.riftverse.kanone_zerfallen").withStyle(ChatFormatting.GRAY), false);
         }
         if (tank.mb() > 0 && !accepts(tank.stufe())) tank = KanonenTank.LEER;
-        if (tank.mb() < shotCost()) {
+        // Set-Bonus der Multiversal-Rüstung: halber Verbrauch
+        int cost = dev.riftverse.ruestung.Ruestung.kanonenKosten(player, shotCost());
+        // Erst aus dem Brusttank des Kernmantels nachtanken, dann aus Kartuschen
+        if (tank.mb() < cost) {
+            KanonenTank brust = dev.riftverse.ruestung.Ruestung.ausBrusttank(player, this, tank, cost);
+            if (brust != null) {
+                tank = brust;
+                player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 0.6f, 1.8f);
+            }
+        }
+        if (tank.mb() < cost) {
             ItemStack cartridge = takeCartridge(player, now, this);
             if (cartridge == null) {
                 gun.set(ModDataComponents.KANONEN_TANK.get(), tank);
@@ -290,7 +300,7 @@ public class PortalKanoneItem extends Item {
                     stufe);
             player.level().playSound(null, player.blockPosition(), SoundEvents.BUCKET_FILL, SoundSource.PLAYERS, 0.8f, 1.6f);
         }
-        int left = tank.mb() - shotCost();
+        int left = tank.mb() - cost;
         gun.set(ModDataComponents.KANONEN_TANK.get(), left > 0
                 ? new KanonenTank(left, tank.zerfall(), tank.stabil(), tank.konzentrat(), tank.essenz()) : KanonenTank.LEER);
         player.getCooldowns().addCooldown(this, 40);

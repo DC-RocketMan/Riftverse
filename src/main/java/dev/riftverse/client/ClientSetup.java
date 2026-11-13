@@ -50,6 +50,18 @@ public final class ClientSetup {
     public static final KeyMapping ZIEL = new KeyMapping("key.riftverse.ziel", KeyConflictContext.IN_GAME,
             InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_V, "key.categories.riftverse");
 
+    // --- Meilenstein 6: Multiversal-Rüstung (Phasenschritt: in der Luft noch einmal springen) ---
+    public static final KeyMapping TARN = key("key.riftverse.tarn", GLFW.GLFW_KEY_H);
+    public static final KeyMapping KANONE = key("key.riftverse.kanone", GLFW.GLFW_KEY_B);
+    public static final KeyMapping GADGET_1 = key("key.riftverse.gadget_1", GLFW.GLFW_KEY_Z);
+    public static final KeyMapping GADGET_2 = key("key.riftverse.gadget_2", GLFW.GLFW_KEY_X);
+    public static final KeyMapping GRAVITATION = key("key.riftverse.gravitation", GLFW.GLFW_KEY_G);
+    public static final KeyMapping SCHRUMPF = key("key.riftverse.schrumpf", GLFW.GLFW_KEY_N);
+
+    private static KeyMapping key(String name, int code) {
+        return new KeyMapping(name, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, code, "key.categories.riftverse");
+    }
+
     @SubscribeEvent
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenus.PROCESSING.get(), ProcessingScreen::new);
@@ -67,12 +79,15 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.RIFT_PORTAL.get(), RiftPortalRenderer::new);
         event.registerEntityRenderer(ModEntities.RIFT_BOSS.get(), RiftBossRenderer::new);
         event.registerEntityRenderer(ModEntities.SCHROTT_GOLEM.get(), SchrottGolemRenderer::new);
+        event.registerEntityRenderer(ModEntities.HOLO_KOEDER.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
+        event.registerEntityRenderer(ModEntities.ANTI_GRAV_GRANATE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
     }
 
     @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(RUECKKEHR);
         event.register(ZIEL);
+        for (KeyMapping k : new KeyMapping[]{TARN, KANONE, GADGET_1, GADGET_2, GRAVITATION, SCHRUMPF}) event.register(k);
     }
 
     @SubscribeEvent

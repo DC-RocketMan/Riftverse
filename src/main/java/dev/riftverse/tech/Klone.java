@@ -43,6 +43,13 @@ public final class Klone extends SavedData {
     private static final String NAME = "riftverse_klone";
     public static final String INVENTAR = "riftverse:klon_inventar";
     public static final String ZIEL = "riftverse:klon_ziel";
+    public static final String KLON_XP = "riftverse:klon_xp";
+
+    /** Mit Klon-Link bleibt die Erfahrung beim Klon, statt als Kugeln liegen zu bleiben. */
+    @SubscribeEvent
+    public static void onXpDrop(net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent event) {
+        if (event.getEntity().getPersistentData().contains(KLON_XP)) event.setDroppedExperience(0);
+    }
 
     private final Map<UUID, GlobalPos> tanks = new HashMap<>();
 
@@ -97,6 +104,14 @@ public final class Klone extends SavedData {
             data.put(INVENTAR, inv);
             player.getInventory().clearContent();
         }
+        // Klon-Link (Modul im Kernmantel): auch die Erfahrung wandert in den Klon
+        if (dev.riftverse.ruestung.Ruestung.hat(player, dev.riftverse.ruestung.Modul.KLON_LINK)) {
+            CompoundTag xp = new CompoundTag();
+            xp.putInt("Level", player.experienceLevel);
+            xp.putFloat("Fortschritt", player.experienceProgress);
+            xp.putInt("Gesamt", player.totalExperience);
+            data.put(KLON_XP, xp);
+        }
         CompoundTag ziel = new CompoundTag();
         ziel.putString("Dim", tank.getLevel().dimension().location().toString());
         ziel.putLong("Pos", tank.getBlockPos().asLong());
@@ -114,6 +129,13 @@ public final class Klone extends SavedData {
         if (old.contains(ZIEL, Tag.TAG_COMPOUND)) {
             player.getPersistentData().put(ZIEL, old.getCompound(ZIEL).copy());
             old.remove(ZIEL);
+        }
+        if (old.contains(KLON_XP, Tag.TAG_COMPOUND)) {
+            CompoundTag xp = old.getCompound(KLON_XP);
+            player.experienceLevel = xp.getInt("Level");
+            player.experienceProgress = xp.getFloat("Fortschritt");
+            player.totalExperience = xp.getInt("Gesamt");
+            old.remove(KLON_XP);
         }
     }
 

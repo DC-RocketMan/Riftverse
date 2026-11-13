@@ -1,0 +1,44 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      },
+      "count": 5
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:gravitit_rahmen"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:rift_schaltkreis"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:flux_spule"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:piston"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:white_wool"
+      },
+      "count": 3
+    }
+  ],
+  "result": {
+    "id": "riftverse:exo_rahmen_rohling"
+  },
+  "time": 600
+}

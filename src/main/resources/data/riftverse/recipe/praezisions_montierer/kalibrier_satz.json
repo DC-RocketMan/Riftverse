@@ -1,0 +1,37 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:fluxkristall"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:saeuregel"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:chronoglas_scheibe"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "tag": "riftverse:story_fragmente"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:quanten_schaltkreis"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:kalibrier_satz"
+  },
+  "time": 300
+}

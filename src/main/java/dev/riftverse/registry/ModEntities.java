@@ -39,7 +39,18 @@ public final class ModEntities {
                     .clientTrackingRange(10)
                     .build("schrott_golem"));
 
+    // --- Meilenstein 6: Gadgets ---
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.gadget.HoloKoederEntity>> HOLO_KOEDER =
+            ENTITIES.register("holo_koeder", () -> EntityType.Builder.<dev.riftverse.gadget.HoloKoederEntity>of(
+                    dev.riftverse.gadget.HoloKoederEntity::new, MobCategory.MISC).sized(0.6f, 1.8f).noSave().fireImmune()
+                    .clientTrackingRange(8).build("holo_koeder"));
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.gadget.AntiGravGranateEntity>> ANTI_GRAV_GRANATE =
+            ENTITIES.register("anti_grav_granate", () -> EntityType.Builder.<dev.riftverse.gadget.AntiGravGranateEntity>of(
+                    dev.riftverse.gadget.AntiGravGranateEntity::new, MobCategory.MISC).sized(0.25f, 0.25f)
+                    .clientTrackingRange(4).updateInterval(10).build("anti_grav_granate"));
+
     public static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(HOLO_KOEDER.get(), dev.riftverse.gadget.HoloKoederEntity.createAttributes().build());
         event.put(RIFT_BOSS.get(), RiftBossEntity.createAttributes().build());
         event.put(SCHROTT_GOLEM.get(), SchrottGolem.createAttributes().build());
     }

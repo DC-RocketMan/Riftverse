@@ -145,6 +145,7 @@ public final class RauchTest {
         RauchTestM3.aufbauen(server, level, recipes, base.south(64));
         RauchTestM4.aufbauen(server, level, recipes, base.south(112));
         RauchTestM5.aufbauen(server, level, recipes, base.south(176));
+        RauchTestM6.aufbauen(server, level, recipes, base.south(240));
         ticks = 0;
     }
 
@@ -356,6 +357,7 @@ public final class RauchTest {
         RauchTestM3.ergebnis(server, level);
         RauchTestM4.ergebnis(server, level);
         RauchTestM5.ergebnis(server, level);
+        RauchTestM6.ergebnis(server, level);
 
         if (failures.isEmpty()) {
             Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: BESTANDEN");

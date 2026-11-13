@@ -1,0 +1,31 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:saeuregel"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:isolierfolie"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:kuehlkoerper"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_atemfilter"
+  },
+  "time": 300
+}

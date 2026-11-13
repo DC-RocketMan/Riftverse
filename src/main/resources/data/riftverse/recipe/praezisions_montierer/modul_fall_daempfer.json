@@ -1,0 +1,31 @@
+{
+  "type": "riftverse:praezisions_montierer",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "riftverse:antigrav_platte"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:feder"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:white_wool"
+      },
+      "count": 2
+    },
+    {
+      "ingredient": {
+        "item": "riftverse:graphitplatte"
+      }
+    }
+  ],
+  "result": {
+    "id": "riftverse:modul_fall_daempfer"
+  },
+  "time": 300
+}

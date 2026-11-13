@@ -5,6 +5,7 @@ import dev.riftverse.devtest.RauchTest;
 import dev.riftverse.energy.EnergyNet;
 import dev.riftverse.network.RueckkehrPayload;
 import dev.riftverse.network.ZielPayload;
+import dev.riftverse.registry.ModArmorMaterials;
 import dev.riftverse.registry.ModAttachments;
 import dev.riftverse.registry.ModBiomeModifiers;
 import dev.riftverse.registry.ModBlockEntities;
@@ -40,6 +41,7 @@ public class Riftverse {
         ModFluids.FLUID_TYPES.register(modBus);
         ModFluids.FLUIDS.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
+        ModArmorMaterials.MATERIALS.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModMenus.MENUS.register(modBus);
@@ -61,6 +63,7 @@ public class Riftverse {
         modBus.addListener(ModEntities::registerSpawnPlacements);
         modBus.addListener(RueckkehrPayload::register);
         modBus.addListener(ZielPayload::register);
+        modBus.addListener(dev.riftverse.network.RuestungPayload::register);
         modBus.addListener(ModBlockEntities::registerCapabilities);
 
         // Riftverse-Stromnetz: verteilt am Ende jedes Server-Ticks

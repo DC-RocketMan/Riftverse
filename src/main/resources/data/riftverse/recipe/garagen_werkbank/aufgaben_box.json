@@ -1,0 +1,27 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "item": "riftverse:biomasse_pulpe"
+    },
+    {
+      "item": "riftverse:biomasse_pulpe"
+    },
+    {
+      "item": "riftverse:biomasse_pulpe"
+    },
+    {
+      "item": "riftverse:biomasse_pulpe"
+    },
+    {
+      "item": "riftverse:quanten_schaltkreis"
+    },
+    {
+      "item": "minecraft:iron_block"
+    }
+  ],
+  "result": {
+    "id": "riftverse:aufgaben_box"
+  },
+  "loetzinn": 1
+}

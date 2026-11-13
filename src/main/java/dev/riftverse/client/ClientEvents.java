@@ -26,6 +26,35 @@ public final class ClientEvents {
         while (ClientSetup.ZIEL.consumeClick()) {
             if (mc.player != null && mc.screen == null) PacketDistributor.sendToServer(new ZielPayload(mc.player.isShiftKeyDown()));
         }
+        // Multiversal-Rüstung
+        ruestungTaste(mc, ClientSetup.TARN, dev.riftverse.ruestung.Ruestung.AKTION_TARN);
+        ruestungTaste(mc, ClientSetup.KANONE, dev.riftverse.ruestung.Ruestung.AKTION_KANONE);
+        ruestungTaste(mc, ClientSetup.GADGET_1, dev.riftverse.ruestung.Ruestung.AKTION_GADGET_1);
+        ruestungTaste(mc, ClientSetup.GADGET_2, dev.riftverse.ruestung.Ruestung.AKTION_GADGET_2);
+        ruestungTaste(mc, ClientSetup.GRAVITATION, dev.riftverse.ruestung.Ruestung.AKTION_GRAVITATION);
+        ruestungTaste(mc, ClientSetup.SCHRUMPF, dev.riftverse.ruestung.Ruestung.AKTION_SCHRUMPF);
+        phasenschritt(mc);
+    }
+
+    private static void ruestungTaste(Minecraft mc, net.minecraft.client.KeyMapping key, int aktion) {
+        while (key.consumeClick()) {
+            if (mc.player != null && mc.screen == null) PacketDistributor.sendToServer(new dev.riftverse.network.RuestungPayload(aktion));
+        }
+    }
+
+    private static boolean sprungGedrueckt;
+    private static int luftTicks;
+
+    /** Phasenschritt: In der Luft noch einmal Springen drücken. */
+    private static void phasenschritt(Minecraft mc) {
+        if (mc.player == null || mc.screen != null) return;
+        boolean down = mc.options.keyJump.isDown();
+        luftTicks = mc.player.onGround() ? 0 : luftTicks + 1;
+        if (down && !sprungGedrueckt && luftTicks > 2 && !mc.player.isInWater() && !mc.player.getAbilities().flying
+                && dev.riftverse.ruestung.Ruestung.hat(mc.player, dev.riftverse.ruestung.Modul.PHASENSCHRITT)) {
+            PacketDistributor.sendToServer(new dev.riftverse.network.RuestungPayload(dev.riftverse.ruestung.Ruestung.AKTION_PHASE));
+        }
+        sprungGedrueckt = down;
     }
 
     /** Schrottwelt: dauerhafter Nebel. Toxische und organische Welt: leichter Dunst. */
