@@ -76,8 +76,9 @@ Portal-Kanone Mk III, zwei neue Universumstypen und ein Ersatz für die Story-Fr
   wirken wie ein großer Speicher (bis 9 × 9 × 9). So zählt jeder Speicher mit, ohne eigene Multiblock-Hülle.
 - **Universums-Destillator ist ein Einzelblock** (offene Frage im Dokument).
 - **Konzentrat im Tank:** Rekonfigurator und Parallelzapfer nehmen stabiles Portalfluid und Konzentrat; Konzentrat zählt doppelt.
-- **Hochgravitation:** Mit 2,5 g springt man nur noch einen halben Block hoch. Damit man nicht in jeder Mulde festsitzt,
-  steigt man dort volle Blöcke ohne Sprung hoch (Schritthöhe 1). Das Gelände ist plattgedrückt.
+- **Hochgravitation:** Mit 2,5 g springt man nur noch gut einen halben Block hoch. Über einen vollen Block kommt man
+  nur mit selbst gesetzten Stufen (halben Blöcken), die man mit der normalen Schritthöhe hochläuft. Das gilt auch für
+  Mobs. Das Gelände ist plattgedrückt.
 - **Spiegelwelt:** Alle Dimensionen teilen sich die Tageszeit der Overworld. Ein kleiner Mixin verschiebt sie für den
   Dimensionstyp der Spiegelwelt um einen halben Tag (Himmel, Licht und Mob-Spawns passen dazu). Das Gelände ist an der
   Nord-Süd-Achse durch die Mitte des Universums gespiegelt. Doppelgänger sind Wüstenzombies mit einer Kopie deiner

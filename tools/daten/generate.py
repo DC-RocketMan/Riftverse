@@ -1916,7 +1916,7 @@ M4_DE = {
     'message.riftverse.mikrokosmos.abstieg': 'Die Zivilisation in der Zelle fällt auf Stufe %s zurück.',
     'message.riftverse.zapfer.erschoepft': 'Die Quelle des Parallelzapfers ist erschöpft – neu ausrichten!',
     'message.riftverse.zapfer.entdeckt': 'Die andere Seite hat den Diebstahl bemerkt!',
-    'message.riftverse.hochgravitation': 'Hohe Gravitation: Springen geht kaum, jeder Sturz zählt dreifach.',
+    'message.riftverse.hochgravitation': 'Hohe Gravitation: Springen geht kaum – hoch kommst du nur über Stufen. Jeder Sturz zählt dreifach.',
     'message.riftverse.doppelgaenger': 'Irgendwo hier läuft jemand herum, der aussieht wie du …',
 }
 
@@ -2014,7 +2014,7 @@ M4_EN = {
     'message.riftverse.mikrokosmos.abstieg': 'The civilization in the cell falls back to level %s.',
     'message.riftverse.zapfer.erschoepft': 'The parallel tap source is depleted – realign it!',
     'message.riftverse.zapfer.entdeckt': 'The other side noticed the theft!',
-    'message.riftverse.hochgravitation': 'High gravity: you can barely jump, every fall counts triple.',
+    'message.riftverse.hochgravitation': 'High gravity: you can barely jump – only slabs get you up. Every fall counts triple.',
     'message.riftverse.doppelgaenger': 'Somewhere around here walks someone who looks like you …',
 }
 

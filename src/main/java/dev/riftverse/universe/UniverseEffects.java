@@ -55,7 +55,6 @@ public final class UniverseEffects {
     private static final ResourceLocation SAFE_FALL = Riftverse.id("universe_safe_fall");
     private static final ResourceLocation FALL_DAMAGE = Riftverse.id("universe_fall_damage");
     private static final ResourceLocation SCALE = Riftverse.id("universe_scale");
-    private static final ResourceLocation STEP = Riftverse.id("universe_step");
     /** Markiert Doppelgänger der Spiegelwelt. */
     public static final String DOPPELGAENGER = "riftverse:doppelgaenger";
 
@@ -224,8 +223,8 @@ public final class UniverseEffects {
         set(e, Attributes.SAFE_FALL_DISTANCE, SAFE_FALL, 1.0 / g - 1.0);
         // Hochgravitation: Fallschaden 3×, schon kleine Stürze sind tödlich
         set(e, Attributes.FALL_DAMAGE_MULTIPLIER, FALL_DAMAGE, heavy ? 2.0 : g - 1.0);
-        // Springen geht dort kaum noch; damit man nicht in jeder Mulde festsitzt, steigt man volle Blöcke hoch
-        set(e, Attributes.STEP_HEIGHT, STEP, heavy ? 1.0 / 0.6 - 1.0 : 0.0);
+        // Springen geht dort kaum noch (gut ein halber Block): über einen vollen Block kommt man nur mit selbst gesetzten
+        // Stufen, denn eine halbe Stufe schafft die normale Schritthöhe noch.
     }
 
     private static void set(LivingEntity e, Holder<Attribute> attribute, ResourceLocation id, double amount) {
