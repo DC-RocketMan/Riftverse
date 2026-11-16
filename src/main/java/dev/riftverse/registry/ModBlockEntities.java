@@ -58,6 +58,10 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("fluid_mixer", () -> BlockEntityType.Builder.of(FluidMixerBlockEntity::new,
                     ModBlocks.FLUID_MIXER.get()).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<dev.riftverse.tech.GaragenAkkuBlockEntity>> GARAGEN_AKKU =
+            BLOCK_ENTITIES.register("garagen_akku", () -> BlockEntityType.Builder.of(dev.riftverse.tech.GaragenAkkuBlockEntity::new,
+                    ModBlocks.GARAGEN_AKKU.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<XenitZelleBlockEntity>> XENIT_ZELLE =
             BLOCK_ENTITIES.register("xenit_zelle", () -> BlockEntityType.Builder.of(XenitZelleBlockEntity::new,
                     ModBlocks.XENIT_ZELLE.get()).build(null));
@@ -164,6 +168,8 @@ public final class ModBlockEntities {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, FLUID_MIXER.get(),
                 (mixer, side) -> mixer.energy().readOnly());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, XENIT_ZELLE.get(),
+                (cell, side) -> cell.energy().readOnly());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, GARAGEN_AKKU.get(),
                 (cell, side) -> cell.energy().readOnly());
 
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, ENERGY_PORT.get(),

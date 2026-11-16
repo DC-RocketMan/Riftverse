@@ -775,5 +775,15 @@
   "info.riftverse.aufgaben_box": "Right-click an ore: the helper mines the whole vein (up to 64 blocks). On a field: harvests and replants within 8 blocks. Into the air: fights. After 5 minutes it falls apart.",
   "info.riftverse.ruestung": "Multiversal armour has no durability, it runs on FE. Blank in the precision assembler, calibrated in the quantum lithograph, perfected in the rift forge; modules, charge and chest tank carry over. Set bonus \"Multiversal Resonance\": all four pieces perfected and a universe core in the core mantle.",
   "info.riftverse.modul": "Install at the garage workbench together with the matching armour piece. To remove, put the piece alone into the workbench – the last installed module stays in the grid. The armour battery pays the running costs.",
-  "info.riftverse.chip": "Right-click a processing machine from T1 onwards to install the chip (one of each kind). Remove with the multitool in wrench mode and sneak + right-click."
+  "info.riftverse.chip": "Right-click a processing machine from T1 onwards to install the chip (one of each kind). Remove with the multitool in wrench mode and sneak + right-click.",
+  "item.riftverse.handbuch": "Riftverse Handbook",
+  "tooltip.riftverse.handbuch": "Everything about machines, universes and recipes",
+  "tooltip.riftverse.handbuch_g": "Tip: hold G on any tooltip to open its page",
+  "block.riftverse.garagen_akku": "Garage Battery",
+  "tooltip.riftverse.garagen_akku": "Tier I · no xenite · keeps its charge when mined",
+  "info.riftverse.garagen_akku": "The first storage block, without any xenite: 100,000 FE at tier I, built from tin, copper and iron plates, redstone and a garage casing. Charges and discharges items and keeps its charge when broken. Only supplies consumers.",
+  "guide.riftverse.fluid_rein": "Fluid in: %s mB %s",
+  "guide.riftverse.fluid_raus": "Fluid out: %s mB %s",
+  "guide.riftverse.nebenprodukt": "Byproduct %s: %s %% chance",
+  "guide.riftverse.formlos": "Shapeless: any arrangement"
 }

@@ -73,6 +73,9 @@ public class Riftverse {
         NeoForge.EVENT_BUS.addListener(EnergyNet::onLevelUnload);
         NeoForge.EVENT_BUS.addListener(EnergyNet::onServerStopped);
 
+        // Handbuch: neue Spieler bekommen es beim ersten Betreten
+        NeoForge.EVENT_BUS.addListener(dev.riftverse.handbuch.Handbuch::onLogin);
+
         // Nur mit -Driftverse.rauchtest=true (GitHub Actions: ./gradlew runRauchtest)
         RauchTest.registerIfEnabled();
 

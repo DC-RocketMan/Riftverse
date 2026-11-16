@@ -4,6 +4,47 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
+## Handbuch und Garagen-Akku
+
+Riftverse hat jetzt ein Handbuch im Spiel (GuideME) und einen ersten Speicher ganz ohne Xenit.
+
+| Bereich | Inhalt |
+|---|---|
+| **Handbuch** | 46 Seiten in acht Kapiteln: Willkommen, Ziele und Wege, Grundlagen, Rohstoffe, Bauteile, Strom, Maschinen, Portale und Universen, Gadgets und Rüstung. Jedes Riftverse-Item hat eine Seite |
+| **Rezepte im Buch** | Alle Riftverse-Rezepttypen (Werkbank, alle Maschinen, Fluid-Mixer, Raffinerie) werden direkt aus dem Spiel gezeichnet, mit Dauer, FE/t, Stufe, Hammer, Lötzinn und Nebenprodukten – wie in JEI und EMI |
+| **3D-Szenen** | Kabel und Leitungen aller Stufen nebeneinander, Raffinerie, Pendel, Parallelzapfer, Rift-Schmiede, Weltenformer und Eindämmungsring zum Drehen |
+| **G halten** | In jedem Tooltip springt G zur passenden Seite (GuideME) |
+| **Garagen-Akku** | T0-Speicher: 100.000 FE auf Stufe I aus Zinn-, Kupfer- und Eisenplatten, Redstone und Garagen-Gehäuse; behält die Ladung beim Abbauen |
+
+### So nutzt man es
+
+1. Neue Spieler bekommen das **Riftverse-Handbuch** beim ersten Betreten (abschaltbar: `handbuch.beim_start`).
+   Verloren? Buch + Kupferbarren in der normalen Werkbank.
+2. Rechtsklick öffnet es an der zuletzt gelesenen Seite. Oben rechts gibt es eine Volltextsuche.
+3. Über jedem Item im Inventar **G** gedrückt halten öffnet dessen Seite.
+
+### Entscheidungen
+
+- **Nachschlagewerk statt Tutorial:** Die Startseite zeigt Ziele, die Seite „Ziele und Wege“ stellt für Platten,
+  Erz, Strom, Xenit, Reisen und seltene Rohstoffe die verschiedenen Wege nebeneinander. Es gibt keinen festen Pfad;
+  welche Reihenfolge man wählt, bleibt dem Spieler überlassen.
+- **GuideME steckt in der Riftverse-Jar** (Jar-in-Jar), damit Riftverse allein spielbar bleibt. Ist im Pack eine
+  neuere GuideME-Version installiert, nimmt NeoForge diese.
+- **Seiten auf Deutsch** als Grundsprache des Guides; eine englische Fassung käme nach `_en_us/`.
+- **Rezepte aus dem Anzeigemodell von JEI/EMI** (`compat/RezeptAnsicht`): Fluide stehen als passende Kartusche oder
+  Eimer im Slot und mit ihrer Menge im Text.
+- **Garagen-Akku statt Xenit in der Energiezelle:** Die Energiezelle (Item) bleibt, wie sie war. Davor kommt ein
+  vierter Speicherblock aus Erdmetallen und Redstone, damit die Garage schon Strom puffern kann. Zinn liegt in der
+  Bilanz damit bei 499 statt 496 Barren.
+- **Prüfskript:** `python3 tools/guide/pruefen.py` stellt sicher, dass jedes Item genau eine Seite hat und alle Ids,
+  Rezepte und Links stimmen. Es läuft in GitHub Actions vor dem Build.
+
+### Seiten schreiben
+
+Die Seiten liegen unter `src/main/resources/assets/riftverse/guides/riftverse/handbuch/`. Zum Schreiben im laufenden
+Spiel den Client mit `-Dguideme.riftverse.handbuch.sources=<Pfad zu diesem Ordner>` starten: GuideME lädt Änderungen
+sofort neu. Neue Items brauchen einen Eintrag in `item_ids` einer Seite, sonst schlägt das Prüfskript fehl.
+
 ## Stand: Meilenstein 7 – Feinschliff
 
 Mit Meilenstein 7 kommen Rezeptanzeigen für JEI und EMI, Blockinfos für Jade, neue Config-Optionen und ein
@@ -479,6 +520,7 @@ Wo das Design-Dokument nichts festlegt oder sich widerspricht, gilt bis auf Weit
 | `universen.tage` | `10` | Ingame-Tage ohne Besuch bis zum Zurücksetzen |
 | `universen.bloecke` | `64` | Ab mehr als so vielen platzierten Blöcken gilt ein Universum als bebaut |
 | `story.boss_bei_ankunft` | `false` | Prototyp: Boss kurz nach der Ankunft starten (bis zum Story-Modus aus) |
+| `handbuch.beim_start` | `true` | Neue Spieler bekommen beim ersten Betreten das Riftverse-Handbuch |
 
 ## Bauen und Starten
 

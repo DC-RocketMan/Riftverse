@@ -22,6 +22,9 @@ jobs:
       - name: Gradle einrichten
         uses: gradle/actions/setup-gradle@v5
 
+      - name: Handbuch prüfen
+        run: python3 tools/guide/pruefen.py
+
       - name: Bauen
         run: |
           chmod +x ./gradlew

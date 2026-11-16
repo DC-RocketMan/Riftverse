@@ -228,7 +228,7 @@ R = 'riftverse:'
 MODELL = {
     'T0 Garage': {
         'garagen_werkbank': 1, 'garagenpresse': 1, 'kurbel_dynamo': 2, 'handkurbel': 1, 'garagen_hammer': 2,
-        'loetkolben': 1, 'kupferkabel': 16, 'energiezelle': 1,
+        'loetkolben': 1, 'kupferkabel': 16, 'energiezelle': 1, 'garagen_akku': 1,
     },
     'T1 Bastler': {
         'erzmuehle': 2, 'walzbank': 1, 'legierungsofen': 1, 'tonnenreaktor': 2, 'xenit_schmelze': 1, 'platinen_aetzer': 1,
