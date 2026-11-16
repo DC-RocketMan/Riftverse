@@ -50,6 +50,8 @@ neoForge {
 }
 
 repositories {
+    // GuideME (Handbuch im Spiel)
+    mavenCentral()
     // JEI
     maven {
         name = 'BlameJared'
@@ -76,6 +78,17 @@ dependencies {
     compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
     compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
     compileOnly "maven.modrinth:jade:${jade_version}"
+
+    // GuideME für das Handbuch: gegen die API kompilieren, die Mod selbst in die Riftverse-Jar packen,
+    // damit Riftverse allein spielbar bleibt. Ist eine neuere GuideME-Version installiert, nimmt NeoForge diese.
+    compileOnly "org.appliedenergistics:guideme:${guideme_version}:api"
+    runtimeOnly "org.appliedenergistics:guideme:${guideme_version}"
+    jarJar("org.appliedenergistics:guideme") {
+        version {
+            strictly "[${guideme_version},21.2)"
+            prefer guideme_version
+        }
+    }
 }
 
 // Wichtig unter Windows: Umlaute in den Story-Texten korrekt kompilieren

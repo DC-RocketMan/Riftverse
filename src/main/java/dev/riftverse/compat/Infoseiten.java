@@ -43,7 +43,7 @@ public final class Infoseiten {
             "xenit_ore", "tin_ore", "fluxkristall_ore", "schrott_haufen", "meteoritenkern", "gravitit_ore", "nullmaterie_erz",
             "meteoritenpeiler", "saeuregel",
             // T0/T1 Strom
-            "kurbel_dynamo", "handkurbel", "tonnenreaktor", "xenit_zelle", "einspeiser", "ausspeiser", "kupferkabel",
+            "kurbel_dynamo", "handkurbel", "garagen_akku", "tonnenreaktor", "xenit_zelle", "einspeiser", "ausspeiser", "kupferkabel",
             // T2
             "umspanner", "flux_zelle", "chrono_beschleuniger", "biomasse_kessel", "zeitschleifen_solar",
             "fluxkristall_resonator", "gravitations_pendel",

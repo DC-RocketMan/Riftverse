@@ -30,6 +30,8 @@ public final class Config {
     public static final ModConfigSpec.IntValue BUILD_THRESHOLD;
     /** Prototyp: Boss kurz nach der Ankunft starten (bis zum Story-Modus aus). */
     public static final ModConfigSpec.BooleanValue BOSS_ON_ARRIVAL;
+    /** Neue Spieler bekommen beim ersten Betreten das Riftverse-Handbuch. */
+    public static final ModConfigSpec.BooleanValue GUIDE_ON_JOIN;
 
     static {
         ModConfigSpec.Builder b = new ModConfigSpec.Builder();
@@ -86,6 +88,12 @@ public final class Config {
                 .comment("Prototyp aus dem ersten Entwurf: Boss 6 Sekunden nach der Ankunft starten.",
                         "Bis zum Story-Modus aus, damit Universen beim Betreten friedlich sind.")
                 .define("boss_bei_ankunft", false);
+        b.pop();
+
+        b.push("handbuch");
+        GUIDE_ON_JOIN = b
+                .comment("Neue Spieler bekommen beim ersten Betreten das Riftverse-Handbuch ins Inventar.")
+                .define("beim_start", true);
         b.pop();
 
         SPEC = b.build();

@@ -780,5 +780,15 @@
   "info.riftverse.aufgaben_box": "Rechtsklick auf ein Erz: Der Helfer baut die Ader ab (bis 64 Blöcke). Auf ein Feld: Er erntet und sät im Umkreis 8. In die Luft: Er kämpft. Nach 5 Minuten zerfällt er.",
   "info.riftverse.ruestung": "Multiversal-Rüstung ohne Haltbarkeit, sie läuft mit FE. Rohling im Präzisions-Montierer, Kalibriert im Quanten-Lithografen, Perfektioniert in der Rift-Schmiede; Module, Ladung und Brusttank wandern mit. Set-Bonus „Multiversale Resonanz“: alle vier Teile perfektioniert und ein Universums-Kern im Kernmantel.",
   "info.riftverse.modul": "An der Garagen-Werkbank zusammen mit dem passenden Rüstungsteil einbauen. Ausbauen: das Teil allein in die Werkbank – das zuletzt eingebaute Modul bleibt liegen. Laufende Kosten zahlt der Akku der Rüstung.",
-  "info.riftverse.chip": "Rechtsklick auf eine Verarbeitungsmaschine ab T1 baut den Chip ein (jede Sorte einmal). Ausbauen mit dem Multitool im Schlüssel-Modus und Schleichen + Rechtsklick."
+  "info.riftverse.chip": "Rechtsklick auf eine Verarbeitungsmaschine ab T1 baut den Chip ein (jede Sorte einmal). Ausbauen mit dem Multitool im Schlüssel-Modus und Schleichen + Rechtsklick.",
+  "item.riftverse.handbuch": "Riftverse-Handbuch",
+  "tooltip.riftverse.handbuch": "Alles über Maschinen, Universen und Rezepte",
+  "tooltip.riftverse.handbuch_g": "Tipp: In jedem Tooltip G halten öffnet die passende Seite",
+  "block.riftverse.garagen_akku": "Garagen-Akku",
+  "tooltip.riftverse.garagen_akku": "Stufe I · ohne Xenit · behält die Ladung beim Abbauen",
+  "info.riftverse.garagen_akku": "Der erste Speicher, ganz ohne Xenit: 100.000 FE auf Stufe I, gebaut aus Zinn-, Kupfer- und Eisenplatten, Redstone und einem Garagen-Gehäuse. Lädt und entlädt Items und behält die Ladung beim Abbauen. Gibt Energie nur an Verbraucher ab.",
+  "guide.riftverse.fluid_rein": "Fluid rein: %s mB %s",
+  "guide.riftverse.fluid_raus": "Fluid raus: %s mB %s",
+  "guide.riftverse.nebenprodukt": "Nebenprodukt %s: %s %% Chance",
+  "guide.riftverse.formlos": "Formlos: Anordnung egal"
 }

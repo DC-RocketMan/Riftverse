@@ -636,7 +636,7 @@ EN = {
 
 
 def lang(texture_pack_de=None):
-    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE, **M4_DE, **M5_DE, **M6_DE, **M7_DE}), ('en_us', {**EN, **M2_EN, **M3_EN, **M4_EN, **M5_EN, **M6_EN, **M7_EN})):
+    for code, entries in (('de_de', {**DE, **M2_DE, **M3_DE, **M4_DE, **M5_DE, **M6_DE, **M7_DE, **HB_DE}), ('en_us', {**EN, **M2_EN, **M3_EN, **M4_EN, **M5_EN, **M6_EN, **M7_EN, **HB_EN})):
         p = os.path.join(ASSETS, 'lang', code + '.json')
         data = {}
         if os.path.exists(p):
@@ -2875,6 +2875,75 @@ M7_EN = {
 }
 
 
+# =============================================================================
+# Handbuch (GuideME) und Garagen-Akku
+# =============================================================================
+def hb_models():
+    # Garagen-Akku: Holzkiste mit Batteriefenster, oben die beiden Pole
+    for suffix in ('', '_on'):
+        block_model('garagen_akku' + suffix, 'minecraft:block/cube_bottom_top', {
+            'top': tex('garagen_akku_top'), 'bottom': tex('casing_t0_top'), 'side': tex('garagen_akku_side' + suffix)})
+    variants = {}
+    for facing, y in HORIZONTAL.items():
+        for active in ('false', 'true'):
+            variants[f'active={active},facing={facing}'] = variant('garagen_akku' + ('_on' if active == 'true' else ''), y=y)
+    blockstate('garagen_akku', variants)
+    item_from_block('garagen_akku')
+    item_generated('handbuch')
+
+
+def hb_loot():
+    # Wie die Xenit-Zelle: Ladung bleibt beim Abbauen erhalten
+    write(os.path.join(DATA, NS, 'loot_table', 'blocks', 'garagen_akku.json'), {
+        'type': 'minecraft:block',
+        'pools': [{'rolls': 1, 'bonus_rolls': 0,
+                   'entries': [{'type': 'minecraft:item', 'name': rl('garagen_akku'), 'functions': [
+                       {'function': 'minecraft:copy_components', 'source': 'block_entity', 'include': [f'{NS}:energy']}]}],
+                   'conditions': [{'condition': 'minecraft:survives_explosion'}]}],
+        'random_sequence': f'{NS}:blocks/garagen_akku'})
+
+
+def hb_tags():
+    tag('block', 'minecraft:mineable/axe', ['garagen_akku'])
+
+
+def hb_recipes():
+    # Erster Speicher ohne Xenit: nur Erdmetalle und Redstone, alles schon in der Garage machbar
+    werkbank_shaped('garagen_akku', ['ZRZ', 'KCK', 'IRI'],
+                    {'Z': '#c:plates/tin', 'R': '#c:dusts/redstone', 'K': '#c:plates/copper', 'C': 'garagen_gehaeuse',
+                     'I': '#c:plates/iron'},
+                    'garagen_akku', hammer=1)
+    # Handbuch nachbauen: Buch + Kupferbarren
+    shapeless_vanilla('handbuch', ['minecraft:book', '#c:ingots/copper'], 'handbuch')
+
+
+HB_DE = {
+    'item.riftverse.handbuch': 'Riftverse-Handbuch',
+    'tooltip.riftverse.handbuch': 'Alles über Maschinen, Universen und Rezepte',
+    'tooltip.riftverse.handbuch_g': 'Tipp: In jedem Tooltip G halten öffnet die passende Seite',
+    'block.riftverse.garagen_akku': 'Garagen-Akku',
+    'tooltip.riftverse.garagen_akku': 'Stufe I · ohne Xenit · behält die Ladung beim Abbauen',
+    'info.riftverse.garagen_akku': 'Der erste Speicher, ganz ohne Xenit: 100.000 FE auf Stufe I, gebaut aus Zinn-, Kupfer- und Eisenplatten, Redstone und einem Garagen-Gehäuse. Lädt und entlädt Items und behält die Ladung beim Abbauen. Gibt Energie nur an Verbraucher ab.',
+    # Rezepte im Handbuch
+    'guide.riftverse.fluid_rein': 'Fluid rein: %s mB %s',
+    'guide.riftverse.fluid_raus': 'Fluid raus: %s mB %s',
+    'guide.riftverse.nebenprodukt': 'Nebenprodukt %s: %s %% Chance',
+    'guide.riftverse.formlos': 'Formlos: Anordnung egal',
+}
+HB_EN = {
+    'item.riftverse.handbuch': 'Riftverse Handbook',
+    'tooltip.riftverse.handbuch': 'Everything about machines, universes and recipes',
+    'tooltip.riftverse.handbuch_g': 'Tip: hold G on any tooltip to open its page',
+    'block.riftverse.garagen_akku': 'Garage Battery',
+    'tooltip.riftverse.garagen_akku': 'Tier I · no xenite · keeps its charge when mined',
+    'info.riftverse.garagen_akku': 'The first storage block, without any xenite: 100,000 FE at tier I, built from tin, copper and iron plates, redstone and a garage casing. Charges and discharges items and keeps its charge when broken. Only supplies consumers.',
+    'guide.riftverse.fluid_rein': 'Fluid in: %s mB %s',
+    'guide.riftverse.fluid_raus': 'Fluid out: %s mB %s',
+    'guide.riftverse.nebenprodukt': 'Byproduct %s: %s %% chance',
+    'guide.riftverse.formlos': 'Shapeless: any arrangement',
+}
+
+
 if __name__ == '__main__':
     import sys
     pack_de = None
@@ -2910,5 +2979,9 @@ if __name__ == '__main__':
     m6_models()
     m6_tags()
     m6_recipes()
+    hb_models()
+    hb_loot()
+    hb_tags()
+    hb_recipes()
     lang(pack_de)
     print('fertig')

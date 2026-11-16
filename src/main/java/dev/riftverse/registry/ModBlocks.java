@@ -89,6 +89,9 @@ public final class ModBlocks {
             () -> new ProcessingBlock(garageProps(), MachineKind.GARAGENPRESSE));
     public static final DeferredBlock<TechBlock> KURBEL_DYNAMO = BLOCKS.register("kurbel_dynamo",
             () -> new TechBlock(garageProps(), ModBlockEntities.KURBEL_DYNAMO, true));
+    /** Erster Speicher ohne Xenit (T0, 100.000 FE, Stufe I). */
+    public static final DeferredBlock<TechBlock> GARAGEN_AKKU = BLOCKS.register("garagen_akku",
+            () -> new TechBlock(garageProps(), ModBlockEntities.GARAGEN_AKKU, true));
 
     // --- T1 Bastlerwerkstatt ---
     public static final DeferredBlock<ProcessingBlock> ERZMUEHLE = BLOCKS.register("erzmuehle",

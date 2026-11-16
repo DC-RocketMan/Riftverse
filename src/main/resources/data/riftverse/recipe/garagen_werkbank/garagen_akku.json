@@ -1,0 +1,29 @@
+{
+  "type": "riftverse:werkbank_shaped",
+  "pattern": [
+    "ZRZ",
+    "KCK",
+    "IRI"
+  ],
+  "key": {
+    "Z": {
+      "tag": "c:plates/tin"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "K": {
+      "tag": "c:plates/copper"
+    },
+    "C": {
+      "item": "riftverse:garagen_gehaeuse"
+    },
+    "I": {
+      "tag": "c:plates/iron"
+    }
+  },
+  "result": {
+    "id": "riftverse:garagen_akku"
+  },
+  "hammer": 1
+}

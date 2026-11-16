@@ -28,6 +28,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Riftverse.MODID);
 
+    /** Das Riftverse-Handbuch (GuideME). Steht ganz vorne im Kreativ-Tab. */
+    public static final DeferredItem<dev.riftverse.item.HandbuchItem> HANDBUCH = ITEMS.register("handbuch",
+            () -> new dev.riftverse.item.HandbuchItem(new Item.Properties().stacksTo(1)));
+
     // =====================================================================
     // Meilenstein 1 – Fundament (steht vorne im Kreativ-Tab)
     // =====================================================================
@@ -36,6 +40,9 @@ public final class ModItems {
     public static final DeferredItem<BlockItem> GARAGEN_WERKBANK = blockItem("garagen_werkbank", ModBlocks.GARAGEN_WERKBANK);
     public static final DeferredItem<BlockItem> GARAGENPRESSE = blockItem("garagenpresse", ModBlocks.GARAGENPRESSE);
     public static final DeferredItem<BlockItem> KURBEL_DYNAMO = blockItem("kurbel_dynamo", ModBlocks.KURBEL_DYNAMO);
+    public static final DeferredItem<XenitZelleItem> GARAGEN_AKKU = ITEMS.register("garagen_akku",
+            () -> new XenitZelleItem(ModBlocks.GARAGEN_AKKU.get(), new Item.Properties().stacksTo(1),
+                    dev.riftverse.tech.GaragenAkkuBlockEntity.AKKU_CAPACITY, "tooltip.riftverse.garagen_akku"));
     public static final DeferredItem<BlockItem> TONNENREAKTOR = blockItem("tonnenreaktor", ModBlocks.TONNENREAKTOR);
     public static final DeferredItem<BlockItem> ERZMUEHLE = blockItem("erzmuehle", ModBlocks.ERZMUEHLE);
     public static final DeferredItem<BlockItem> WALZBANK = blockItem("walzbank", ModBlocks.WALZBANK);
