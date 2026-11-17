@@ -32,8 +32,8 @@ public final class EinzigartigBefehl {
     @SubscribeEvent
     public static void onRegister(RegisterCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("riftverse")
-                .requires(src -> src.hasPermission(3))
                 .then(Commands.literal("einzigartig")
+                        .requires(src -> src.hasPermission(3))
                         .then(Commands.literal("zuruecksetzen")
                                 .then(Commands.argument("welt", StringArgumentType.word())
                                         .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(

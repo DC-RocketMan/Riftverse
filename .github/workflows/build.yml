@@ -25,6 +25,9 @@ jobs:
       - name: Handbuch prüfen
         run: python3 tools/guide/pruefen.py
 
+      - name: Storylines prüfen
+        run: python3 tools/story/pruefen.py
+
       - name: Bauen
         run: |
           chmod +x ./gradlew

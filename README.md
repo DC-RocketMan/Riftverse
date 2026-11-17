@@ -4,6 +4,37 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
+## Meilenstein 9 – Story-Gerüst
+
+Geschichten für die einzigartigen Universen: als JSON im Datapack geschrieben, ohne Java. Die Anleitung mit allen
+Auslösern und Aktionen steht in [`docs/story.md`](docs/story.md), das Beispiel unter
+`data/riftverse/riftverse_story/test_einzigartig/kartograf.json`.
+
+| Bereich | Inhalt |
+|---|---|
+| **Storylines** | Schritte mit Auslösern, Aktionen und Zieltext; Verzweigungen über Flags und Dialog-Antworten; `/reload` lädt neu |
+| **Auslöser** | Ankunft, Bereich, Item, Abgeben, Mob besiegt, Reden, Block, Notiz gelesen, Tag/Nacht, Flag, Antwort |
+| **Aktionen** | Notiz, Dialog, Titel, Nachricht, Item, XP, Sound, Flag, Figur, Mob, Blöcke, Schritt, Abschluss |
+| **Story-Figur** | Spielermodell mit Skin aus der Datei, unverwundbar, läuft auf Wunsch im Radius herum |
+| **Dialog** | schwebt über der Figur, nur für den Spieler im Gespräch; Rechtsklick weiter, Antworten mit 1–4 beim Ansehen; Weggehen beendet ihn |
+| **Rift-Tagebuch** | neues Item (Buch + Kupferbarren + Feder, beim ersten Story-Ereignis geschenkt): Geschichten, Ziele, Notizen |
+| **Ziel-Anzeige** | oben rechts, Taste J blendet sie ein und aus |
+| **Stand** | pro Welt (Standard) oder pro Spieler (`"geltung": "spieler"`), einzelne Flags und Notizen können abweichen; liegt beim Universum und wird mit ihm zurückgesetzt |
+| **Fortschritt** | pro Storyline über `"fortschritt"` |
+| **Befehle** | `/riftverse story status`, `schritt`, `flag`, `zuruecksetzen`; `/riftverse testwelt` |
+| **Testwelt** | `entwicklung.testwelten` (Config) lädt den Prüfstein auch im normalen Spiel |
+| **Prüfskript** | `tools/story/pruefen.py` in GitHub Actions: Typen, Sprünge, Figuren, Flags, Notizen, Ids |
+
+### Entscheidungen in Meilenstein 9
+
+- **JSON im Datapack:** Minecraft-Standard, `/reload` ohne Neustart, Modpacks können eigene Geschichten dazulegen.
+- **Dialog über der Figur statt eigenem Fenster:** Der Spieler bleibt frei und kann jederzeit gehen. Antworten über 1–4
+  nur, solange man die Figur ansieht; sonst bleiben die Tasten Hotbar-Tasten.
+- **Rift-Tagebuch statt Handbuchseite:** Das Handbuch ist für alle gleich, das Tagebuch zeigt den eigenen Fortschritt.
+  Rezept mit Feder, weil Buch + Kupferbarren schon das Handbuch ist.
+- **Story-Stand pro Welt, Schalter „spieler“ schon eingebaut:** Der hybride Ansatz kommt später ohne Umbau.
+- **Ohne `weiter` geht es zum nächsten Schritt der Liste:** So lösen Bereich-Auslöser nie in Dauerschleife aus.
+
 ## Meilenstein 8 – Gewichtete Sprünge und einzigartige Universen
 
 Erster Meilenstein der neuen Universen (Plan im Dokument „Riftverse – Neue Universen“). Er bringt noch keine neue
@@ -558,6 +589,7 @@ Wo das Design-Dokument nichts festlegt oder sich widerspricht, gilt bis auf Weit
 | `universen.bloecke` | `64` | Ab mehr als so vielen platzierten Blöcken gilt ein Universum als bebaut |
 | `universen.gewichte` | `[]` | Gewichte der Universumstypen bei Zufallssprüngen überschreiben, z. B. `["leere_welt=1"]`; 0 = nie Zufallsziel |
 | `universen.anfaengerschutz` | `false` | Die ersten drei Mk-I-Sprünge führen in Schrott-, Kristall- und Toxische Welt |
+| `entwicklung.testwelten` | `false` | Testwelten (Prüfstein mit Beispiel-Storyline) auch im normalen Spiel; `/riftverse testwelt` |
 | `story.boss_bei_ankunft` | `false` | Prototyp: Boss kurz nach der Ankunft starten (bis zum Story-Modus aus) |
 | `handbuch.beim_start` | `true` | Neue Spieler bekommen beim ersten Betreten das Riftverse-Handbuch |
 

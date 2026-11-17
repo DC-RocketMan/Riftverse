@@ -9,6 +9,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
+import dev.riftverse.storyline.StoryStand;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -56,6 +57,8 @@ public class MultiverseData extends SavedData {
         public final Set<UUID> angekommen = new HashSet<>();
         /** Ein Admin hat das Zurücksetzen angefordert; passiert beim nächsten Serverstart. */
         public boolean resetAngefordert;
+        /** Stand der Storylines (Meilenstein 9), für die Welt und pro Spieler. */
+        public final StoryStand.Sammlung story = new StoryStand.Sammlung();
 
         public boolean isAnchored() {
             return !anchors.isEmpty();
@@ -67,7 +70,7 @@ public class MultiverseData extends SavedData {
 
         boolean worthSaving() {
             return state != STATE_NONE || visits > 0 || lastVisit >= 0 || !anchors.isEmpty() || resets > 0
-                    || !angekommen.isEmpty() || resetAngefordert;
+                    || !angekommen.isEmpty() || resetAngefordert || !story.leer();
         }
 
         CompoundTag save() {
@@ -89,6 +92,7 @@ public class MultiverseData extends SavedData {
             for (UUID u : angekommen) spieler.add(NbtUtils.createUUID(u));
             t.put("Angekommen", spieler);
             t.putBoolean("ResetAngefordert", resetAngefordert);
+            if (!story.leer()) t.put("Story", story.save());
             return t;
         }
 
@@ -109,6 +113,7 @@ public class MultiverseData extends SavedData {
             r.resets = t.getInt("Resets");
             for (Tag u : t.getList("Angekommen", Tag.TAG_INT_ARRAY)) r.angekommen.add(NbtUtils.loadUUID(u));
             r.resetAngefordert = t.getBoolean("ResetAngefordert");
+            r.story.load(t.getCompound("Story"));
             return r;
         }
 
@@ -127,6 +132,7 @@ public class MultiverseData extends SavedData {
             anchors.clear();
             angekommen.clear();
             resetAngefordert = false;
+            story.leeren();
         }
 
         /** Nach dem Löschen des Geländes: Bauzähler leeren, Story und Besuche bleiben. */

@@ -21,5 +21,9 @@ public final class ModAttachments {
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> ANFAENGERSCHUTZ = ATTACHMENT_TYPES.register("anfaengerschutz",
             () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build());
 
+    /** Rift-Tagebuch schon einmal verteilt (beim ersten Story-Ereignis). */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> TAGEBUCH_ERHALTEN = ATTACHMENT_TYPES.register("tagebuch_erhalten",
+            () -> AttachmentType.builder(() -> false).serialize(Codec.BOOL).copyOnDeath().build());
+
     private ModAttachments() {}
 }

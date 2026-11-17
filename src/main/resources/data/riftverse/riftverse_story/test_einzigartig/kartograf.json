@@ -1,0 +1,235 @@
+{
+  "welt": "test_einzigartig",
+  "titel": "Der verschwundene Kartograf",
+  "beschreibung": "Beispielgeschichte im Prüfstein. Sie zeigt die wichtigsten Bausteine des Story-Gerüsts: Notizen, eine Figur, Orte, einen Dialog mit Antworten, eine Übergabe und eine bleibende Veränderung der Welt.",
+  "fortschritt": "riftverse:story/kartograf",
+  "figuren": {
+    "mira": {
+      "name": "Mira",
+      "aussehen": "alex",
+      "ort": [
+        2132,
+        2032
+      ],
+      "laufen": true,
+      "radius": 5,
+      "sofort": false,
+      "standard": "Hast du schon eine leere Karte für mich?"
+    }
+  },
+  "schritte": [
+    {
+      "id": "ankunft",
+      "ziel": "",
+      "ausloeser": {
+        "typ": "ankunft"
+      },
+      "aktionen": [
+        {
+          "typ": "notiz",
+          "id": "brief",
+          "titel": "Ein zerknitterter Brief",
+          "text": "Wer das hier findet: Ich bin nach Osten gezogen, zum Lager am Hang, etwa sechzig Schritte vom Ankunftsstein. Mira wartet dort. Sie weiß, was als Nächstes kommt. – Eldric, Kartograf"
+        },
+        {
+          "typ": "figur",
+          "figur": "mira"
+        },
+        {
+          "typ": "bloecke",
+          "bloecke": [
+            {
+              "pos": [
+                2135,
+                2034
+              ],
+              "block": "minecraft:campfire"
+            },
+            {
+              "pos": [
+                2129,
+                2030
+              ],
+              "block": "minecraft:barrel"
+            },
+            {
+              "pos": [
+                2129,
+                2030
+              ],
+              "ueber_boden": 1,
+              "block": "minecraft:lantern"
+            }
+          ]
+        }
+      ],
+      "weiter": "brief_lesen"
+    },
+    {
+      "id": "brief_lesen",
+      "ziel": "Lies den Brief in deinem Rift-Tagebuch",
+      "ausloeser": {
+        "typ": "notiz_gelesen",
+        "notiz": "brief"
+      },
+      "aktionen": [
+        {
+          "typ": "nachricht",
+          "text": "Der Brief erwähnt ein Lager im Osten."
+        }
+      ],
+      "weiter": "lager"
+    },
+    {
+      "id": "lager",
+      "ziel": "Folge der Spur nach Osten zum Lager am Hang",
+      "ausloeser": {
+        "typ": "bereich",
+        "pos": [
+          2132,
+          2032
+        ],
+        "radius": 10
+      },
+      "aktionen": [
+        {
+          "typ": "titel",
+          "titel": "Das Lager",
+          "untertitel": "Hier hat Eldric zuletzt gerastet"
+        },
+        {
+          "typ": "sound",
+          "sound": "minecraft:block.campfire.crackle",
+          "lautstaerke": 1.0
+        }
+      ],
+      "weiter": "gespraech"
+    },
+    {
+      "id": "gespraech",
+      "ziel": "Sprich mit Mira",
+      "ausloeser": {
+        "typ": "reden",
+        "figur": "mira"
+      },
+      "aktionen": [
+        {
+          "typ": "dialog",
+          "figur": "mira",
+          "zeilen": [
+            "Oh! Ein Rift-Reisender. Hast du Eldrics Brief gefunden?",
+            "Er ist vor drei Tagen in Richtung der Tafelberge aufgebrochen und nicht zurückgekommen.",
+            {
+              "text": "Ohne eine Karte kann ich ihm nicht folgen. Hilfst du mir?",
+              "antworten": [
+                {
+                  "text": "Natürlich. Was brauchst du?",
+                  "id": "hilft",
+                  "flag": "hilft",
+                  "schritt": "karte"
+                },
+                {
+                  "text": "Warum sollte ich?",
+                  "id": "misstrauisch",
+                  "flag": "misstrauisch",
+                  "schritt": "karte"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "karte",
+      "ziel": "Bring Mira eine leere Karte",
+      "ausloeser": {
+        "typ": "abgeben",
+        "figur": "mira",
+        "item": "minecraft:map"
+      },
+      "aktionen": [
+        {
+          "typ": "dialog",
+          "figur": "mira",
+          "zeilen": [
+            {
+              "text": "Danke! Ich wusste, dass ich mich auf dich verlassen kann.",
+              "wenn": "hilft"
+            },
+            {
+              "text": "Na also. Vielleicht bist du doch nicht so übel.",
+              "wenn": "misstrauisch"
+            },
+            "Damit zeichne ich den Weg zu den Tafelbergen. Und für dich baue ich ein Leuchtfeuer, damit du den Prüfstein immer wiederfindest."
+          ]
+        },
+        {
+          "typ": "bloecke",
+          "bloecke": [
+            {
+              "pos": [
+                2127,
+                2036
+              ],
+              "ueber_boden": 0,
+              "block": "minecraft:stone_bricks"
+            },
+            {
+              "pos": [
+                2127,
+                2036
+              ],
+              "ueber_boden": 1,
+              "block": "minecraft:stone_bricks"
+            },
+            {
+              "pos": [
+                2127,
+                2036
+              ],
+              "ueber_boden": 2,
+              "block": "minecraft:stone_bricks"
+            },
+            {
+              "pos": [
+                2127,
+                2036
+              ],
+              "ueber_boden": 3,
+              "block": "minecraft:stone_bricks"
+            },
+            {
+              "pos": [
+                2127,
+                2036
+              ],
+              "ueber_boden": 4,
+              "block": "minecraft:sea_lantern"
+            }
+          ]
+        },
+        {
+          "typ": "notiz",
+          "id": "lagerkarte",
+          "titel": "Miras Skizze",
+          "text": "Eine grobe Karte: das Lager, ein Leuchtfeuer daneben und eine gestrichelte Linie nach Norden zu den Tafelbergen. Darunter in Miras Schrift: Fortsetzung folgt."
+        },
+        {
+          "typ": "item",
+          "item": "minecraft:compass",
+          "name": "Eldrics Kompass"
+        },
+        {
+          "typ": "xp",
+          "menge": 30
+        },
+        {
+          "typ": "sound",
+          "sound": "minecraft:entity.player.levelup"
+        }
+      ],
+      "abschluss": true
+    }
+  ]
+}

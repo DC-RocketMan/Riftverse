@@ -150,6 +150,7 @@ public final class RauchTest {
         RauchTestM7.aufbauen(server, level, recipes, base.south(300));
         RauchTestM8.aufbauen(server, level, recipes, base.south(330));
         RauchTestEinzigartig.aufbauen(server, level);
+        RauchTestStory.aufbauen(server);
         ticks = 0;
     }
 

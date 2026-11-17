@@ -79,6 +79,7 @@ public final class ClientSetup {
         event.registerEntityRenderer(ModEntities.RIFT_PORTAL.get(), RiftPortalRenderer::new);
         event.registerEntityRenderer(ModEntities.RIFT_BOSS.get(), RiftBossRenderer::new);
         event.registerEntityRenderer(ModEntities.SCHROTT_GOLEM.get(), SchrottGolemRenderer::new);
+        event.registerEntityRenderer(ModEntities.STORY_FIGUR.get(), dev.riftverse.client.story.StoryFigurRenderer::new);
         event.registerEntityRenderer(ModEntities.HOLO_KOEDER.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         event.registerEntityRenderer(ModEntities.ANTI_GRAV_GRANATE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
     }

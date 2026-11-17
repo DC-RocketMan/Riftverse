@@ -31,6 +31,9 @@ public final class ModItems {
     /** Das Riftverse-Handbuch (GuideME). Steht ganz vorne im Kreativ-Tab. */
     public static final DeferredItem<dev.riftverse.item.HandbuchItem> HANDBUCH = ITEMS.register("handbuch",
             () -> new dev.riftverse.item.HandbuchItem(new Item.Properties().stacksTo(1)));
+    /** Rift-Tagebuch: Notizen und Ziele der Storylines (Meilenstein 9 der neuen Universen). */
+    public static final DeferredItem<dev.riftverse.storyline.RiftTagebuchItem> RIFT_TAGEBUCH = ITEMS.register("rift_tagebuch",
+            () -> new dev.riftverse.storyline.RiftTagebuchItem(new Item.Properties().stacksTo(1)));
 
     // =====================================================================
     // Meilenstein 1 – Fundament (steht vorne im Kreativ-Tab)
