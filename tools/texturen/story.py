@@ -25,4 +25,4 @@ def rift_tagebuch():
 
 
 def build(pk):
-    pk.add('Story', 'item', 'rift_tagebuch', rift_tagebuch(), 'Rift-Tagebuch', lang_key='item.riftverse.rift_tagebuch')
+    pk.add('Meilenstein 9', 'item', 'rift_tagebuch', rift_tagebuch(), 'Rift-Tagebuch', lang_key='item.riftverse.rift_tagebuch')
