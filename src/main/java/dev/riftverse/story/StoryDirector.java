@@ -5,6 +5,8 @@ import dev.riftverse.Riftverse;
 import dev.riftverse.boss.RiftBossEntity;
 import dev.riftverse.registry.ModBlocks;
 import dev.riftverse.registry.ModEntities;
+import dev.riftverse.universe.Einzigartig;
+import dev.riftverse.universe.EinzigartigeAnkunft;
 import dev.riftverse.universe.Multiverse;
 import dev.riftverse.universe.MultiverseData;
 import dev.riftverse.universe.UniverseId;
@@ -68,6 +70,11 @@ public final class StoryDirector {
     }
 
     private static void onArrive(ServerPlayer player, UniverseId id) {
+        if (Einzigartig.ist(id)) {
+            // Eigene Begrüßung, keine Boss-Handlung: Die Story der einzigartigen Welten kommt mit dem Story-Gerüst
+            EinzigartigeAnkunft.ankommen(player, id);
+            return;
+        }
         UniverseProfile u = UniverseProfile.get(id);
         player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
         player.connection.send(new ClientboundSetTitleTextPacket(u.type.displayName().copy().withStyle(ChatFormatting.GREEN)));

@@ -2,6 +2,7 @@ package dev.riftverse.client.handbuch;
 
 import dev.riftverse.handbuch.Handbuch;
 import guideme.Guide;
+import guideme.compiler.TagCompiler;
 import guideme.compiler.tags.RecipeTypeMappingSupplier;
 
 /**
@@ -19,6 +20,7 @@ public final class HandbuchClient {
         Guide.builder(Handbuch.ID)
                 .defaultLanguage("de_de")
                 .extension(RecipeTypeMappingSupplier.EXTENSION_POINT, new HandbuchRezepte())
+                .extension(TagCompiler.EXTENSION_POINT, new RiftChancenCompiler())
                 .build();
     }
 }

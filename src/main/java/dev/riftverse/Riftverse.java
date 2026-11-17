@@ -58,6 +58,7 @@ public class Riftverse {
         ModDataComponents.COMPONENTS.register(modBus);
         ModBiomeModifiers.SERIALIZERS.register(modBus);
         ModAttachments.ATTACHMENT_TYPES.register(modBus);
+        dev.riftverse.registry.ModConditions.CONDITIONS.register(modBus);
 
         modBus.addListener(ModEntities::registerAttributes);
         modBus.addListener(ModEntities::registerSpawnPlacements);

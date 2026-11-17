@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +46,11 @@ public record UniverseId(UniverseType type, int cellX, int cellZ) {
         char letter = LETTERS.charAt((int) Math.floorMod(s, LETTERS.length()));
         int number = (int) Math.floorMod(s >>> 17, 900) + 100;
         return letter + "-" + number;
+    }
+
+    /** Anzeigename: „Universum K-412“, bei einzigartigen Universen ihr Name aus der Sprachdatei. */
+    public Component label() {
+        return type.einzigartig() ? type.displayName() : Component.literal("Universum " + code());
     }
 
     /** Schlüssel für Speicherdaten, z. B. {@code schrottwelt:3:-12}. */

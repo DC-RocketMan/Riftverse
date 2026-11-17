@@ -45,7 +45,7 @@ public class UniversumsprobeItem extends KoordinatenkarteItem {
                 player.drop(filled, false);
             }
             level.playSound(null, player.blockPosition(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 1.0f, 1.3f);
-            player.displayClientMessage(Component.translatable("message.riftverse.probe_gefuellt", "Universum " + id.code())
+            player.displayClientMessage(Component.translatable("message.riftverse.probe_gefuellt", id.label())
                     .withStyle(ChatFormatting.GREEN), true);
         }
         return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);

@@ -1,6 +1,7 @@
 package dev.riftverse.universe;
 
 import com.mojang.serialization.Codec;
+import dev.riftverse.Config;
 import dev.riftverse.Riftverse;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -23,47 +24,91 @@ import java.util.List;
  */
 public enum UniverseType implements StringRepresentable {
     /** Dauerhafter Nebel, Müllberge; Alien-Schrott, Xenit in Wrackfeldern; Schrott-Golems in den Halden. */
-    SCHROTT("schrottwelt", 1, 1.0),
+    SCHROTT("schrottwelt", 1, 1.0, 8),
     /** Immer hell, Kristalle wachsen nach; Fluxkristall-Cluster; Lärm lässt Kristalle explodieren. */
-    KRISTALL("kristallwelt", 1, 1.0),
+    KRISTALL("kristallwelt", 1, 1.0, 8),
     /** Luft vergiftet ohne Helm; Säureseen mit Säuregel; Säureregen beschädigt Rüstung. */
-    TOXISCH("toxische_welt", 1, 1.0),
+    TOXISCH("toxische_welt", 1, 1.0, 8),
 
     // --- T2, ab Kanone Mk II (Mk I mit stabilisiertem Portalfluid: zufällig) ---------------
     /** Gravitation 30 %, schwebende Inseln über dem Nichts; Schwebstein; Abstürze zwischen den Inseln. */
-    NIEDRIGGRAVITATION("niedriggravitation", 2, 0.3),
+    NIEDRIGGRAVITATION("niedriggravitation", 2, 0.3, 6),
     /** Pflanzen und Zufallsticks 4× schneller; Chronoglas-Sand fällt in Zeitlupe; Zeitverzerrungen setzen zurück. */
-    ZEITDILATATION("zeitdilatation", 2, 1.0),
+    ZEITDILATATION("zeitdilatation", 2, 1.0, 6),
     /** Abgebaute Blöcke wachsen nach, der Boden atmet; Biomasse-Pulpe; fressende Flora. */
-    ORGANISCH("organische_welt", 2, 1.0),
+    ORGANISCH("organische_welt", 2, 1.0, 6),
 
     // --- T3, ab Kanone Mk III (Mk II mit Portalfluid-Konzentrat: zufällig) ------------------
     /** Gravitation 250 %, kaum Sprünge, dreifacher Fallschaden; Gravitit, extrem dichtes Erz. */
-    HOCHGRAVITATION("hochgravitation", 3, 2.5),
+    HOCHGRAVITATION("hochgravitation", 3, 2.5, 5),
     /** Tag und Nacht vertauscht, gespiegeltes Gelände; Inversionssplitter; Doppelgänger kopieren die Ausrüstung. */
-    SPIEGEL("spiegelwelt", 3, 1.0),
+    SPIEGEL("spiegelwelt", 3, 1.0, 5),
 
     // --- T4, ab Kanone Mk IV (Mk III mit Weltenformer-Essenz: zufällig in die Leere Welt) -------
     /** Fast keine Blöcke, Sternenhimmel, schwebende Kerne; Nullmaterie (selten, bewacht); die Leere frisst Licht. */
-    LEERE("leere_welt", 4, 1.0),
+    LEERE("leere_welt", 4, 1.0, 3),
     /**
      * Gezüchtete Universen aus dem Weltenformer: Landschaft, Rohstoffe, Schwerkraft und Gefahren sind frei gewählt
      * (siehe {@link Zucht}). Nie ein zufälliges Ziel – man kommt nur mit der Koordinatenkarte des Weltenformers hin.
      */
-    GEZUECHTET("gezuechtet", 4, 1.0);
+    GEZUECHTET("gezuechtet", 4, 1.0, 0),
+
+    // --- Nur im Entwicklungsmodus -------------------------------------------------------------
+    /**
+     * Testwelt für einzigartige Universen (Meilenstein 8). Ihre Dimension gibt es nur im Rauchtest und in
+     * Entwicklungsstarts (Bedingung {@code riftverse:entwicklung}), nie in einer Release-Version. Sie ist kein
+     * Zufallsziel und mit keiner Kanone erreichbar.
+     */
+    TEST_EINZIGARTIG("test_einzigartig", 99, 1.0, 0, true, true);
 
     public static final Codec<UniverseType> CODEC = StringRepresentable.fromEnum(UniverseType::values);
 
     private final String id;
     private final int gunTier;
     private final double gravity;
+    /** Gewicht bei Zufallssprüngen (Standard; die Config kann es überschreiben, siehe {@link #weight()}). */
+    private final int gewicht;
+    /** Einzigartig: Es gibt genau ein Universum dieses Typs (Zelle 0,0), es wird nie aufgeräumt. */
+    private final boolean einzigartig;
+    /** Nur im Entwicklungsmodus vorhanden (Testwelten). */
+    private final boolean entwicklung;
     private final ResourceKey<Level> dimension;
 
-    UniverseType(String id, int gunTier, double gravity) {
+    UniverseType(String id, int gunTier, double gravity, int gewicht) {
+        this(id, gunTier, gravity, gewicht, false, false);
+    }
+
+    UniverseType(String id, int gunTier, double gravity, int gewicht, boolean einzigartig, boolean entwicklung) {
         this.id = id;
         this.gunTier = gunTier;
         this.gravity = gravity;
+        this.gewicht = gewicht;
+        this.einzigartig = einzigartig;
+        this.entwicklung = entwicklung;
         this.dimension = ResourceKey.create(Registries.DIMENSION, Riftverse.id(id));
+    }
+
+    /**
+     * Gewicht bei Zufallssprüngen: Die Chance auf diesen Typ ist sein Gewicht geteilt durch die Summe der Gewichte
+     * aller Typen, die die Kanone erreicht. 0 heißt: nie ein Zufallsziel. Die Config ({@code universen.gewichte})
+     * kann jedes Gewicht überschreiben.
+     */
+    public int weight() {
+        Integer override = Config.gewichtFuer(id);
+        return Math.max(0, override != null ? override : gewicht);
+    }
+
+    /** Gewicht ohne Config, wie im Code festgelegt. */
+    public int standardGewicht() {
+        return gewicht;
+    }
+
+    public boolean einzigartig() {
+        return einzigartig;
+    }
+
+    public boolean entwicklung() {
+        return entwicklung;
     }
 
     @Override
@@ -115,7 +160,7 @@ public enum UniverseType implements StringRepresentable {
 
     /** Kann eine Kanone zufällig hier landen? Gezüchtete Universen erreicht man nur gezielt. */
     public boolean randomTarget() {
-        return this != GEZUECHTET;
+        return this != GEZUECHTET && !entwicklung;
     }
 
     /** Zufallsziele einer Kanone dieser Stufe (ohne gezüchtete Universen). */

@@ -33,6 +33,14 @@ public class KoordinatenkarteItem extends Item {
             return;
         }
         UniverseProfile p = UniverseProfile.get(id);
+        if (id.type().einzigartig()) {
+            tooltip.add(id.label().copy().withStyle(ChatFormatting.GOLD));
+            tooltip.add(Component.translatable("tooltip.riftverse.karte_einzigartig").withStyle(ChatFormatting.LIGHT_PURPLE));
+            if (stack.getItem() == this && getClass() == KoordinatenkarteItem.class) {
+                tooltip.add(Component.translatable("tooltip.riftverse.karte_benutzen").withStyle(ChatFormatting.DARK_GRAY));
+            }
+            return;
+        }
         tooltip.add(Component.literal(p.title() + " „" + p.name + "“").withStyle(ChatFormatting.GREEN));
         tooltip.add(id.type().displayName().copy().withStyle(ChatFormatting.GRAY));
         if (p.zucht != null) tooltip.add(p.zucht.describe().copy().withStyle(ChatFormatting.LIGHT_PURPLE));

@@ -7,6 +7,7 @@ import dev.riftverse.registry.ModDataComponents;
 import dev.riftverse.registry.ModDataComponents.KanonenTank;
 import dev.riftverse.registry.ModDataComponents.KanonenZiele;
 import dev.riftverse.registry.ModItems;
+import dev.riftverse.universe.Anfaengerschutz;
 import dev.riftverse.universe.Multiverse;
 import dev.riftverse.universe.UniverseId;
 import dev.riftverse.universe.UniverseType;
@@ -138,8 +139,13 @@ public class PortalKanoneItem extends Item {
             target = mapped;
         } else {
             List<UniverseType> types = UniverseType.randomWith(Math.max(tier, shot.stufe()));
-            target = Multiverse.random(level.random, types);
-            for (int i = 0; i < 4 && target.equals(here); i++) target = Multiverse.random(level.random, types);
+            UniverseId geschuetzt = tier == 1 ? Anfaengerschutz.naechstes(player, level.random) : null;
+            if (geschuetzt != null) {
+                target = geschuetzt;
+            } else {
+                target = Multiverse.random(level.random, types);
+                for (int i = 0; i < 4 && target.equals(here); i++) target = Multiverse.random(level.random, types);
+            }
         }
 
         Vec3 spot = aimedSpot(level, player);
@@ -150,8 +156,10 @@ public class PortalKanoneItem extends Item {
         effects(level, player, spot);
         if (fromCard && tier >= 3) gun.set(ModDataComponents.KANONEN_ZIELE.get(), ziele.merken(mapped));
         if (mapped != null) {
-            player.displayClientMessage(Component.translatable("message.riftverse.rift_ziel", "Universum " + target.code(),
-                    target.type().displayName()).withStyle(ChatFormatting.GREEN), true);
+            Component ziel = target.type().einzigartig()
+                    ? Component.translatable("message.riftverse.rift_ziel_einzigartig", target.label())
+                    : Component.translatable("message.riftverse.rift_ziel", target.label(), target.type().displayName());
+            player.displayClientMessage(ziel.copy().withStyle(ChatFormatting.GREEN), true);
         } else {
             player.displayClientMessage(Component.translatable("message.riftverse.rift_open").withStyle(ChatFormatting.GREEN), true);
         }
@@ -203,7 +211,7 @@ public class PortalKanoneItem extends Item {
         UniverseId id = z.gewaehlt();
         if (id == null) return Component.translatable("message.riftverse.ziel_zufall");
         return Component.translatable("message.riftverse.ziel_nummer", z.auswahl() + 1, z.ziele().size(),
-                "Universum " + id.code(), id.type().displayName());
+                id.label(), id.type().displayName());
     }
 
     /** Universum der Koordinatenkarte in der anderen Hand, falls diese Kanone es erreicht. */
@@ -438,8 +446,8 @@ public class PortalKanoneItem extends Item {
             tooltip.add(auswahlText(z).copy().withStyle(ChatFormatting.AQUA));
             for (int i = 0; i < z.ziele().size(); i++) {
                 UniverseId id = z.ziele().get(i);
-                tooltip.add(Component.literal((i == z.auswahl() ? "▶ " : "  ") + (i + 1) + ". Universum " + id.code() + " · ")
-                        .append(id.type().displayName()).withStyle(i == z.auswahl() ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY));
+                tooltip.add(Component.literal((i == z.auswahl() ? "▶ " : "  ") + (i + 1) + ". ")
+                        .append(id.label()).append(" · ").append(id.type().displayName()).withStyle(i == z.auswahl() ? ChatFormatting.WHITE : ChatFormatting.DARK_GRAY));
             }
             tooltip.add(Component.translatable("tooltip.riftverse.kanone_ziele").withStyle(ChatFormatting.DARK_GREEN));
         }
