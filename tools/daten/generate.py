@@ -2984,4 +2984,6 @@ if __name__ == '__main__':
     hb_tags()
     hb_recipes()
     lang(pack_de)
+    import bridges_inn   # Meilenstein 10 der neuen Universen
+    bridges_inn.alles()
     print('fertig')

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "angeregt=false,leuchtet=false": {
+      "model": "riftverse:block/leuchtglocke_tuerkis"
+    },
+    "angeregt=true,leuchtet=false": {
+      "model": "riftverse:block/leuchtglocke_tuerkis_an"
+    },
+    "angeregt=false,leuchtet=true": {
+      "model": "riftverse:block/leuchtglocke_tuerkis_an"
+    },
+    "angeregt=true,leuchtet=true": {
+      "model": "riftverse:block/leuchtglocke_tuerkis_an"
+    }
+  }
+}

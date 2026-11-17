@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "angeregt=false,leuchtet=false": {
+      "model": "riftverse:block/leuchtglocke_rosa"
+    },
+    "angeregt=true,leuchtet=false": {
+      "model": "riftverse:block/leuchtglocke_rosa_an"
+    },
+    "angeregt=false,leuchtet=true": {
+      "model": "riftverse:block/leuchtglocke_rosa_an"
+    },
+    "angeregt=true,leuchtet=true": {
+      "model": "riftverse:block/leuchtglocke_rosa_an"
+    }
+  }
+}

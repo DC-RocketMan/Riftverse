@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "D  ",
+    "DD ",
+    "DDD"
+  ],
+  "key": {
+    "D": {
+      "item": "riftverse:violette_dachziegel"
+    }
+  },
+  "result": {
+    "id": "riftverse:violette_dachziegel_treppe",
+    "count": 4
+  }
+}

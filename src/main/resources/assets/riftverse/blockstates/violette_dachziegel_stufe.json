@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "riftverse:block/violette_dachziegel_stufe"
+    },
+    "type=top": {
+      "model": "riftverse:block/violette_dachziegel_stufe_top"
+    },
+    "type=double": {
+      "model": "riftverse:block/violette_dachziegel"
+    }
+  }
+}

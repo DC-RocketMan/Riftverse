@@ -151,6 +151,7 @@ public final class RauchTest {
         RauchTestM8.aufbauen(server, level, recipes, base.south(330));
         RauchTestEinzigartig.aufbauen(server, level);
         RauchTestStory.aufbauen(server);
+        RauchTestBridgesInn.aufbauen(server, level, base.south(360));
         ticks = 0;
     }
 
@@ -242,7 +243,7 @@ public final class RauchTest {
             portal.setSpawnReturn(false);
             level.addFreshEntity(portal);
         }
-        check(UniverseType.reachableWith(1).size() == 3, "Kanone Mk I erreicht drei Universumstypen");
+        check(UniverseType.reachableWith(1).size() == 4, "Kanone Mk I erreicht vier Universumstypen (mit Bridge's Inn)");
 
         // --- Meteoritenkrater -------------------------------------------------------------
         BlockPos crater = KraterOrte.nearest(level, 0, 0, 3);

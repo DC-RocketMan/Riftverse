@@ -65,7 +65,7 @@ final class RauchTestM3 {
         swapped.set(2, first);
         check(recipes.getRecipeFor(ModRecipes.PRAEZISIONS_MONTIERER_TYPE.get(), new MachineRecipeInput(swapped, ""), level).isEmpty(),
                 "Montierer: vertauschte Reihenfolge passt nicht");
-        check(UniverseType.reachableWith(2).size() == 6, "Kanone Mk II erreicht sechs Universumstypen");
+        check(UniverseType.reachableWith(2).size() == 7, "Kanone Mk II erreicht sieben Universumstypen");
         check(Math.abs(UniverseProfile.get(new UniverseId(UniverseType.NIEDRIGGRAVITATION, 0, 0)).gravity - 0.3) < 1e-9,
                 "Niedriggravitationswelt hat 0,3 g");
 

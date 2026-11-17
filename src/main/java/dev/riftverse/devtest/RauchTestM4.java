@@ -71,7 +71,7 @@ final class RauchTestM4 {
         check(recipes.getAllRecipesFor(ModRecipes.RAFFINERIE_TYPE.get()).size() >= 2, "Raffinerie kennt Portalfluid-Konzentrat");
         check(new ItemStack(ModItems.FRAGMENT_REPLIK.get()).is(net.minecraft.tags.TagKey.create(net.minecraft.core.registries.Registries.ITEM,
                 dev.riftverse.Riftverse.id("story_fragmente"))), "Fragment-Replik steht im Tag riftverse:story_fragmente");
-        check(UniverseType.reachableWith(3).size() == 8, "Kanone Mk III erreicht acht Universumstypen");
+        check(UniverseType.reachableWith(3).size() == 9, "Kanone Mk III erreicht neun Universumstypen");
         check(Math.abs(UniverseProfile.get(new UniverseId(UniverseType.HOCHGRAVITATION, 0, 0)).gravity - 2.5) < 1e-9,
                 "Hochgravitationswelt hat 2,5 g");
 

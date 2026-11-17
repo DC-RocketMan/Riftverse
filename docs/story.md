@@ -52,7 +52,7 @@ Storyline ist eine JSON-Datei im Datapack. Du schreibst Texte, Orte und Abläufe
 | Feld | Bedeutung |
 |---|---|
 | `name` | Name über dem Kopf und im Dialog |
-| `aussehen` | `steve`, `alex`, `ari`, `efe`, `kai`, `makena`, `noor`, `sunny`, `zuri` oder ein Texturpfad wie `riftverse:textures/entity/figur/mira.png` (64 × 64, Spieler-Skin-Format) |
+| `aussehen` | `steve`, `alex`, `ari`, `efe`, `kai`, `makena`, `noor`, `sunny`, `zuri` oder ein Texturpfad wie `riftverse:textures/entity/figur/mira.png` (64 × 64, Spieler-Skin-Format). Mit `gleeb` oder `gleeb:<beruf>` sieht die Figur aus wie ein Gleeb aus Bridge's Inn (`buerger`, `baeckerin`, `kraeuterhexe`, `alchemist`, `runenschmied`, `sternenkundlerin`) |
 | `ort` | `[x, z]` (steht auf dem Boden) oder `[x, y, z]` |
 | `laufen` | läuft im `radius` um ihren Platz herum (Standard: nein) |
 | `sofort` | steht schon da, wenn die Welt zum ersten Mal betreten wird (Standard: ja). Mit `false` erscheint sie erst per Aktion `figur` |

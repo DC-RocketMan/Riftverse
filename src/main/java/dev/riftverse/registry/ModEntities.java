@@ -55,7 +55,33 @@ public final class ModEntities {
                     dev.riftverse.storyline.StoryFigur::new, MobCategory.MISC).sized(0.6f, 1.8f)
                     .clientTrackingRange(10).build("story_figur"));
 
+    // --- Neue Universen, Meilenstein 10: Bridge's Inn ---
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.dorf.Gleeb>> GLEEB =
+            ENTITIES.register("gleeb", () -> EntityType.Builder.<dev.riftverse.dorf.Gleeb>of(
+                    dev.riftverse.dorf.Gleeb::new, MobCategory.MISC).sized(0.5f, 1.45f).eyeHeight(1.25f)
+                    .clientTrackingRange(10).build("gleeb"));
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.dorf.Glimmhase>> GLIMMHASE =
+            ENTITIES.register("glimmhase", () -> EntityType.Builder.<dev.riftverse.dorf.Glimmhase>of(
+                    dev.riftverse.dorf.Glimmhase::new, MobCategory.CREATURE).sized(0.5f, 0.55f)
+                    .clientTrackingRange(8).build("glimmhase"));
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.dorf.Pusteling>> PUSTELING =
+            ENTITIES.register("pusteling", () -> EntityType.Builder.<dev.riftverse.dorf.Pusteling>of(
+                    dev.riftverse.dorf.Pusteling::new, MobCategory.CREATURE).sized(0.6f, 0.6f)
+                    .clientTrackingRange(8).build("pusteling"));
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.dorf.Schimmerfalter>> SCHIMMERFALTER =
+            ENTITIES.register("schimmerfalter", () -> EntityType.Builder.<dev.riftverse.dorf.Schimmerfalter>of(
+                    dev.riftverse.dorf.Schimmerfalter::new, MobCategory.CREATURE).sized(0.5f, 0.4f)
+                    .clientTrackingRange(8).build("schimmerfalter"));
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.dorf.Irrlicht>> IRRLICHT =
+            ENTITIES.register("irrlicht", () -> EntityType.Builder.<dev.riftverse.dorf.Irrlicht>of(
+                    dev.riftverse.dorf.Irrlicht::new, MobCategory.MISC).sized(0.4f, 0.4f).noSave().fireImmune()
+                    .clientTrackingRange(8).updateInterval(2).build("irrlicht"));
+
     public static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(GLEEB.get(), dev.riftverse.dorf.Gleeb.createAttributes().build());
+        event.put(GLIMMHASE.get(), dev.riftverse.dorf.Glimmhase.createAttributes().build());
+        event.put(PUSTELING.get(), dev.riftverse.dorf.Pusteling.createAttributes().build());
+        event.put(SCHIMMERFALTER.get(), dev.riftverse.dorf.Schimmerfalter.createAttributes().build());
         event.put(STORY_FIGUR.get(), dev.riftverse.storyline.StoryFigur.createAttributes().build());
         event.put(HOLO_KOEDER.get(), dev.riftverse.gadget.HoloKoederEntity.createAttributes().build());
         event.put(RIFT_BOSS.get(), RiftBossEntity.createAttributes().build());
@@ -65,6 +91,12 @@ public final class ModEntities {
     public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
         event.register(SCHROTT_GOLEM.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
                 SchrottGolem::checkSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(GLIMMHASE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(PUSTELING.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                net.minecraft.world.entity.animal.Animal::checkAnimalSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(SCHIMMERFALTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                net.minecraft.world.entity.Mob::checkMobSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     private ModEntities() {}

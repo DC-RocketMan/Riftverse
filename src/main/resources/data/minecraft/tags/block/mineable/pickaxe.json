@@ -75,6 +75,11 @@
     "riftverse:nullmaterie_erz",
     "riftverse:nullmaterie_block",
     "riftverse:null_leitung",
-    "riftverse:leerstein"
+    "riftverse:leerstein",
+    "riftverse:violette_dachziegel",
+    "riftverse:violette_dachziegel_treppe",
+    "riftverse:violette_dachziegel_stufe",
+    "riftverse:buntes_kopfsteinpflaster",
+    "riftverse:schwebelaterne"
   ]
 }

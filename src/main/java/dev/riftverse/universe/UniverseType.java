@@ -59,7 +59,14 @@ public enum UniverseType implements StringRepresentable {
      * Entwicklungsstarts (Bedingung {@code riftverse:entwicklung}), nie in einer Release-Version. Sie ist kein
      * Zufallsziel und mit keiner Kanone erreichbar.
      */
-    TEST_EINZIGARTIG("test_einzigartig", 99, 1.0, 0, true, true);
+    TEST_EINZIGARTIG("test_einzigartig", 99, 1.0, 0, true, true),
+
+    // --- Einzigartige Storywelten (neue Universen) ----------------------------------------------
+    /**
+     * Bridge's Inn (Meilenstein 10): kunterbunte, magische Dorfwelt mit vielen Gleeb-Dörfern, Leuchtpflanzen und
+     * einem Wirtshaus auf der Brücke. Einzigartig, ab Kanone Mk I, Gewicht 4.
+     */
+    MAGISCHES_DORF("magisches_dorf", 1, 1.0, 4, true, false);
 
     public static final Codec<UniverseType> CODEC = StringRepresentable.fromEnum(UniverseType::values);
 

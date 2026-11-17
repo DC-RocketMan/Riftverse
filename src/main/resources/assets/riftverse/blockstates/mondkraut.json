@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "angeregt=false,leuchtet=false": {
+      "model": "riftverse:block/mondkraut"
+    },
+    "angeregt=true,leuchtet=false": {
+      "model": "riftverse:block/mondkraut_an"
+    },
+    "angeregt=false,leuchtet=true": {
+      "model": "riftverse:block/mondkraut_an"
+    },
+    "angeregt=true,leuchtet=true": {
+      "model": "riftverse:block/mondkraut_an"
+    }
+  }
+}

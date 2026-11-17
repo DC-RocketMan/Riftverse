@@ -38,7 +38,9 @@ public final class UniverseProfile {
         // Meilenstein 4
         PLATTGEDRUECKT("Plattgedrückte Ebene"),
         // Meilenstein 5
-        KERNE("Schwebende Kerne");
+        KERNE("Schwebende Kerne"),
+        // Meilenstein 10 der neuen Universen: Bridge's Inn (Fluss, See, Hügel, flache Dorfplätze; siehe DorfPlan)
+        DORFLAND("Dorfland");
         public final String label;
         Terrain(String label) { this.label = label; }
     }
@@ -100,7 +102,9 @@ public final class UniverseProfile {
                     new Palette("Kalkspiegel", Blocks.CALCITE, Blocks.SMOOTH_STONE, Blocks.DEEPSLATE, Blocks.CALCITE)),
             UniverseType.LEERE, List.of(
                     new Palette("Sternenstaub", ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get()),
-                    new Palette("Obsidiankern", ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN, ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN)));
+                    new Palette("Obsidiankern", ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN, ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN)),
+            UniverseType.MAGISCHES_DORF, List.of(
+                    new Palette("Blütenwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.SAND)));
 
     // ------------------------------------------------------------------ Cache
 
@@ -187,6 +191,7 @@ public final class UniverseProfile {
             case HOCHGRAVITATION -> weighted(r, Terrain.values(), 0, 0, 0, 0, 0, 30, 0, 0, 70);
             case SPIEGEL -> weighted(r, Terrain.values(), 35, 20, 20, 15, 10, 0, 0);
             case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> Terrain.KERNE;
+            case MAGISCHES_DORF -> Terrain.DORFLAND;
         };
         this.terrain = einzigartig != null ? einzigartig.terrain() : gewuerfelt;
         List<Palette> palettes = PALETTES.get(look);
@@ -202,6 +207,7 @@ public final class UniverseProfile {
             case HOCHGRAVITATION -> 0.004f + r.nextFloat() * 0.006f;
             case SPIEGEL -> 0.004f + r.nextFloat() * 0.008f;
             case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> 0.3f + r.nextFloat() * 0.15f;   // Anteil der Raster-Felder mit einem Kern
+            case MAGISCHES_DORF -> 0.012f;   // Funkelbäume
         };
         this.plantDensity = switch (look) {
             case SCHROTT -> 0.01f + r.nextFloat() * 0.03f;
@@ -213,17 +219,19 @@ public final class UniverseProfile {
             case HOCHGRAVITATION -> 0.005f + r.nextFloat() * 0.02f;
             case SPIEGEL -> 0.06f + r.nextFloat() * 0.12f;
             case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> 0f;
+            case MAGISCHES_DORF -> 0.42f;   // kunterbunt: fast überall Blumen
         };
 
         double richness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
         this.oreRichness = modifiers.contains(UniverseModifier.DOPPELTE_ERZE) ? Math.min(2.0, richness * 2.0) : richness;
         this.danger = 1 + r.nextInt(5);
         this.biomeRoll = r.nextInt(1 << 20);
-        this.caves = r.nextFloat() < 0.75f && look != UniverseType.LEERE;
+        this.caves = r.nextFloat() < 0.75f && look != UniverseType.LEERE && look != UniverseType.MAGISCHES_DORF;
 
         // Schwebeinseln haben keine Seen: unter ihnen ist nur das Nichts
         boolean dry = palette.surface() == Blocks.RED_SAND || look == UniverseType.NIEDRIGGRAVITATION || look == UniverseType.LEERE;
-        this.fluidLevel = dry ? Integer.MIN_VALUE : (terrain == Terrain.ARCHIPELAGO ? 63 : 50 + r.nextInt(18));
+        this.fluidLevel = dry ? Integer.MIN_VALUE : terrain == Terrain.DORFLAND ? dev.riftverse.dorf.DorfPlan.WASSER
+                : (terrain == Terrain.ARCHIPELAGO ? 63 : 50 + r.nextInt(18));
 
         switch (terrain) {
             case ROLLING -> { base = 66 + r.nextInt(20); amplitude = 10 + r.nextInt(30); frequency = 1.0 / (90 + r.nextInt(130)); }
@@ -255,6 +263,31 @@ public final class UniverseProfile {
         this.fieldNoise = new SimplexNoise(r);
         this.caveNoise = new ImprovedNoise(r);
         this.oreNoise = new ImprovedNoise(r);
+    }
+
+    @Nullable
+    private volatile dev.riftverse.dorf.DorfPlan dorfPlan;
+
+    /** Bridge's Inn: Lage von Fluss, See, Hügel und Dörfern (nur für {@link Terrain#DORFLAND}). */
+    public dev.riftverse.dorf.DorfPlan dorfPlan() {
+        dev.riftverse.dorf.DorfPlan d = dorfPlan;
+        if (d == null) {
+            synchronized (this) {
+                if (dorfPlan == null) dorfPlan = new dev.riftverse.dorf.DorfPlan(this);
+                d = dorfPlan;
+            }
+        }
+        return d;
+    }
+
+    /** Glattes Höhenrauschen –1..1 (für das Dorfland). */
+    public double sanft(double x, double z) {
+        return fbm(heightNoise, x / 260.0, z / 260.0, 4) + 0.12 * fbm(detailNoise, x / 30.0, z / 30.0, 2);
+    }
+
+    /** Zweites Rauschen –1..1 für Blumenfelder und Wälder. */
+    public double feld(double x, double z) {
+        return fbm(fieldNoise, x, z, 2);
     }
 
     public boolean has(UniverseModifier modifier) {
@@ -332,6 +365,11 @@ public final class UniverseProfile {
             }
             case KERNE -> {
                 return core(x, z, out);
+            }
+            case DORFLAND -> {
+                out[0] = minY;
+                out[1] = dorfPlan().hoehe(x, z);
+                return true;
             }
             default -> h = base + amplitude * n + detail;
         }

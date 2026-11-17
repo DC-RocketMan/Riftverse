@@ -152,6 +152,7 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
             case HOCHGRAVITATION -> decorateHeavy(chunk, p, tops, pos);
             case SPIEGEL -> decorateMirror(chunk, p, tops, pos);
             case LEERE -> decorateVoid(chunk, p, pos);
+            case MAGISCHES_DORF -> dev.riftverse.dorf.DorfBau.gestalten(chunk, p, tops, pos);
             case GEZUECHTET -> { }
         }
         return CompletableFuture.completedFuture(chunk);
@@ -641,6 +642,11 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
 
     @Override
     public void spawnOriginalMobs(WorldGenRegion level) {
+        // Bridge's Inn: Kisten, Betten und Öfen der Häuser, die Gleebs und die ersten Tiere
+        ChunkPos cp = level.getCenter();
+        if (Multiverse.inBorder(cp.getMiddleBlockX(), cp.getMiddleBlockZ())) return;
+        UniverseProfile p = profileAt(cp.getMinBlockX(), cp.getMinBlockZ());
+        if (p.look == UniverseType.MAGISCHES_DORF) dev.riftverse.dorf.DorfBau.beleben(level, p);
     }
 
     @Override
