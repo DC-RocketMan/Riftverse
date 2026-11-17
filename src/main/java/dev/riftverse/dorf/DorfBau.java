@@ -13,11 +13,13 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.RandomizableContainer;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DoublePlantBlock;
 import net.minecraft.world.level.block.LeavesBlock;
@@ -34,9 +36,8 @@ import java.util.List;
 
 /**
  * Baut Bridge's Inn in den Chunk (Meilenstein 10): Blumenwiesen, Funkelbäume, Wege, Laternen, die Häuser der
- * Gleeb-Dörfer und die Orte in der Natur. In {@link #gestalten} (beim Gelände) entstehen alle einfachen Blöcke,
- * in {@link #beleben} (Spawn-Schritt, mit echter Welt-Region) Kisten, Fässer, Betten und Öfen samt Inhalt, die Gleebs
- * und die ersten Tiere.
+ * Gleeb-Dörfer und die Orte in der Natur. In {@link #gestalten} (beim Gelände) entstehen alle Blöcke samt Kisten,
+ * Fässern, Betten und Öfen, in {@link #beleben} (Spawn-Schritt) die Gleebs und die ersten Tiere.
  */
 public final class DorfBau {
     public static final ResourceKey<LootTable> KISTE_HAUS = ResourceKey.create(Registries.LOOT_TABLE, Riftverse.id("chests/gleeb_haus"));
@@ -101,12 +102,8 @@ public final class DorfBau {
             }
         }
 
-        // Häuser, Laternen und Orte in der Natur (nur einfache Blöcke)
-        HausBauer.Ziel ziel = (x, y, z, st) -> {
-            if (x < bx || x > bx + 15 || z < bz || z > bz + 15 || st.hasBlockEntity()) return;
-            if (y <= chunk.getMinBuildHeight() || y >= chunk.getMaxBuildHeight()) return;
-            chunk.setBlockState(pos.set(x, y, z), st, false);
-        };
+        // Häuser, Laternen und Orte in der Natur
+        HausBauer.Ziel ziel = chunkZiel(chunk, pos, KISTE_HAUS, rnd);
         for (DorfPlan.Dorf d : doerfer) {
             laternen(d, ziel);
             for (DorfPlan.Haus h : d.haeuser()) {
@@ -116,9 +113,34 @@ public final class DorfBau {
                 HausBauer.bauen(h, ziel);
             }
         }
+        HausBauer.Ziel natur = chunkZiel(chunk, pos, KISTE_IRRLICHT, rnd);
         for (DorfPlan.Naturort o : plan.orteIn(bx, bz, bx + 15, bz + 15, 16)) {
-            Naturorte.bauen(o, plan, ziel);
+            Naturorte.bauen(o, plan, natur);
         }
+    }
+
+    /**
+     * Schreibt nur in diesen Chunk. Blöcke mit Block-Entity (Kisten, Fässer, Betten, Öfen …) bekommen sie gleich
+     * mit, Kisten und Fässer dazu ihre Loot-Tabelle – im Spawn-Schritt dürfte man keine Blöcke mehr setzen.
+     */
+    private static HausBauer.Ziel chunkZiel(ChunkAccess chunk, BlockPos.MutableBlockPos pos, ResourceKey<LootTable> loot,
+                                            RandomSource rnd) {
+        int bx = chunk.getPos().getMinBlockX(), bz = chunk.getPos().getMinBlockZ();
+        return (x, y, z, st) -> {
+            if (x < bx || x > bx + 15 || z < bz || z > bz + 15) return;
+            if (y <= chunk.getMinBuildHeight() || y >= chunk.getMaxBuildHeight()) return;
+            pos.set(x, y, z);
+            BlockState alt = chunk.setBlockState(pos, st, false);
+            if (st.hasBlockEntity() && st.getBlock() instanceof EntityBlock eb) {
+                BlockEntity be = eb.newBlockEntity(pos.immutable(), st);
+                if (be != null) {
+                    if (be instanceof RandomizableContainerBlockEntity k) k.setLootTable(loot, rnd.nextLong());
+                    chunk.setBlockEntity(be);
+                }
+            } else if (alt != null && alt.hasBlockEntity()) {
+                chunk.removeBlockEntity(pos);
+            }
+        };
     }
 
     /** Schwebelaternen entlang der Wege und rund um die Plätze. */
@@ -257,41 +279,17 @@ public final class DorfBau {
         ChunkPos cp = region.getCenter();
         int bx = cp.getMinBlockX(), bz = cp.getMinBlockZ();
         RandomSource rnd = RandomSource.create(UniverseId.mix(p.seed ^ cp.toLong() ^ 0x1EBE1L));
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
-        HausBauer.Ziel ziel = (x, y, z, st) -> {
-            if (x < bx || x > bx + 15 || z < bz || z > bz + 15 || !st.hasBlockEntity()) return;
-            pos.set(x, y, z);
-            region.setBlock(pos, st, Block.UPDATE_CLIENTS);
-            if (st.is(Blocks.CHEST) || st.is(Blocks.BARREL)) {
-                RandomizableContainer.setBlockEntityLootTable(region, rnd, pos.immutable(), KISTE_HAUS);
-            }
-        };
         for (DorfPlan.Dorf d : plan.doerferIn(bx, bz, bx + 15, bz + 15)) {
             for (DorfPlan.Haus h : d.haeuser()) {
-                if (h.maxX() + 3 < bx || h.minX() - 3 > bx + 15 || h.maxZ() + 3 < bz || h.minZ() - 3 > bz + 15) {
-                    if (h.typ() != HausTyp.TAVERNE) continue;
-                }
-                HausBauer.bauen(h, ziel);
                 if (h.x() >= bx && h.x() <= bx + 15 && h.z() >= bz && h.z() <= bz + 15) bewohner(region, d, h, rnd);
             }
             // Besenflieger über dem Platz
             DorfPlan.Platz pl = d.plaetze().get(0);
             if (pl.x() >= bx && pl.x() <= bx + 15 && pl.z() >= bz && pl.z() <= bz + 15) {
                 for (int i = 0; i < (d.haupt() ? 2 : 1); i++) {
-                    Gleeb g = gleeb(region, Beruf.BUERGER, new BlockPos(pl.x(), d.hoehe() + 16 + i * 5, pl.z()), d, rnd);
-                    if (g != null) g.besenSetzen(true);
+                    gleeb(region, Beruf.BUERGER, new BlockPos(pl.x(), d.hoehe() + 16 + i * 5, pl.z()), d, rnd, true);
                 }
             }
-        }
-        for (DorfPlan.Naturort o : plan.orteIn(bx, bz, bx + 15, bz + 15, 16)) {
-            Naturorte.bauen(o, plan, (x, y, z, st) -> {
-                if (x < bx || x > bx + 15 || z < bz || z > bz + 15 || !st.hasBlockEntity()) return;
-                pos.set(x, y, z);
-                region.setBlock(pos, st, Block.UPDATE_CLIENTS);
-                if (st.is(Blocks.CHEST) || st.is(Blocks.BARREL)) {
-                    RandomizableContainer.setBlockEntityLootTable(region, rnd, pos.immutable(), KISTE_IRRLICHT);
-                }
-            });
         }
         // Tiere der Wiesen (wie in normalen Welten beim Erzeugen)
         Holder<Biome> biome = region.getBiome(cp.getWorldPosition().atY(region.getMaxBuildHeight() - 1));
@@ -302,17 +300,19 @@ public final class DorfBau {
 
     private static void bewohner(WorldGenRegion region, DorfPlan.Dorf d, DorfPlan.Haus h, RandomSource rnd) {
         BlockPos innen = new BlockPos(h.x(), h.y() + 1, h.z());
-        if (h.typ().beruf != null) gleeb(region, h.typ().beruf, innen, d, rnd);
-        for (int i = 0; i < h.typ().buerger; i++) gleeb(region, Beruf.BUERGER, innen, d, rnd);
+        if (h.typ().beruf != null) gleeb(region, h.typ().beruf, innen, d, rnd, false);
+        for (int i = 0; i < h.typ().buerger; i++) gleeb(region, Beruf.BUERGER, innen, d, rnd, false);
     }
 
-    private static Gleeb gleeb(WorldGenRegion region, Beruf beruf, BlockPos pos, DorfPlan.Dorf d, RandomSource rnd) {
+    /** Erst ganz einrichten, dann hinzufügen: der Proto-Chunk speichert das Wesen sofort als NBT. */
+    private static Gleeb gleeb(WorldGenRegion region, Beruf beruf, BlockPos pos, DorfPlan.Dorf d, RandomSource rnd, boolean besen) {
         Gleeb g = ModEntities.GLEEB.get().create(region.getLevel());
         if (g == null) return null;
         g.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, rnd.nextFloat() * 360, 0);
         DorfPlan.Platz pl = d.plaetze().get(0);
         g.einrichten(beruf, pos, new BlockPos(pl.x(), d.hoehe() + 1, pl.z()), d.radius(), rnd);
         g.setPersistenceRequired();
+        if (besen) g.besenSetzen(true);
         region.addFreshEntity(g);
         return g;
     }
