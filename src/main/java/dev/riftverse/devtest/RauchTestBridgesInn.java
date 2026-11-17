@@ -64,7 +64,7 @@ final class RauchTestBridgesInn {
                         HausTyp.KRAEUTERHUETTE, HausTyp.ALCHEMIE, HausTyp.RUNENSCHMIEDE, HausTyp.MARKTBRUNNEN)),
                 "Hauptdorf hat Wirtshaus, Magierturm, Sternwarte, Brunnen und alle Berufshäuser " + typen);
         check(haupt.haeuser().size() >= 14, "Hauptdorf: " + haupt.haeuser().size() + " Gebäude");
-        check(plan.doerfer.size() >= 12, "Bridge's Inn: " + plan.doerfer().size() + " Dörfer");
+        check(plan.doerfer.size() >= 12, "Bridge's Inn: " + plan.doerfer.size() + " Dörfer");
         boolean alleBewohnt = true;
         for (DorfPlan.Dorf d : plan.doerfer) alleBewohnt &= d.haeuser().size() >= 5;
         check(alleBewohnt, "Jedes Dorf hat Brunnen und mindestens vier Häuser");

@@ -70,7 +70,7 @@ public class Pusteling extends Animal {
     }
 
     @Override
-    protected InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (stack.is(Items.SHEARS) && geschoren == 0 && !isBaby()) {
             if (!level().isClientSide) {
