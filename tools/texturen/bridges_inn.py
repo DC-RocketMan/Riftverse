@@ -380,54 +380,152 @@ def box(t, u, v, w, h, d, faces):
                     t.p(x0 + x, y0 + y, c)
 
 
+# Gleebs: zwergenhafte Elfen mit Knollennase, Spitzohren, weichem Schnallenhut und bunter, gemusterter Kleidung.
+# Box-Layout wie in client/dorf/GleebModel (64 x 64).
 BERUFE = {
-    # beruf: (haut, robe, hut, akzent)
-    'baeckerin': ('#ffd8c0', '#f0a060', '#fff4e0', '#c86a2a'),
-    'kraeuterhexe': ('#c8f0c8', '#6a8a3a', '#3a6a2a', '#c8e060'),
-    'alchemist': ('#d8c8ff', '#4a3a9a', '#7a3ac8', '#ffd060'),
-    'runenschmied': ('#f0d0b0', '#8a4a2a', '#4a3020', '#4ae0ff'),
-    'sternenkundlerin': ('#c8e0ff', '#2a4aa0', '#1a2a6a', '#ffe060'),
-    'buerger': ('#ffc8e0', '#3aa8a0', '#c84a8a', '#ffffff'),
+    # haut, haar/bart (None = kein Bart), hut, hutband, hemd, weste/robe, muster, hose, stiefel, art
+    'buerger': ('#f6c9a4', '#d8662a', '#2f9a4a', '#1d5a2a', '#f4efe0', '#2f8a46', '#ffd34a', '#7a4a2a', '#3a2418', 'weste'),
+    'baeckerin': ('#f9d2b8', None, '#f6e6c8', '#d88a6a', '#f2a0b0', '#fff8ee', '#e86a8a', '#b0603a', '#5a3420', 'schuerze'),
+    'kraeuterhexe': ('#e8c9a0', None, '#5a7a2a', '#8a4a2a', '#e8d8a8', '#7a5a2a', '#b8e060', '#4a6a2a', '#3a2a18', 'weste'),
+    'alchemist': ('#f1c7a8', '#eeeef4', '#6a3ab0', '#ffcf4a', '#e8e0ff', '#5a2e9a', '#ffcf4a', '#3a2a6a', '#2a1a3a', 'robe'),
+    'runenschmied': ('#e4ae86', '#4a2c1a', '#5a3a26', '#c84a2a', '#c8402a', '#8a5a34', '#5ae8ff', '#4a3a30', '#2a1c14', 'schuerze'),
+    'sternenkundlerin': ('#f4d0b4', None, '#22357a', '#ffe36a', '#cfe0ff', '#2c4aa0', '#ffe36a', '#1e2c5a', '#1a1a2e', 'robe'),
 }
+
+# Haarfarbe der Gleebs ohne Bart (mit Bart hat das Haar die Bartfarbe)
+HAAR = {'baeckerin': '#e8a040', 'kraeuterhexe': '#b0502a', 'sternenkundlerin': '#eceaff'}
 
 
 def gleeb(beruf):
-    haut, robe, hut, akzent = (H(c) for c in BERUFE[beruf])
+    haut, bart, hut, band, hemd, weste, muster, hose, stiefel, art = BERUFE[beruf]
+    haut, hut, band, hemd, weste, muster, hose, stiefel = (H(c) for c in (haut, hut, band, hemd, weste, muster, hose, stiefel))
+    bart = H(bart) if bart else None
+    haar = bart if bart else H(HAAR[beruf])
     t = Tex(64, 64)
+    wange, mund, auge, pupille = mix(haut, H('#ff7a8a'), 0.45), dunkel(haut, 0.4), H('#ffffff'), H('#2a1e1a')
+    gold = H('#ffd34a')
+    guertel = H('#4a2a18')
 
+    # --- Kopf (8 x 8 x 7) ---
     def gesicht(x, y, w, h):
-        if y in (3, 4) and x in (1, 2, 5, 6):
-            return H('#101018')
+        if y == 0:
+            return haar
+        if y == 2 and x in (1, 2, 5, 6):
+            return dunkel(haar, 0.1)          # Augenbrauen
+        if y == 3 and x in (1, 6):
+            return auge
+        if y == 3 and x in (2, 5):
+            return pupille
+        if y == 5 and x in (0, 7):
+            return wange
+        if y == 5 and x in (2, 5):
+            return mund                       # Lächeln
         if y == 6 and x in (3, 4):
-            return dunkel(haut, 0.35)
-        if y in (5,) and x in (0, 7):
-            return mix(haut, H('#ff8aa0'), 0.4)
+            return mund
         return haut
-    box(t, 0, 0, 8, 8, 8, {'alle': haut, 'vorne': gesicht, 'top': hut})
-    box(t, 16, 16, 8, 12, 4, {'alle': lambda x, y, w, h: akzent if y == 5 else (dunkel(robe, 0.1) if x in (0, w - 1) else robe)})
-    box(t, 40, 16, 4, 12, 4, {'alle': lambda x, y, w, h: haut if y >= h - 3 else robe})
-    box(t, 0, 16, 4, 12, 4, {'alle': lambda x, y, w, h: dunkel(robe, 0.5) if y >= h - 2 else dunkel(robe, 0.15)})
-    sterne = beruf == 'sternenkundlerin'
 
-    def hutfarbe(x, y, w, h):
-        if sterne and (x * 7 + y * 3) % 11 == 0:
-            return akzent
-        return hut
-    box(t, 0, 32, 12, 1, 12, {'alle': hutfarbe, 'vorne': dunkel(hut, 0.2)})
-    box(t, 0, 45, 7, 4, 7, {'alle': lambda x, y, w, h: akzent if y == h - 1 else hutfarbe(x, y, w, h)})
-    box(t, 28, 45, 5, 3, 5, {'alle': hutfarbe})
-    box(t, 48, 45, 3, 3, 3, {'alle': hutfarbe})
-    box(t, 48, 52, 1, 2, 1, {'alle': akzent})
-    # Besen (nur bei Besenfliegern sichtbar)
-    box(t, 32, 0, 1, 1, 14, {'alle': lambda x, y, w, h: H('#7a4a2a') if (x + y) % 3 else H('#5a3418')})
-    box(t, 48, 32, 3, 3, 4, {'alle': lambda x, y, w, h: H('#e0c060') if (x + y) % 2 else H('#c8a040')})
-    return t
+    def seite(x, y, w, h):
+        return haar if y <= 2 else haut
 
+    def hinten(x, y, w, h):
+        return haar if y <= 5 or (x + y) % 3 else dunkel(haar, 0.15)
+    box(t, 0, 0, 8, 8, 7, {'top': haar, 'bottom': haut, 'vorne': gesicht, 'rechts': seite, 'links': seite, 'hinten': hinten})
+    nase = mix(haut, H('#ff8a7a'), 0.3)
+    box(t, 30, 0, 2, 2, 1, {'alle': nase, 'vorne': lambda x, y, w, h: hell(nase, 0.3) if (x, y) == (0, 0) else nase})
+    ohr = {'alle': haut, 'vorne': lambda x, y, w, h: wange if y == 1 else haut}
+    box(t, 36, 0, 1, 3, 2, ohr)
+    box(t, 42, 0, 1, 3, 2, ohr)
+    if bart:
+        def bartf(x, y, w, h):
+            if y == 0 and x in (2, 3):
+                return None                   # Platz für den Mund unter der Nase
+            return bart if (x + y) % 2 else dunkel(bart, 0.15)
+        box(t, 30, 5, 6, 3, 1, {'alle': bart, 'vorne': bartf})
 
-def gleeb_augen():
-    t = Tex(64, 64)
-    for x, y in ((9, 11), (10, 11), (13, 11), (14, 11), (9, 12), (10, 12), (13, 12), (14, 12)):
-        t.p(x, y, H('#c8ffff'))
+    # --- Körper (7 x 6 x 4) ---
+    def koerper_vorne(x, y, w, h):
+        if y == 4:
+            return gold if x == 3 else guertel                            # Gürtel mit Schnalle
+        if y == 5:
+            return hose if art != 'robe' else weste
+        if art == 'weste':
+            if x <= 1 or x >= 5:
+                return muster if (x + y) % 3 == 0 else weste              # Weste mit Rautenmuster
+            return gold if x == 3 and y in (1, 3) else hemd                # Hemd mit Knöpfen
+        if art == 'schuerze':
+            if 1 <= x <= 5 and y >= 1:
+                return muster if (y == 3 and x % 2) else weste            # Schürze mit Ziernaht
+            return hemd
+        if x == 3 or (x == 2 and y % 2) or (x == 4 and not y % 2):
+            return muster                                                 # Robe: Zickzack-Borte
+        return weste
+
+    def koerper_seite(x, y, w, h):
+        if y == 4:
+            return guertel
+        if y == 5:
+            return hose if art != 'robe' else weste
+        return (weste if art != 'schuerze' else hemd) if (x + y) % 4 else muster
+
+    def koerper_hinten(x, y, w, h):
+        if y == 4:
+            return guertel
+        if beruf == 'sternenkundlerin' and (x * 5 + y * 3) % 7 == 0:
+            return muster                                                 # Sternenumhang
+        if y == 5:
+            return hose if art != 'robe' else weste
+        return weste if art != 'schuerze' else hemd
+    box(t, 0, 16, 7, 6, 4, {'top': weste, 'bottom': hose, 'vorne': koerper_vorne, 'rechts': koerper_seite,
+                            'links': koerper_seite, 'hinten': koerper_hinten})
+
+    # --- Arme (2 x 6 x 2): Ärmel, Manschette, Hand ---
+    aermel = hemd if art in ('schuerze', 'weste') else weste
+
+    def arm(x, y, w, h):
+        if y >= 5:
+            return haut
+        if y == 4:
+            return muster
+        return aermel if (x + y) % 5 else dunkel(aermel, 0.12)
+    box(t, 22, 16, 2, 6, 2, {'alle': arm, 'top': aermel, 'bottom': haut})
+    box(t, 30, 16, 2, 6, 2, {'alle': arm, 'top': aermel, 'bottom': haut})
+
+    # --- Beine (3 x 5 x 3): Hose mit Muster, Stiefel mit Schnalle ---
+    def bein(x, y, w, h):
+        if y >= 3:
+            return gold if (y == 3 and x == 1) else stiefel
+        if beruf == 'buerger':
+            return dunkel(hose, 0.2) if (x + y) % 2 else hose             # kariert
+        return hose if (x * 2 + y) % 5 else muster
+    for u in (38, 50):
+        box(t, u, 16, 3, 5, 3, {'alle': bein, 'top': hose, 'bottom': dunkel(stiefel, 0.3)})
+
+    # --- Hut: Krempe, Krone mit Schnallenband, gestreifter Zipfel, Bommel ---
+    def krempe(x, y, w, h):
+        return dunkel(hut, 0.25) if (x in (0, w - 1) or y in (0, h - 1)) else hut
+    box(t, 0, 27, 10, 1, 9, {'alle': dunkel(hut, 0.25), 'top': krempe, 'bottom': dunkel(hut, 0.35)})
+
+    def krone(x, y, w, h):
+        if y == 2:
+            if w == 7 and 2 <= x <= 4:
+                return gold if x != 3 else band                           # Schnalle
+            return band
+        if beruf in ('alchemist', 'sternenkundlerin') and (x * 3 + y * 5) % 7 == 0:
+            return muster                                                 # Sterne
+        if beruf == 'kraeuterhexe' and y == 0 and x % 2:
+            return H('#8ad04a')                                           # Blätter am Hut
+        return hut if (x + y) % 4 else hell(hut, 0.08)
+    box(t, 0, 38, 7, 4, 7, {'alle': krone, 'top': hut})
+
+    def zipfel(x, y, w, h):
+        return muster if (x + y) % 3 == 0 else hut
+    box(t, 28, 38, 5, 2, 5, {'alle': zipfel})
+    box(t, 48, 38, 3, 2, 3, {'alle': zipfel})
+    box(t, 48, 44, 2, 2, 2, {'alle': lambda x, y, w, h: hell(muster, 0.3) if (x + y) % 2 else muster})
+
+    # --- Besen ---
+    box(t, 0, 50, 1, 1, 12, {'alle': lambda x, y, w, h: H('#7a4a2a') if (x + y) % 3 else H('#5a3418')})
+    box(t, 28, 50, 3, 3, 4, {'alle': lambda x, y, w, h: H('#e0c060') if (x + y) % 2 else H('#c8a040')})
     return t
 
 
@@ -521,8 +619,7 @@ def alle():
             ('mob_effect', 'verhuehnert', verhuehnert_icon())]
     for beruf in BERUFE:
         out.append(('entity/gleeb', beruf, gleeb(beruf)))
-    out += [('entity/gleeb', 'augen', gleeb_augen()),
-            ('entity/tiere', 'glimmhase', glimmhase(False)), ('entity/tiere', 'glimmhase_leuchten', glimmhase(True)),
+    out += [('entity/tiere', 'glimmhase', glimmhase(False)), ('entity/tiere', 'glimmhase_leuchten', glimmhase(True)),
             ('entity/tiere', 'pusteling', pusteling()),
             ('entity/tiere', 'schimmerfalter', schimmerfalter(False)),
             ('entity/tiere', 'schimmerfalter_leuchten', schimmerfalter(True)),
