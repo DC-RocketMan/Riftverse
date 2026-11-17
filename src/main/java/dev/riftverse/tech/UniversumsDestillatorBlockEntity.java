@@ -62,6 +62,7 @@ public class UniversumsDestillatorBlockEntity extends IndustrieBlockEntity imple
                 if (random == null || random.nextFloat() < 0.3f) out.add(new ItemStack(net.minecraft.world.item.Items.OBSIDIAN));
             }
             case GEZUECHTET -> { }
+            case MAGISCHES_DORF -> out.add(new ItemStack(dev.riftverse.registry.ModDorf.STERNENSTAUB.get()));
         }
         return out;
     }

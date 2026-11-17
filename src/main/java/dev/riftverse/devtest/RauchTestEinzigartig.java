@@ -55,8 +55,9 @@ final class RauchTestEinzigartig {
         check(UniverseType.SCHROTT.weight() == 8 && UniverseType.KRISTALL.weight() == 8 && UniverseType.TOXISCH.weight() == 8
                         && UniverseType.NIEDRIGGRAVITATION.weight() == 6 && UniverseType.ZEITDILATATION.weight() == 6
                         && UniverseType.ORGANISCH.weight() == 6 && UniverseType.HOCHGRAVITATION.weight() == 5
-                        && UniverseType.SPIEGEL.weight() == 5 && UniverseType.LEERE.weight() == 3,
-                "Gewichte: T1 je 8, T2 je 6, Hochgravitation und Spiegel je 5, Leere Welt 3");
+                        && UniverseType.SPIEGEL.weight() == 5 && UniverseType.LEERE.weight() == 3
+                        && UniverseType.MAGISCHES_DORF.weight() == 4,
+                "Gewichte: T1 je 8, T2 je 6, Hochgravitation und Spiegel je 5, Leere Welt 3, Bridge's Inn 4");
 
         for (int stufe = 1; stufe <= 4; stufe++) {
             List<UniverseType> typen = UniverseType.randomWith(stufe);
@@ -72,8 +73,8 @@ final class RauchTestEinzigartig {
             check(Math.abs(summe - 1) < 1e-9 && abweichung < 0.01, "Mk " + stufe + ": " + SPRUENGE
                     + " Sprünge folgen den Gewichten (größte Abweichung " + String.format("%.4f", abweichung) + ")");
         }
-        check(Math.abs(Multiverse.chance(UniverseType.LEERE, UniverseType.randomWith(4)) - 3.0 / 55) < 1e-9,
-                "Mk IV: Leere Welt 3 von 55 (5,5 %)");
+        check(Math.abs(Multiverse.chance(UniverseType.LEERE, UniverseType.randomWith(4)) - 3.0 / 59) < 1e-9,
+                "Mk IV: Leere Welt 3 von 59 (5,1 %)");
 
         // Config überschreibt Gewichte, 0 = nie Zufallsziel
         List<? extends String> vorher = Config.GEWICHTE.get();

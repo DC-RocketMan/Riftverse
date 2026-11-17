@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "riftverse:leuchtglocke_violett"
+    }
+  ],
+  "result": {
+    "id": "minecraft:purple_dye"
+  }
+}

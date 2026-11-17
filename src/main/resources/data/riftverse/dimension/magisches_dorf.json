@@ -1,0 +1,14 @@
+{
+  "type": "riftverse:magisches_dorf",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "magisches_dorf",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "magisches_dorf",
+      "biomes": [
+        "riftverse:bridges_inn"
+      ]
+    }
+  }
+}

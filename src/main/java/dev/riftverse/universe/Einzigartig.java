@@ -37,7 +37,10 @@ public record Einzigartig(UniverseType type, UniverseType vorlage, UniverseProfi
 
     private static final Map<UniverseType, Einzigartig> ALLE = Map.of(
             UniverseType.TEST_EINZIGARTIG, new Einzigartig(UniverseType.TEST_EINZIGARTIG, UniverseType.ZEITDILATATION,
-                    UniverseProfile.Terrain.TERRACED, 1, "Prüfstein", 24, -16));
+                    UniverseProfile.Terrain.TERRACED, 1, "Prüfstein", 24, -16),
+            // Ankunft auf dem Aussichtshügel nordwestlich des Hauptdorfs (siehe DorfPlan.HUEGEL_DX/DZ)
+            UniverseType.MAGISCHES_DORF, new Einzigartig(UniverseType.MAGISCHES_DORF, UniverseType.MAGISCHES_DORF,
+                    UniverseProfile.Terrain.DORFLAND, 0, "Bridge's Inn", -150, -110));
 
     @Nullable
     public static Einzigartig of(UniverseType type) {

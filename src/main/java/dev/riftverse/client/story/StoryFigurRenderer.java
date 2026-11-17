@@ -29,12 +29,26 @@ public class StoryFigurRenderer extends HumanoidMobRenderer<StoryFigur, PlayerMo
     private static final int HINTERGRUND = 0xB0000000;
     private static final Map<String, ResourceLocation> TEXTUREN = new HashMap<>();
 
+    /** Figuren mit {@code "aussehen": "gleeb:<beruf>"} sehen aus wie Gleebs aus Bridge's Inn. */
+    private final dev.riftverse.client.dorf.GleebRenderer<StoryFigur> gleeb;
+
     public StoryFigurRenderer(EntityRendererProvider.Context context) {
         super(context, new PlayerModel<>(context.bakeLayer(ModelLayers.PLAYER), false), 0.5f);
+        this.gleeb = new dev.riftverse.client.dorf.GleebRenderer<>(context, StoryFigurRenderer::beruf);
+    }
+
+    public static boolean istGleeb(StoryFigur figur) {
+        return figur.aussehen().startsWith("gleeb");
+    }
+
+    private static dev.riftverse.dorf.Beruf beruf(StoryFigur figur) {
+        String a = figur.aussehen();
+        return a.startsWith("gleeb:") ? dev.riftverse.dorf.Beruf.von(a.substring(6)) : dev.riftverse.dorf.Beruf.BUERGER;
     }
 
     @Override
     public ResourceLocation getTextureLocation(StoryFigur figur) {
+        if (istGleeb(figur)) return dev.riftverse.client.dorf.GleebRenderer.textur(beruf(figur));
         return TEXTUREN.computeIfAbsent(figur.aussehen(), StoryFigurRenderer::textur);
     }
 
@@ -49,7 +63,8 @@ public class StoryFigurRenderer extends HumanoidMobRenderer<StoryFigur, PlayerMo
 
     @Override
     public void render(StoryFigur figur, float yaw, float partialTicks, PoseStack pose, MultiBufferSource buffers, int light) {
-        super.render(figur, yaw, partialTicks, pose, buffers, light);
+        if (istGleeb(figur)) gleeb.render(figur, yaw, partialTicks, pose, buffers, light);
+        else super.render(figur, yaw, partialTicks, pose, buffers, light);
         ClientStory.Anzeige a = ClientStory.fuer(figur);
         if (a != null) dialogZeichnen(figur, a, pose, buffers);
     }
@@ -82,7 +97,7 @@ public class StoryFigurRenderer extends HumanoidMobRenderer<StoryFigur, PlayerMo
         for (FormattedCharSequence z : zeilen) breite = Math.max(breite, font.width(z));
 
         pose.pushPose();
-        pose.translate(0.0, figur.getBbHeight() + 0.75, 0.0);
+        pose.translate(0.0, (istGleeb(figur) ? 1.45 : figur.getBbHeight()) + 0.75, 0.0);
         pose.mulPose(entityRenderDispatcher.cameraOrientation());
         pose.scale(0.022f, -0.022f, 0.022f);
         Matrix4f m = pose.last().pose();

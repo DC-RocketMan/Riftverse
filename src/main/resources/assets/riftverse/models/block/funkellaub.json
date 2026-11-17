@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "riftverse:block/funkellaub"
+  },
+  "render_type": "minecraft:cutout_mipped"
+}

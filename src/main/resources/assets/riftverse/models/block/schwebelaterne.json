@@ -1,0 +1,82 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "l": "riftverse:block/schwebelaterne",
+    "particle": "riftverse:block/schwebelaterne"
+  },
+  "render_type": "minecraft:cutout",
+  "elements": [
+    {
+      "from": [
+        4,
+        2,
+        4
+      ],
+      "to": [
+        12,
+        13,
+        12
+      ],
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      },
+      "faces": {
+        "north": {
+          "texture": "#l",
+          "uv": [
+            4,
+            2,
+            12,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#l",
+          "uv": [
+            4,
+            2,
+            12,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#l",
+          "uv": [
+            4,
+            2,
+            12,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#l",
+          "uv": [
+            4,
+            2,
+            12,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#l",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#l",
+          "uv": [
+            4,
+            4,
+            12,
+            12
+          ]
+        }
+      }
+    }
+  ]
+}

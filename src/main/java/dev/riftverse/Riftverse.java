@@ -38,6 +38,7 @@ public class Riftverse {
     public Riftverse(IEventBus modBus, ModContainer container) {
         container.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
+        dev.riftverse.registry.ModDorf.init();   // Bridge's Inn: Blöcke und Items hängen an ModBlocks/ModItems
         ModFluids.FLUID_TYPES.register(modBus);
         ModFluids.FLUIDS.register(modBus);
         ModBlocks.BLOCKS.register(modBus);
@@ -59,12 +60,14 @@ public class Riftverse {
         ModBiomeModifiers.SERIALIZERS.register(modBus);
         ModAttachments.ATTACHMENT_TYPES.register(modBus);
         dev.riftverse.registry.ModConditions.CONDITIONS.register(modBus);
+        dev.riftverse.registry.ModDorf.EFFECTS.register(modBus);
 
         modBus.addListener(ModEntities::registerAttributes);
         modBus.addListener(ModEntities::registerSpawnPlacements);
         modBus.addListener(RueckkehrPayload::register);
         modBus.addListener(ZielPayload::register);
         modBus.addListener(dev.riftverse.storyline.StoryNetz::register);
+        modBus.addListener(dev.riftverse.dorf.Huhn::register);
         modBus.addListener(dev.riftverse.network.RuestungPayload::register);
         modBus.addListener(ModBlockEntities::registerCapabilities);
 

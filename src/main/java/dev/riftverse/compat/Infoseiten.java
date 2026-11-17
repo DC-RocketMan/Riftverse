@@ -77,6 +77,11 @@ public final class Infoseiten {
         for (UpgradeChip c : UpgradeChip.values()) chips.add(c.itemName());
         out.add(new Seite("chip", chips));
         out.add(new Seite("multitool_mk", List.of("multiversal_multitool_mk2", "multiversal_multitool_mk3")));
+        // Bridge's Inn
+        List<String> pflanzen = new ArrayList<>(dev.riftverse.registry.ModDorf.PFLANZEN.keySet());
+        pflanzen.add("lichtranke");
+        out.add(new Seite("leuchtpflanzen", pflanzen));
+        out.add(new Seite("sternenstaub", List.of("sternenstaub")));
         return out;
     }
 }

@@ -1,0 +1,24 @@
+{
+  "type": "riftverse:werkbank_shapeless",
+  "ingredients": [
+    {
+      "item": "riftverse:sternenstaub"
+    },
+    {
+      "item": "riftverse:sternenstaub"
+    },
+    {
+      "item": "riftverse:sternenstaub"
+    },
+    {
+      "item": "riftverse:sternenstaub"
+    },
+    {
+      "item": "riftverse:basis_schaltkreis"
+    }
+  ],
+  "result": {
+    "id": "riftverse:sternen_chip"
+  },
+  "loetzinn": 1
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:string"
+    },
+    {
+      "item": "riftverse:mondkraut"
+    },
+    {
+      "item": "riftverse:mondkraut"
+    }
+  ],
+  "result": {
+    "id": "riftverse:kraeuterbuendel"
+  }
+}

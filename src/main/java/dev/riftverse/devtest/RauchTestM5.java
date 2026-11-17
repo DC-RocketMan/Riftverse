@@ -59,10 +59,10 @@ final class RauchTestM5 {
         check(recipes.getRecipeFor(ModRecipes.RIFT_SCHMIEDE_TYPE.get(), new MachineRecipeInput(hullZutaten(), ""), level)
                 .map(h -> h.value().result().is(ModItems.NULL_HUELLE.get()) && h.value().result().getCount() == 4).orElse(false),
                 "Rift-Schmiede: 4 Graphit-Hülle + Gravitit + 2 Obsidian + Xenit- und Stahlplatten -> 4 Null-Hülle");
-        check(UniverseType.reachableWith(4).size() == 10, "Kanone Mk IV erreicht zehn Universumstypen");
+        check(UniverseType.reachableWith(4).size() == 11, "Kanone Mk IV erreicht elf Universumstypen");
         check(UniverseType.randomWith(4).contains(UniverseType.LEERE) && !UniverseType.randomWith(4).contains(UniverseType.GEZUECHTET),
                 "Zufallssprünge: Leere Welt ja, gezüchtete Universen nie");
-        check(UniverseType.randomWith(3).size() == 8, "Mk III springt zufällig in acht Typen");
+        check(UniverseType.randomWith(3).size() == 9, "Mk III springt zufällig in neun Typen");
 
         PortalKanoneItem mk2 = ModItems.PORTAL_KANONE_MK2.get(), mk3 = ModItems.PORTAL_KANONE_MK3.get(), mk4 = ModItems.PORTAL_KANONE_MK4.get();
         check(mk3.accepts(3) && mk3.accepts(4) && !mk3.accepts(2), "Mk III nimmt Konzentrat und Weltenformer-Essenz");

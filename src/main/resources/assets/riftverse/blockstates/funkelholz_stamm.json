@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "riftverse:block/funkelholz_stamm"
+    },
+    "axis=z": {
+      "model": "riftverse:block/funkelholz_stamm_horizontal",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "riftverse:block/funkelholz_stamm_horizontal",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

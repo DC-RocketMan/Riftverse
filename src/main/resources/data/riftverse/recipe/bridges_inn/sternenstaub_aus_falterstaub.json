@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "riftverse:falterstaub"
+    },
+    {
+      "item": "riftverse:falterstaub"
+    },
+    {
+      "item": "riftverse:falterstaub"
+    },
+    {
+      "item": "riftverse:falterstaub"
+    }
+  ],
+  "result": {
+    "id": "riftverse:sternenstaub"
+  }
+}

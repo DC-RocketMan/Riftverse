@@ -4,6 +4,10 @@
     "riftverse:garagen_gehaeuse",
     "riftverse:garagenpresse",
     "riftverse:kurbel_dynamo",
-    "riftverse:garagen_akku"
+    "riftverse:garagen_akku",
+    "riftverse:fachwerk",
+    "riftverse:fachwerk_kreuz",
+    "riftverse:funkelholz_stamm",
+    "riftverse:funkelholz_bretter"
   ]
 }

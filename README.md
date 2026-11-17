@@ -4,6 +4,37 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
+## Meilenstein 10 – Bridge's Inn
+
+Das erste einzigartige Storyuniversum: eine kunterbunte, magische Dorfwelt. Schon mit der Mk I erreichbar (Gewicht 4),
+ohne Monster, mit normalem Tag und Nacht.
+
+| Bereich | Inhalt |
+|---|---|
+| **Welt** | Fluss quer durch die Welt, See mit Insel, Aussichtshügel als Ankunft, Blumenwiesen in Farbthemen, Funkel-, Kirsch- und Azaleenbäume |
+| **Hauptdorf** | Wirtshaus **Bridge's Inn** auf der Steinbrücke über den Fluss, Marktplatz mit Brunnen, Magierturm, Sternwarte, alle Berufshäuser |
+| **Dörfer** | rund 20 kleine Gleeb-Dörfer mit Brunnen, Kopfsteinwegen und Schwebelaternen; 10 Haustypen, prozedural gebaut |
+| **Orte in der Natur** | Steinkreis auf der Seeinsel, Feenringe, Großvater-Funkelbaum, alte Brücke |
+| **Gleebs** | kleine Magier mit Namen; 5 Berufe handeln fremde Rohstoffe gegen Sternenstaub; Nachtschwärmer zaubern in den Leuchtpflanzen; Besenflieger |
+| **Huhn-Strafe** | wer einen Gleeb schlägt, ist 5 Minuten ein Huhn: kein Abbauen, Setzen, Benutzen, Schlagen; alle sehen ein Huhn |
+| **Leuchtpflanzen** | 11 Pflanzen in vielen Farben, leuchten nachts und strahlen auf, wenn man hindurchläuft; Lichtranke, Kräuterbündel; Farbstoffe |
+| **Deko** | violette Dachziegel (+ Treppe, Stufe), Fachwerk, buntes Kopfsteinpflaster, Sternglas, Funkelholz, Funkellaub, Schwebelaterne, Feenlicht |
+| **Tiere** | Glimmhase (Glimmhaar), Pusteling (Flausch, scherbar), Schimmerfalter (Falterstaub) |
+| **Nachts** | Sternschnuppen lassen Sternenstaub fallen, Irrlichter führen zu Fässern mit Schätzen |
+| **Neue Items** | Sternenstaub, Sternenbrot, Sternen-Chip (ersetzt die Xenit-Spule im Tempo-Chip), Glimmhaar, Flausch, Falterstaub, 4 Spawn-Eier |
+| **Story** | Story-Figuren können mit `"aussehen": "gleeb:<beruf>"` wie Gleebs aussehen |
+| **Handbuch** | drei Seiten: Bridge's Inn, Gleebs, Leuchtpflanzen und Dorf-Deko |
+
+### Entscheidungen in Meilenstein 10
+
+- **Alles im eigenen Weltengenerator:** Häuser, Wege und Laternen entstehen direkt mit dem Gelände, Kisten, Betten und
+  Gleebs im Spawn-Schritt. Kein Strukturen-System nötig, jeder Chunk weiß aus dem Seed, was auf ihm steht.
+- **Häuser erst prozedural:** Später ersetzen selbst gebaute Häuser die prozeduralen; Maße und Türseite stehen in
+  `HausTyp`.
+- **Gleebs nehmen keinen Schaden:** Statt zu sterben, verwandeln sie Angreifer in Hühner.
+- **Sternenstaub als Währung:** kommt aus Sternschnuppen, Handel, Irrlicht-Fässern, Falterstaub und dem
+  Universums-Destillator.
+
 ## Meilenstein 9 – Story-Gerüst
 
 Geschichten für die einzigartigen Universen: als JSON im Datapack geschrieben, ohne Java. Die Anleitung mit allen

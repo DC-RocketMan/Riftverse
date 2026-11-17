@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "riftverse:flausch"
+    },
+    {
+      "item": "riftverse:flausch"
+    },
+    {
+      "item": "riftverse:flausch"
+    },
+    {
+      "item": "riftverse:flausch"
+    }
+  ],
+  "result": {
+    "id": "minecraft:white_wool"
+  }
+}

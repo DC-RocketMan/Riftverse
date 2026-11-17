@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "riftverse:sternenblume_weiss"
+    }
+  ],
+  "result": {
+    "id": "minecraft:white_dye"
+  }
+}
