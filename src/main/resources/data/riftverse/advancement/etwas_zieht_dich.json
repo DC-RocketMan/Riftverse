@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:adventure/root",
+  "display": {
+    "icon": {
+      "id": "riftverse:koordinatenkarte"
+    },
+    "title": {
+      "translate": "advancements.riftverse.etwas_zieht_dich.title"
+    },
+    "description": {
+      "translate": "advancements.riftverse.etwas_zieht_dich.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "einzigartig": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

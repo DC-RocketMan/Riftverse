@@ -4,6 +4,43 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
+## Meilenstein 8 – Gewichtete Sprünge und einzigartige Universen
+
+Erster Meilenstein der neuen Universen (Plan im Dokument „Riftverse – Neue Universen“). Er bringt noch keine neue
+Welt, sondern die Grundlage, auf der die Story-Welten (Magisches Dorf, Lumora, Verlassene Minen) aufbauen.
+
+| Bereich | Inhalt |
+|---|---|
+| **Gewichte** | Zufallssprünge sind gewichtet: T1-Welten 8, T2-Welten 6, Hochgravitation und Spiegelwelt 5, Leere Welt 3. Mk I bleibt bei 33 % pro Welt; mit Mk IV fällt die Leere Welt von 11 % auf 5,5 % |
+| **Config** | `universen.gewichte` überschreibt jedes Gewicht (0 = nie Zufallsziel), `universen.anfaengerschutz` (standardmäßig aus) schickt die ersten drei Mk-I-Sprünge in die drei T1-Rohstoffwelten |
+| **Einzigartige Universen** | Kennzeichen `einzigartig` an `UniverseType`: immer die Zelle 0,0, nie aufgeräumt, festes Profil (Gelände und Palette fest, keine Modifikatoren) |
+| **Ankunft** | Die erste Ankunft eines Spielers ist am szenischen Ankunftspunkt, jede weitere an einer zufälligen sicheren Stelle der Welt |
+| **Begrüßung** | Beim ersten Besuch Titel in Gold, „Ein einzigartiges Universum“, Text im Chat, tiefer Klang, Erinnerungskarte und Fortschritt „Etwas zieht dich“; bei jeder Rückkehr einer von vier wechselnden Sätzen |
+| **Name statt Code** | Scanner („einzigartig – verändert sich nie“), Koordinatenkarte, Kanone und Universumsprobe zeigen den Namen der Welt |
+| **Admin-Befehl** | `/riftverse einzigartig zuruecksetzen <welt> [bestaetigen]` und `/riftverse einzigartig abbrechen <welt>` (Stufe 3) |
+| **Handbuch** | Neue Seiten „Wohin führt ein Rift?“ (Chancen-Tabelle, live aus den Gewichten) und „Einzigartige Universen“ |
+| **Testwelt** | `test_einzigartig` („Prüfstein“) gibt es nur im Rauchtest und in Entwicklungsstarts (Bedingung `riftverse:entwicklung`) |
+
+### Texte selbst schreiben
+
+Alle Texte der einzigartigen Welten stehen in `assets/riftverse/lang/de_de.json` (und `en_us.json`):
+
+- `universe.riftverse.<welt>` – Name der Welt
+- `einzigartig.riftverse.<welt>.erster_besuch` – Chat-Text beim ersten Besuch
+- `einzigartig.riftverse.<welt>.rueckkehr.1` bis `.4` – Untertitel bei der Rückkehr, sie wechseln sich ab
+- `message.riftverse.einzigartig.untertitel` – „Ein einzigartiges Universum“ (für alle Welten gleich)
+
+Text ändern, neu bauen, fertig; am Code muss dafür nichts geändert werden.
+
+### Entscheidungen in Meilenstein 8
+
+- **Gewichte statt Gleichverteilung:** Mit vielen neuen Welten würden die Rohstoffwelten sonst immer seltener.
+- **Anfängerschutz aus:** „Zufall ist King“. Wer ihn will, schaltet ihn in der Config ein.
+- **Erste Ankunft szenisch, danach Zufall:** Wegpunkte, die man mit besseren Kanonen speichert, kommen später.
+- **Erster Besuch pro Spieler, Story pro Welt:** Jeder wird einmal begrüßt; was in der Welt passiert, gilt für alle.
+- **Zurücksetzen beim Serverstart:** Die Region-Dateien sind im laufenden Betrieb offen, deshalb merkt der Befehl das
+  Zurücksetzen nur vor.
+
 ## Handbuch und Garagen-Akku
 
 Riftverse hat jetzt ein Handbuch im Spiel (GuideME) und einen ersten Speicher ganz ohne Xenit.
@@ -519,6 +556,8 @@ Wo das Design-Dokument nichts festlegt oder sich widerspricht, gilt bis auf Weit
 | `universen.aufraeumen` | `true` | Unbebaute, lange nicht besuchte Universen beim Serverstart zurücksetzen |
 | `universen.tage` | `10` | Ingame-Tage ohne Besuch bis zum Zurücksetzen |
 | `universen.bloecke` | `64` | Ab mehr als so vielen platzierten Blöcken gilt ein Universum als bebaut |
+| `universen.gewichte` | `[]` | Gewichte der Universumstypen bei Zufallssprüngen überschreiben, z. B. `["leere_welt=1"]`; 0 = nie Zufallsziel |
+| `universen.anfaengerschutz` | `false` | Die ersten drei Mk-I-Sprünge führen in Schrott-, Kristall- und Toxische Welt |
 | `story.boss_bei_ankunft` | `false` | Prototyp: Boss kurz nach der Ankunft starten (bis zum Story-Modus aus) |
 | `handbuch.beim_start` | `true` | Neue Spieler bekommen beim ersten Betreten das Riftverse-Handbuch |
 

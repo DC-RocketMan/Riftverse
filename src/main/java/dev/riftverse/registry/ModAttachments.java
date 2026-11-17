@@ -1,5 +1,6 @@
 package dev.riftverse.registry;
 
+import com.mojang.serialization.Codec;
 import dev.riftverse.Riftverse;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.attachment.AttachmentType;
@@ -15,6 +16,10 @@ public final class ModAttachments {
     /** Heimanker: wohin die Rückkehr-Taste der Portal-Kanone führt (siehe {@link dev.riftverse.portal.Heimanker}). */
     public static final DeferredHolder<AttachmentType<?>, AttachmentType<CompoundTag>> HEIMANKER = ATTACHMENT_TYPES.register("heimanker",
             () -> AttachmentType.builder(() -> new CompoundTag()).serialize(CompoundTag.CODEC).copyOnDeath().build());
+
+    /** Anfängerschutz: welche der drei T1-Rohstoffwelten schon angesteuert wurden (Bitmaske, siehe {@link dev.riftverse.universe.Anfaengerschutz}). */
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> ANFAENGERSCHUTZ = ATTACHMENT_TYPES.register("anfaengerschutz",
+            () -> AttachmentType.builder(() -> 0).serialize(Codec.INT).copyOnDeath().build());
 
     private ModAttachments() {}
 }

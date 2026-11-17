@@ -3,7 +3,9 @@ package dev.riftverse.universe;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongArrayTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -49,6 +51,12 @@ public class MultiverseData extends SavedData {
         public boolean cleared;
         public int resets;
 
+        // --- Einzigartige Universen ---
+        /** Spieler, die schon einmal angekommen sind (erste Ankunft am szenischen Punkt, Begrüßung, Karte). */
+        public final Set<UUID> angekommen = new HashSet<>();
+        /** Ein Admin hat das Zurücksetzen angefordert; passiert beim nächsten Serverstart. */
+        public boolean resetAngefordert;
+
         public boolean isAnchored() {
             return !anchors.isEmpty();
         }
@@ -58,7 +66,8 @@ public class MultiverseData extends SavedData {
         }
 
         boolean worthSaving() {
-            return state != STATE_NONE || visits > 0 || lastVisit >= 0 || !anchors.isEmpty() || resets > 0;
+            return state != STATE_NONE || visits > 0 || lastVisit >= 0 || !anchors.isEmpty() || resets > 0
+                    || !angekommen.isEmpty() || resetAngefordert;
         }
 
         CompoundTag save() {
@@ -76,6 +85,10 @@ public class MultiverseData extends SavedData {
             t.put("Anchors", longs(anchors));
             t.putBoolean("Cleared", cleared);
             t.putInt("Resets", resets);
+            ListTag spieler = new ListTag();
+            for (UUID u : angekommen) spieler.add(NbtUtils.createUUID(u));
+            t.put("Angekommen", spieler);
+            t.putBoolean("ResetAngefordert", resetAngefordert);
             return t;
         }
 
@@ -94,7 +107,26 @@ public class MultiverseData extends SavedData {
             readLongs(t, "Anchors", r.anchors);
             r.cleared = t.getBoolean("Cleared");
             r.resets = t.getInt("Resets");
+            for (Tag u : t.getList("Angekommen", Tag.TAG_INT_ARRAY)) r.angekommen.add(NbtUtils.loadUUID(u));
+            r.resetAngefordert = t.getBoolean("ResetAngefordert");
             return r;
+        }
+
+        /**
+         * Einzigartiges Universum vom Admin zurückgesetzt: Gelände, Bauten, Story-Stand und Ankünfte beginnen von
+         * vorn. Rift-Anker sind mit dem Gelände gelöscht.
+         */
+        public void komplettReset() {
+            terrainReset();
+            state = STATE_NONE;
+            bossName = "";
+            epithet = "";
+            bossId = null;
+            arena = null;
+            visits = 0;
+            anchors.clear();
+            angekommen.clear();
+            resetAngefordert = false;
         }
 
         /** Nach dem Löschen des Geländes: Bauzähler leeren, Story und Besuche bleiben. */

@@ -45,12 +45,18 @@ public final class UniverseCleanup {
         return Config.CLEANUP_DAYS.get() * 24000L;
     }
 
-    /** Soll dieses Universum zurückgesetzt werden? */
+    /** Soll dieses Universum zurückgesetzt werden? Einzigartige Universen nie (außer auf Anforderung eines Admins). */
+    public static boolean shouldReset(UniverseId id, MultiverseData.Record r, long now, long maxAge, int threshold) {
+        if (id.type().einzigartig()) return false;
+        return shouldReset(r, now, maxAge, threshold);
+    }
+
+    /** Soll dieses (normale) Universum zurückgesetzt werden? */
     public static boolean shouldReset(MultiverseData.Record r, long now, long maxAge, int threshold) {
         return r.lastVisit >= 0 && !r.cleared && !r.isAnchored() && !r.isBuilt(threshold) && now - r.lastVisit >= maxAge;
     }
 
-    /** Tage bis zum Zurücksetzen, gezählt ab dem letzten Besuch; -1 = bleibt (bebaut oder verankert). */
+    /** Tage bis zum Zurücksetzen, gezählt ab dem letzten Besuch; -1 = bleibt (bebaut oder verankert). Für normale Universen. */
     public static int daysLeft(MultiverseData.Record r, long now) {
         if (r.isAnchored() || r.isBuilt(Config.BUILD_THRESHOLD.get())) return -1;
         long left = Math.max(0, r.lastVisit + maxAgeTicks() - now);
@@ -61,7 +67,7 @@ public final class UniverseCleanup {
 
     @SubscribeEvent
     public static void onAboutToStart(ServerAboutToStartEvent event) {
-        if (!Config.CLEANUP.get()) return;
+        boolean aufraeumen = Config.CLEANUP.get();
         Path root = event.getServer().getWorldPath(LevelResource.ROOT);
         Path file = root.resolve("data").resolve(MultiverseData.NAME + ".dat");
         if (!Files.isRegularFile(file)) return;
@@ -73,7 +79,14 @@ public final class UniverseCleanup {
             int threshold = Config.BUILD_THRESHOLD.get();
             List<String> done = new ArrayList<>();
             data.forEach((id, rec) -> {
-                if (!shouldReset(rec, now, maxAge, threshold)) return;
+                if (rec.resetAngefordert) {
+                    // Admin-Befehl /riftverse einzigartig zuruecksetzen: alles beginnt von vorn
+                    int files = deleteTerrain(root, id);
+                    rec.komplettReset();
+                    done.add(id.key() + " komplett (" + files + " Dateien)");
+                    return;
+                }
+                if (!aufraeumen || !shouldReset(id, rec, now, maxAge, threshold)) return;
                 int files = deleteTerrain(root, id);
                 rec.terrainReset();
                 done.add(id.key() + " (" + files + " Dateien)");

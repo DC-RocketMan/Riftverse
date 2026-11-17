@@ -28,9 +28,11 @@ ohne Begrüßungskomitee, aber mit eigener Physik und eigenen Gefahren.
 ## Was ein Universum ausmacht
 
 Jedes Universum hat einen **Typ** (Physik, Rohstoff, Gefahr) und würfelt **1–3 Modifikatoren** dazu, damit keine zwei
-gleich sind. Welche Typen du erreichst, hängt vom Fluid ab. Alles dazu: [Universen](universen.md).
+gleich sind. Welche Typen du erreichst, hängt vom Fluid ab. Alles dazu: [Universen](universen.md). Wie wahrscheinlich
+welches Ziel ist, steht unter [Wohin führt ein Rift?](rift_chancen.md). Manche Universen gibt es nur einmal:
+[Einzigartige Universen](einzigartig.md).
 
-Universen, in denen nichts gebaut wurde, werden irgendwann zurückgesetzt. Was du behalten willst, sicherst du mit
+Universen, in denen nichts gebaut wurde, werden irgendwann zurückgesetzt (einzigartige nie). Was du behalten willst, sicherst du mit
 einem [Rift-Anker](werkzeuge.md).
 
 <SubPages />

@@ -149,6 +149,7 @@ public final class RauchTest {
         RauchTestM6.aufbauen(server, level, recipes, base.south(240));
         RauchTestM7.aufbauen(server, level, recipes, base.south(300));
         RauchTestM8.aufbauen(server, level, recipes, base.south(330));
+        RauchTestEinzigartig.aufbauen(server, level);
         ticks = 0;
     }
 
@@ -215,7 +216,11 @@ public final class RauchTest {
             UniverseProfile p = UniverseProfile.get(new UniverseId(type, 0, 0));
             check(top > u.getMinBuildHeight() + 8, type.id() + ": Gelände erzeugt (Oberfläche bei Y " + top + ", "
                     + p.terrain.label + ", " + p.modifiers + ")");
-            check(!p.modifiers.isEmpty() && p.modifiers.size() <= 3, type.id() + ": 1–3 Modifikatoren");
+            if (type.einzigartig()) {
+                check(p.modifiers.isEmpty(), type.id() + ": einzigartig, keine Modifikatoren");
+            } else {
+                check(!p.modifiers.isEmpty() && p.modifiers.size() <= 3, type.id() + ": 1–3 Modifikatoren");
+            }
             check(Multiverse.at(u, new BlockPos(c, 64, c)) != null, type.id() + ": Position liegt in einem Universum");
             BlockPos land = RiftTravel.findSafe(u, new BlockPos(c + 40, 100, c - 40), 32, false);
             check(RiftTravel.isSafe(u, land) && new UniverseId(type, 0, 0).equals(Multiverse.at(u, land)),
@@ -366,6 +371,7 @@ public final class RauchTest {
         RauchTestM6.ergebnis(server, level);
         RauchTestM7.ergebnis(server, level);
         RauchTestM8.ergebnis(server, level);
+        RauchTestEinzigartig.ergebnis(server, level);
 
         if (failures.isEmpty()) {
             Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: BESTANDEN");

@@ -55,12 +55,42 @@ public final class Multiverse {
         return id == null ? null : UniverseProfile.get(id);
     }
 
-    /** Ein zufälliges Universum eines der erlaubten Typen. */
+    /**
+     * Ein zufälliges Universum eines der erlaubten Typen, gewichtet nach {@link UniverseType#weight()}. Einzigartige
+     * Typen haben nur ein Universum: die Zelle 0,0.
+     */
     public static UniverseId random(RandomSource random, List<UniverseType> types) {
-        UniverseType type = types.get(random.nextInt(types.size()));
+        UniverseType type = waehle(random, types);
+        if (type.einzigartig()) return Einzigartig.id(type);
         int cx = random.nextInt(MAX_CELL * 2 + 1) - MAX_CELL;
         int cz = random.nextInt(MAX_CELL * 2 + 1) - MAX_CELL;
         return new UniverseId(type, cx, cz);
+    }
+
+    /** Wählt einen Typ nach Gewicht; haben alle Gewicht 0, ist jeder gleich wahrscheinlich. */
+    public static UniverseType waehle(RandomSource random, List<UniverseType> types) {
+        int total = summe(types);
+        if (total <= 0) return types.get(random.nextInt(types.size()));
+        int roll = random.nextInt(total);
+        for (UniverseType t : types) {
+            roll -= t.weight();
+            if (roll < 0) return t;
+        }
+        return types.get(types.size() - 1);
+    }
+
+    /** Chance (0–1), dass ein Zufallssprung unter diesen Typen in {@code type} führt. */
+    public static double chance(UniverseType type, List<UniverseType> types) {
+        if (!types.contains(type)) return 0;
+        int total = summe(types);
+        if (total <= 0) return 1.0 / types.size();
+        return (double) type.weight() / total;
+    }
+
+    private static int summe(List<UniverseType> types) {
+        int total = 0;
+        for (UniverseType t : types) total += t.weight();
+        return total;
     }
 
     /** Faktor für den Leitungsverlust: supraleitend 0, hochohmig 2, sonst 1. */

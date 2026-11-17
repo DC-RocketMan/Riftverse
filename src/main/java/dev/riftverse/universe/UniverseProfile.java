@@ -129,6 +129,9 @@ public final class UniverseProfile {
     public final UniverseType rohstoff;
     /** Umweltgefahren der Landschaft; nur gezüchtete Universen lassen sich ohne züchten. */
     public final boolean gefahren;
+    /** Festes Profil, falls einzigartig, sonst null. */
+    @Nullable
+    public final Einzigartig einzigartig;
     /** Bauplan, falls gezüchtet, sonst null. */
     @Nullable
     public final Zucht zucht;
@@ -163,16 +166,18 @@ public final class UniverseProfile {
         RandomSource r = RandomSource.create(seed);
 
         this.zucht = type == UniverseType.GEZUECHTET ? Zucht.of(id) : null;
-        this.look = zucht != null ? zucht.landschaft() : type;
-        this.rohstoff = zucht != null ? zucht.rohstoff() : type;
+        // Einzigartige Universen haben ein festes Profil: Vorlage für Gelände und Erze, keine Modifikatoren
+        this.einzigartig = Einzigartig.of(type);
+        this.look = zucht != null ? zucht.landschaft() : einzigartig != null ? einzigartig.vorlage() : type;
+        this.rohstoff = zucht != null ? zucht.rohstoff() : einzigartig != null ? einzigartig.vorlage() : type;
         this.gefahren = zucht == null || zucht.gefahren();
-        this.name = NameGen.universeName(r);
-        this.modifiers = UniverseModifier.roll(r);
+        this.name = einzigartig != null ? einzigartig.name() : NameGen.universeName(r);
+        this.modifiers = einzigartig != null ? List.of() : UniverseModifier.roll(r);
         this.gravity = zucht != null ? zucht.gravity() : type.gravity();
         this.atmosphere = look == UniverseType.TOXISCH && gefahren ? Atmosphere.TOXIC : Atmosphere.NORMAL;
         this.temperature = Temperature.TEMPERATE;
 
-        this.terrain = switch (look) {
+        Terrain gewuerfelt = switch (look) {
             case SCHROTT -> weighted(r, Terrain.values(), 15, 0, 0, 0, 0, 25, 60);
             case KRISTALL -> weighted(r, Terrain.values(), 30, 15, 20, 35, 0, 0, 0);
             case TOXISCH -> weighted(r, Terrain.values(), 35, 0, 15, 0, 35, 15, 0);
@@ -181,10 +186,12 @@ public final class UniverseProfile {
             case ORGANISCH -> weighted(r, Terrain.values(), 45, 0, 15, 10, 30, 0, 0);
             case HOCHGRAVITATION -> weighted(r, Terrain.values(), 0, 0, 0, 0, 0, 30, 0, 0, 70);
             case SPIEGEL -> weighted(r, Terrain.values(), 35, 20, 20, 15, 10, 0, 0);
-            case LEERE, GEZUECHTET -> Terrain.KERNE;
+            case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> Terrain.KERNE;
         };
+        this.terrain = einzigartig != null ? einzigartig.terrain() : gewuerfelt;
         List<Palette> palettes = PALETTES.get(look);
-        this.palette = palettes.get(r.nextInt(palettes.size()));
+        int paletteRoll = r.nextInt(palettes.size());
+        this.palette = palettes.get(einzigartig != null ? Math.floorMod(einzigartig.palette(), palettes.size()) : paletteRoll);
         this.featureDensity = switch (look) {
             case SCHROTT -> 0.15f + r.nextFloat() * 0.2f;
             case KRISTALL -> 0.006f + r.nextFloat() * 0.012f;
@@ -194,7 +201,7 @@ public final class UniverseProfile {
             case ORGANISCH -> 0.006f + r.nextFloat() * 0.01f;
             case HOCHGRAVITATION -> 0.004f + r.nextFloat() * 0.006f;
             case SPIEGEL -> 0.004f + r.nextFloat() * 0.008f;
-            case LEERE, GEZUECHTET -> 0.3f + r.nextFloat() * 0.15f;   // Anteil der Raster-Felder mit einem Kern
+            case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> 0.3f + r.nextFloat() * 0.15f;   // Anteil der Raster-Felder mit einem Kern
         };
         this.plantDensity = switch (look) {
             case SCHROTT -> 0.01f + r.nextFloat() * 0.03f;
@@ -205,7 +212,7 @@ public final class UniverseProfile {
             case ORGANISCH -> 0.03f + r.nextFloat() * 0.05f;
             case HOCHGRAVITATION -> 0.005f + r.nextFloat() * 0.02f;
             case SPIEGEL -> 0.06f + r.nextFloat() * 0.12f;
-            case LEERE, GEZUECHTET -> 0f;
+            case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> 0f;
         };
 
         double richness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
@@ -508,8 +515,9 @@ public final class UniverseProfile {
         return String.format(Locale.GERMAN, "%.2f g", gravity);
     }
 
+    /** „Universum K-317“, bei einzigartigen Universen ihr Name. */
     public String title() {
-        return "Universum " + id.code();
+        return einzigartig != null ? einzigartig.name() : "Universum " + id.code();
     }
 
     /** „Riesen-Mobs, Supraleitend“ */

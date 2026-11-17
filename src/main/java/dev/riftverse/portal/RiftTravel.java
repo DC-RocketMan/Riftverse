@@ -1,7 +1,9 @@
 package dev.riftverse.portal;
 
 import dev.riftverse.registry.ModBlocks;
+import dev.riftverse.universe.Einzigartig;
 import dev.riftverse.universe.Multiverse;
+import dev.riftverse.universe.MultiverseData;
 import dev.riftverse.universe.UniverseId;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,6 +53,8 @@ public final class RiftTravel {
         BlockPos landing;
         if (dest.exactPos() != null) {
             landing = findSafe(target, BlockPos.containing(dest.exactPos()), 8, true);
+        } else if (dest.universe() != null && Einzigartig.ist(dest.universe())) {
+            landing = landeplatzEinzigartig(target, dest.universe(), entity);
         } else if (dest.universe() != null) {
             RandomSource r = target.getRandom();
             int x = Multiverse.cellCenter(dest.universe().cellX()) + r.nextInt(301) - 150;
@@ -99,6 +103,20 @@ public final class RiftTravel {
     }
 
     // ------------------------------------------------------------------ Landeplatz
+
+    /**
+     * Einzigartige Universen: Die erste Ankunft eines Spielers ist am szenischen Ankunftspunkt (zugebaut: der nächste
+     * sichere Platz in 32 Blöcken, sonst eine Rift-Stein-Plattform). Spätere Ankünfte und Mobs landen an einer
+     * zufälligen sicheren Stelle irgendwo in der Welt.
+     */
+    public static BlockPos landeplatzEinzigartig(ServerLevel target, UniverseId id, Entity entity) {
+        Einzigartig e = Einzigartig.of(id.type());
+        MinecraftServer server = target.getServer();
+        boolean erstes = e != null && entity instanceof ServerPlayer player
+                && !MultiverseData.get(server).record(id).angekommen.contains(player.getUUID());
+        if (erstes) return findSafe(target, e.ankunft(), 32, false);
+        return findSafe(target, Einzigartig.zufaelligeAnkunft(id, target.getRandom()), 32, false);
+    }
 
     /** Sucht spiralförmig einen sicheren Platz; baut notfalls eine Plattform aus Rift-Stein. */
     public static BlockPos findSafe(ServerLevel level, BlockPos around, int radius, boolean tryExactFirst) {

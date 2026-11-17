@@ -40,17 +40,22 @@ public class UniverseScannerItem extends Item {
         UniverseProfile p = UniverseProfile.get(id);
         MultiverseData.Record rec = MultiverseData.get(sl.getServer()).record(id);
 
-        player.sendSystemMessage(Component.literal("━━ " + p.title() + " „" + p.name + "“ ━━").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD));
+        boolean einzig = id.type().einzigartig();
+        Component kopf = einzig ? id.label() : Component.literal(p.title() + " „" + p.name + "“");
+        player.sendSystemMessage(Component.literal("━━ ").append(kopf).append(" ━━")
+                .withStyle(einzig ? ChatFormatting.GOLD : ChatFormatting.GREEN, ChatFormatting.BOLD));
         line(player, "message.riftverse.scanner.type", p.zucht != null
                 ? p.type.displayName().copy().append(" (").append(p.zucht.describe()).append(")") : p.type.displayName());
-        line(player, "message.riftverse.scanner.modifiers", p.modifierText());
+        if (!einzig) line(player, "message.riftverse.scanner.modifiers", p.modifierText());
         line(player, "message.riftverse.scanner.gravity", Component.literal(p.gravityText()));
         line(player, "message.riftverse.scanner.air", Component.literal(p.atmosphere.label));
         line(player, "message.riftverse.scanner.terrain", Component.literal(p.terrain.label + " · " + p.palette.name()));
 
         long now = sl.getServer().overworld().getGameTime();
         Component status;
-        if (rec.isAnchored()) {
+        if (einzig) {
+            status = Component.translatable("message.riftverse.scanner.einzigartig").withStyle(ChatFormatting.GOLD);
+        } else if (rec.isAnchored()) {
             status = Component.translatable("message.riftverse.scanner.anchored").withStyle(ChatFormatting.GREEN);
         } else {
             int days = UniverseCleanup.daysLeft(rec, now);

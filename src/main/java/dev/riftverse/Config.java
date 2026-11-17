@@ -1,6 +1,11 @@
 package dev.riftverse;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Riftverse-Einstellungen (config/riftverse-common.toml).
@@ -28,6 +33,10 @@ public final class Config {
     public static final ModConfigSpec.IntValue CLEANUP_DAYS;
     /** Ab so vielen dauerhaft platzierten Blöcken gilt ein Universum als bebaut. */
     public static final ModConfigSpec.IntValue BUILD_THRESHOLD;
+    /** Gewichte der Universumstypen bei Zufallssprüngen überschreiben ("schrottwelt=8"). */
+    public static final ModConfigSpec.ConfigValue<List<? extends String>> GEWICHTE;
+    /** Die ersten drei Mk-I-Sprünge führen in Schrott-, Kristall- und Toxische Welt. */
+    public static final ModConfigSpec.BooleanValue ANFAENGERSCHUTZ;
     /** Prototyp: Boss kurz nach der Ankunft starten (bis zum Story-Modus aus). */
     public static final ModConfigSpec.BooleanValue BOSS_ON_ARRIVAL;
     /** Neue Spieler bekommen beim ersten Betreten das Riftverse-Handbuch. */
@@ -81,6 +90,17 @@ public final class Config {
                 .comment("Mehr als so viele dauerhaft platzierte Blöcke (ohne Fackeln und Gerüste) gelten als Bau.",
                         "Eine Block-Entity (Truhe, Maschine, Bett) zählt immer als Bau.")
                 .defineInRange("bloecke", 64, 0, 100000);
+        GEWICHTE = b
+                .comment("Gewichte der Universumstypen bei Zufallssprüngen, z. B. [\"schrottwelt=8\", \"leere_welt=1\"].",
+                        "Die Chance auf einen Typ ist sein Gewicht geteilt durch die Summe aller Typen, die die Kanone erreicht.",
+                        "0 = nie ein Zufallsziel. Leer = Standardwerte: schrottwelt, kristallwelt, toxische_welt je 8;",
+                        "niedriggravitation, zeitdilatation, organische_welt je 6; hochgravitation, spiegelwelt je 5; leere_welt 3.")
+                .defineListAllowEmpty("gewichte", List.of(), () -> "schrottwelt=8",
+                        o -> o instanceof String s && s.matches("[a-z0-9_]+\\s*=\\s*\\d+"));
+        ANFAENGERSCHUTZ = b
+                .comment("Anfängerschutz: Die ersten drei Sprünge mit der Kanone Mk I führen in die Schrott-, Kristall- und",
+                        "Toxische Welt (jede genau einmal, in zufälliger Reihenfolge). Standardmäßig aus: Zufall ist King.")
+                .define("anfaengerschutz", false);
         b.pop();
 
         b.push("story");
@@ -105,6 +125,35 @@ public final class Config {
             case "tin_ore" -> TIN_ORE.get() && TIN_DENSITY.get() > 0;
             default -> true;
         };
+    }
+
+    private static List<? extends String> gewichteQuelle;
+    private static Map<String, Integer> gewichteCache = Map.of();
+
+    /** Gewicht aus der Config für einen Universumstyp, oder null für den Standardwert. */
+    @Nullable
+    public static Integer gewichtFuer(String typ) {
+        List<? extends String> liste;
+        try {
+            liste = GEWICHTE.get();
+        } catch (IllegalStateException e) {
+            return null;   // Config noch nicht geladen
+        }
+        if (liste != gewichteQuelle) {
+            Map<String, Integer> neu = new HashMap<>();
+            for (String eintrag : liste) {
+                int gleich = eintrag.indexOf('=');
+                if (gleich < 0) continue;
+                try {
+                    neu.put(eintrag.substring(0, gleich).trim(), Integer.parseInt(eintrag.substring(gleich + 1).trim()));
+                } catch (NumberFormatException ignored) {
+                    // vom Validator schon ausgeschlossen
+                }
+            }
+            gewichteCache = neu;
+            gewichteQuelle = liste;
+        }
+        return gewichteCache.get(typ);
     }
 
     /** Mengenfaktor für den Platzierungs-Modifier {@code riftverse:config_menge}. */
