@@ -11,7 +11,7 @@ item_ids:
 
 # Gleebs
 
-Gleebs sind die kleinen Bewohner von [Bridge's Inn](bridges_inn.md): freundliche Magier mit großen, schiefen Hüten.
+Gleebs sind die kleinen Bewohner von [Bridge's Inn](bridges_inn.md): kleine, zwergenhafte Elfen mit Knollennase, Spitzohren und weichem Schnallenhut. Manche tragen Bart, alle tragen bunte, gemusterte Kleidung.
 Tagsüber laufen sie durch ihr Dorf, nachts gehen sie heim – nur die Nachtschwärmer spazieren durch die Leuchtpflanzen
 und zaubern. Über manchen Dörfern kreisen Gleebs auf ihren Besen.
 

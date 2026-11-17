@@ -58,7 +58,7 @@ public final class ModEntities {
     // --- Neue Universen, Meilenstein 10: Bridge's Inn ---
     public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.dorf.Gleeb>> GLEEB =
             ENTITIES.register("gleeb", () -> EntityType.Builder.<dev.riftverse.dorf.Gleeb>of(
-                    dev.riftverse.dorf.Gleeb::new, MobCategory.MISC).sized(0.5f, 1.45f).eyeHeight(1.25f)
+                    dev.riftverse.dorf.Gleeb::new, MobCategory.MISC).sized(0.5f, 1.05f).eyeHeight(0.8f)
                     .clientTrackingRange(10).build("gleeb"));
     public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.dorf.Glimmhase>> GLIMMHASE =
             ENTITIES.register("glimmhase", () -> EntityType.Builder.<dev.riftverse.dorf.Glimmhase>of(

@@ -97,7 +97,7 @@ public class StoryFigurRenderer extends HumanoidMobRenderer<StoryFigur, PlayerMo
         for (FormattedCharSequence z : zeilen) breite = Math.max(breite, font.width(z));
 
         pose.pushPose();
-        pose.translate(0.0, (istGleeb(figur) ? 1.45 : figur.getBbHeight()) + 0.75, 0.0);
+        pose.translate(0.0, (istGleeb(figur) ? 1.05 : figur.getBbHeight()) + 0.75, 0.0);
         pose.mulPose(entityRenderDispatcher.cameraOrientation());
         pose.scale(0.022f, -0.022f, 0.022f);
         Matrix4f m = pose.last().pose();
