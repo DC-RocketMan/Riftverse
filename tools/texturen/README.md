@@ -47,4 +47,9 @@ Schwebstein-Kern, Chronoglas-Sand, atmende Biomasse, fressende Flora, stabile Ka
 und `meilenstein4.py` (Gravitit-Leitungen, Umspanner II ↔ III und III ↔ IV, Graphit-Hülle, Spiegelkristall,
 Parallelzapfer-Front, aktive Zustände von Chrono-Speicher, Klon-Tank und Kabelknoten, Konzentrat-Kartusche,
 Kopplungskarte, Graphitplatte und Fragment-Replik).
+Die neuen Universen haben eigene Module: `story.py` (Meilenstein 9, Rift-Tagebuch) und `bridges_inn.py`
+(Meilenstein 10: Leuchtpflanzen, Dorf-Deko, Items, Gleebs und Tiere).
 Ein einzelnes Modul erzeugst du mit `python3 main.py <zielordner> meilenstein2`; die Vorschaubögen landen in `vorschau/`.
+
+Gleebs und Tiere sind 3D-Modelle; wie sie zusammengesetzt aussehen, zeigt `vorschau/meilenstein_10_modelle.png`.
+Neu rechnen mit `python3 tools/texturen/modell_vorschau.py` (aus dem Repo-Wurzelordner).
