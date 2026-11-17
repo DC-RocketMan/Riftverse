@@ -629,7 +629,7 @@ def alle():
 
 def build(pk):
     for art, tid, tex in alle():
-        pk.add("Bridge's Inn", art, tid, tex, tid)
+        pk.add('Meilenstein 10', art, tid, tex, tid)
 
 
 if __name__ == '__main__':
