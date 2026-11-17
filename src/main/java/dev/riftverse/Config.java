@@ -37,6 +37,8 @@ public final class Config {
     public static final ModConfigSpec.ConfigValue<List<? extends String>> GEWICHTE;
     /** Die ersten drei Mk-I-Sprünge führen in Schrott-, Kristall- und Toxische Welt. */
     public static final ModConfigSpec.BooleanValue ANFAENGERSCHUTZ;
+    /** Testwelten (Prüfstein) auch im normalen Spiel, mit /riftverse testwelt erreichbar. */
+    public static final ModConfigSpec.BooleanValue TESTWELTEN;
     /** Prototyp: Boss kurz nach der Ankunft starten (bis zum Story-Modus aus). */
     public static final ModConfigSpec.BooleanValue BOSS_ON_ARRIVAL;
     /** Neue Spieler bekommen beim ersten Betreten das Riftverse-Handbuch. */
@@ -108,6 +110,13 @@ public final class Config {
                 .comment("Prototyp aus dem ersten Entwurf: Boss 6 Sekunden nach der Ankunft starten.",
                         "Bis zum Story-Modus aus, damit Universen beim Betreten friedlich sind.")
                 .define("boss_bei_ankunft", false);
+        b.pop();
+
+        b.push("entwicklung");
+        TESTWELTEN = b
+                .comment("Testwelten wie den Prüfstein (mit der Beispiel-Storyline) auch im normalen Spiel laden.",
+                        "Erreichbar mit /riftverse testwelt. Wirkt beim nächsten Laden der Welt.")
+                .define("testwelten", false);
         b.pop();
 
         b.push("handbuch");

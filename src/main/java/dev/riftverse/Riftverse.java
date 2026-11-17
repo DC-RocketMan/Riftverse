@@ -64,6 +64,7 @@ public class Riftverse {
         modBus.addListener(ModEntities::registerSpawnPlacements);
         modBus.addListener(RueckkehrPayload::register);
         modBus.addListener(ZielPayload::register);
+        modBus.addListener(dev.riftverse.storyline.StoryNetz::register);
         modBus.addListener(dev.riftverse.network.RuestungPayload::register);
         modBus.addListener(ModBlockEntities::registerCapabilities);
 

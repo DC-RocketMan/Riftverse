@@ -57,6 +57,7 @@ public final class EinzigartigeAnkunft {
         } else {
             player.playNotifySound(SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.AMBIENT, 0.8f, 0.7f);
         }
+        dev.riftverse.storyline.StoryManager.ankunft(player, id);
     }
 
     /** Einmalig beim ersten Besuch: eine Koordinatenkarte zurück in diese Welt (ab Kanone Mk II nutzbar). */

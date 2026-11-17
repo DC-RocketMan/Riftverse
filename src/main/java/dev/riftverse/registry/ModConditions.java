@@ -18,9 +18,17 @@ public final class ModConditions {
 
     private ModConditions() {}
 
-    /** Nur im Entwicklungsmodus: Rauchtest ({@code -Driftverse.rauchtest=true}) oder Start aus der Entwicklungsumgebung. */
+    /**
+     * Nur im Entwicklungsmodus: Rauchtest ({@code -Driftverse.rauchtest=true}), Start aus der Entwicklungsumgebung oder
+     * die Config-Option {@code entwicklung.testwelten}.
+     */
     public static boolean entwicklung() {
-        return Boolean.getBoolean("riftverse.rauchtest") || !FMLEnvironment.production;
+        if (Boolean.getBoolean("riftverse.rauchtest") || !FMLEnvironment.production) return true;
+        try {
+            return dev.riftverse.Config.TESTWELTEN.get();
+        } catch (IllegalStateException e) {
+            return false;   // Config noch nicht geladen
+        }
     }
 
     /** {@code {"type": "riftverse:entwicklung"}}: wahr nur im Entwicklungsmodus (Testwelten). */

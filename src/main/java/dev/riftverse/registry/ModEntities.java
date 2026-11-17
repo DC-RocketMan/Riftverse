@@ -49,7 +49,14 @@ public final class ModEntities {
                     dev.riftverse.gadget.AntiGravGranateEntity::new, MobCategory.MISC).sized(0.25f, 0.25f)
                     .clientTrackingRange(4).updateInterval(10).build("anti_grav_granate"));
 
+    // --- Neue Universen, Meilenstein 9: Story-Gerüst ---
+    public static final DeferredHolder<EntityType<?>, EntityType<dev.riftverse.storyline.StoryFigur>> STORY_FIGUR =
+            ENTITIES.register("story_figur", () -> EntityType.Builder.<dev.riftverse.storyline.StoryFigur>of(
+                    dev.riftverse.storyline.StoryFigur::new, MobCategory.MISC).sized(0.6f, 1.8f)
+                    .clientTrackingRange(10).build("story_figur"));
+
     public static void registerAttributes(EntityAttributeCreationEvent event) {
+        event.put(STORY_FIGUR.get(), dev.riftverse.storyline.StoryFigur.createAttributes().build());
         event.put(HOLO_KOEDER.get(), dev.riftverse.gadget.HoloKoederEntity.createAttributes().build());
         event.put(RIFT_BOSS.get(), RiftBossEntity.createAttributes().build());
         event.put(SCHROTT_GOLEM.get(), SchrottGolem.createAttributes().build());
