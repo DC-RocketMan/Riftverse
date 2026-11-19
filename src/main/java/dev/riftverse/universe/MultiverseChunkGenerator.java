@@ -40,8 +40,6 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
             UniverseType.CODEC.fieldOf("universe").forGetter(gen -> gen.type)
     ).apply(instance, MultiverseChunkGenerator::new));
 
-    private static final int MIN_Y = -64;
-    private static final int HEIGHT = 384;
     private static final int NO_LAND = Integer.MIN_VALUE;
 
     private final UniverseType type;
@@ -64,11 +62,18 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         return UniverseProfile.get(new UniverseId(type, Multiverse.cellOf(x), Multiverse.cellOf(z)));
     }
 
-    /** Oberster fester Block oder NO_LAND. */
+    /** Oberster fester Block oder NO_LAND (nur für Gelände ohne 3D-Dichte). */
     private int surfaceAt(UniverseProfile p, int x, int z, int[] col) {
         if (Multiverse.inBorder(x, z)) return NO_LAND;
         if (!p.column(x, z, col)) return NO_LAND;
-        return Math.min(col[1], MIN_Y + HEIGHT - 24);
+        return Math.min(col[1], type.minY() + type.height() - 24);
+    }
+
+    /** Oberster fester Block, mit oder ohne 3D-Dichte. */
+    private int topAt(UniverseProfile p, int x, int z) {
+        if (p.gelaende == null) return surfaceAt(p, x, z, new int[2]);
+        if (Multiverse.inBorder(x, z)) return NO_LAND;
+        return p.dichtefeld().oberste(x, z);
     }
 
     // ------------------------------------------------------------------ Hauptgenerierung
@@ -81,6 +86,13 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         int baseZ = cp.getMinBlockZ();
         UniverseProfile p = profileAt(baseX, baseZ);
         int minY = chunk.getMinBuildHeight();
+
+        // Meilenstein 11: Gelände mit 3D-Dichte (Überhänge, Bögen, schwebende Berge)
+        if (p.gelaende != null) {
+            int[][] tops = p.dichtefeld().fuellen(chunk, p);
+            if (p.look == UniverseType.TEST_DICHTE) decorateDichteTest(chunk, p, tops, new BlockPos.MutableBlockPos());
+            return CompletableFuture.completedFuture(chunk);
+        }
 
         BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
         int[] col = new int[2];
@@ -153,7 +165,7 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
             case SPIEGEL -> decorateMirror(chunk, p, tops, pos);
             case LEERE -> decorateVoid(chunk, p, pos);
             case MAGISCHES_DORF -> dev.riftverse.dorf.DorfBau.gestalten(chunk, p, tops, pos);
-            case GEZUECHTET -> { }
+            case GEZUECHTET, TEST_EINZIGARTIG, TEST_DICHTE -> { }
         }
         return CompletableFuture.completedFuture(chunk);
     }
@@ -623,6 +635,25 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         }
     }
 
+    // ------------------------------------------------------------------ Dichte-Testwelt
+
+    /** Kerzen in der Farbe der Region; im Übergangssaum gestreut gemischt (Entscheidung M11-11). */
+    private void decorateDichteTest(ChunkAccess chunk, UniverseProfile p, int[][] tops, BlockPos.MutableBlockPos pos) {
+        if (!(p.gelaende instanceof dev.riftverse.universe.dichte.TestGelaende g)) return;
+        RandomSource rnd = decoRandom(p, chunk);
+        ChunkPos cp = chunk.getPos();
+        for (int lx = 0; lx < 16; lx++) {
+            for (int lz = 0; lz < 16; lz++) {
+                int top = tops[lx][lz];
+                if (!dryLand(p, top) || rnd.nextFloat() >= p.plantDensity) continue;
+                int x = cp.getMinBlockX() + lx, z = cp.getMinBlockZ() + lz;
+                if (!chunk.getBlockState(pos.set(x, top + 1, z)).isAir()) continue;
+                Block kerze = dev.riftverse.universe.dichte.TestGelaende.KERZEN[g.art(x, z)];
+                chunk.setBlockState(pos, kerze.defaultBlockState(), false);
+            }
+        }
+    }
+
     private static void setIfAir(ChunkAccess chunk, BlockPos pos, BlockState state) {
         if (chunk.getBlockState(pos).isAir()) chunk.setBlockState(pos, state, false);
     }
@@ -651,7 +682,7 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
 
     @Override
     public int getGenDepth() {
-        return HEIGHT;
+        return type.height();
     }
 
     @Override
@@ -661,13 +692,13 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
 
     @Override
     public int getMinY() {
-        return MIN_Y;
+        return type.minY();
     }
 
     @Override
     public int getBaseHeight(int x, int z, Heightmap.Types type, LevelHeightAccessor level, RandomState random) {
         UniverseProfile p = profileAt(x, z);
-        int top = surfaceAt(p, x, z, new int[2]);
+        int top = topAt(p, x, z);
         if (top == NO_LAND) return level.getMinBuildHeight();
         boolean floorOnly = type == Heightmap.Types.OCEAN_FLOOR || type == Heightmap.Types.OCEAN_FLOOR_WG;
         if (!floorOnly && p.hasFluid() && top < p.fluidLevel) return p.fluidLevel + 1;
@@ -680,6 +711,19 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         BlockState[] states = new BlockState[level.getHeight()];
         Arrays.fill(states, Blocks.AIR.defaultBlockState());
         UniverseProfile p = profileAt(x, z);
+        if (p.gelaende != null) {
+            // 3D-Dichte: dieselben Rasterpunkte wie beim Füllen, damit Strukturen und Portale passen
+            if (Multiverse.inBorder(x, z)) return new NoiseColumn(minY, states);
+            dev.riftverse.universe.dichte.Dichtefeld feld = p.dichtefeld();
+            BlockState stein = p.palette.stone().defaultBlockState();
+            BlockState fluid = p.hasFluid() ? p.fluidBlock() : null;
+            for (int i = 0; i < states.length; i++) {
+                int y = minY + i;
+                if (feld.fest(x, y, z)) states[i] = i == 0 ? Blocks.BEDROCK.defaultBlockState() : stein;
+                else if (fluid != null && y <= p.fluidLevel) states[i] = fluid;
+            }
+            return new NoiseColumn(minY, states);
+        }
         int[] col = new int[2];
         int top = surfaceAt(p, x, z, col);
         if (top != NO_LAND) {
@@ -697,5 +741,16 @@ public class MultiverseChunkGenerator extends ChunkGenerator {
         UniverseProfile p = profileAt(pos.getX(), pos.getZ());
         info.add("Riftverse: " + p.title() + " \"" + p.name + "\" | " + type.getSerializedName() + " | "
                 + p.terrain.label + " | " + p.modifiers);
+        // Meilenstein 11 (M11-14): Dichte und Region an der eigenen Position
+        if (p.gelaende != null) {
+            double d = p.dichtefeld().dichte(pos.getX(), pos.getY(), pos.getZ());
+            String zeile = String.format(java.util.Locale.ROOT, "Riftverse-Dichte: %.3f (%s)", d, d > 0 ? "Fels" : "Luft");
+            if (p.regionen != null) {
+                dev.riftverse.universe.dichte.Regionskarte.Region r = p.regionen.bei(pos.getX(), pos.getZ());
+                zeile += String.format(java.util.Locale.ROOT, " | Region %d, Nachbar %d, Grenze %.1f Blöcke, Saum %.2f",
+                        r.art(), r.nachbar(), r.abstand(), r.saum());
+            }
+            info.add(zeile);
+        }
     }
 }

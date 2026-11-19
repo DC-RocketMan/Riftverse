@@ -152,6 +152,7 @@ public final class RauchTest {
         RauchTestEinzigartig.aufbauen(server, level);
         RauchTestStory.aufbauen(server);
         RauchTestBridgesInn.aufbauen(server, level, base.south(360));
+        RauchTestM11.aufbauen(server);
         ticks = 0;
     }
 

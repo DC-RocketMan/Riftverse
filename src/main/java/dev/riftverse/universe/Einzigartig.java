@@ -40,7 +40,10 @@ public record Einzigartig(UniverseType type, UniverseType vorlage, UniverseProfi
                     UniverseProfile.Terrain.TERRACED, 1, "Prüfstein", 24, -16),
             // Ankunft auf dem Aussichtshügel nordwestlich des Hauptdorfs (siehe DorfPlan.HUEGEL_DX/DZ)
             UniverseType.MAGISCHES_DORF, new Einzigartig(UniverseType.MAGISCHES_DORF, UniverseType.MAGISCHES_DORF,
-                    UniverseProfile.Terrain.DORFLAND, 0, "Bridge's Inn", -150, -110));
+                    UniverseProfile.Terrain.DORFLAND, 0, "Bridge's Inn", -150, -110),
+            // Meilenstein 11: Dichte-Testwelt, Ankunft zwischen dem schwebenden Testberg (Osten) und dem Bogen (Westen)
+            UniverseType.TEST_DICHTE, new Einzigartig(UniverseType.TEST_DICHTE, UniverseType.TEST_DICHTE,
+                    UniverseProfile.Terrain.DICHTETEST, 0, "Dichteprobe", 0, -30));
 
     @Nullable
     public static Einzigartig of(UniverseType type) {

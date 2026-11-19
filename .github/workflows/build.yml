@@ -28,6 +28,9 @@ jobs:
       - name: Storylines prüfen
         run: python3 tools/story/pruefen.py
 
+      - name: Weltenhöhen prüfen
+        run: python3 tools/daten/pruefen_hoehen.py
+
       - name: Bauen
         run: |
           chmod +x ./gradlew

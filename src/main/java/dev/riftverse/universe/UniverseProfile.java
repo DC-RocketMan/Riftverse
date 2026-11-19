@@ -2,6 +2,10 @@ package dev.riftverse.universe;
 
 import dev.riftverse.registry.ModBlocks;
 import dev.riftverse.story.NameGen;
+import dev.riftverse.universe.dichte.Dichtefeld;
+import dev.riftverse.universe.dichte.Gelaende;
+import dev.riftverse.universe.dichte.Regionskarte;
+import dev.riftverse.universe.dichte.TestGelaende;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
@@ -40,7 +44,9 @@ public final class UniverseProfile {
         // Meilenstein 5
         KERNE("Schwebende Kerne"),
         // Meilenstein 10 der neuen Universen: Bridge's Inn (Fluss, See, Hügel, flache Dorfplätze; siehe DorfPlan)
-        DORFLAND("Dorfland");
+        DORFLAND("Dorfland"),
+        // Meilenstein 11 der neuen Universen: Testgelände mit 3D-Dichte (schwebende Berge, Bögen, Überhänge)
+        DICHTETEST("Dichte-Testgelände");
         public final String label;
         Terrain(String label) { this.label = label; }
     }
@@ -59,52 +65,55 @@ public final class UniverseProfile {
 
     public record Palette(String name, Block surface, Block under, Block stone, Block seabed) {}
 
-    private static final Map<UniverseType, List<Palette>> PALETTES = Map.of(
-            UniverseType.SCHROTT, List.of(
+    private static final Map<UniverseType, List<Palette>> PALETTES = Map.ofEntries(
+            Map.entry(UniverseType.SCHROTT, List.of(
                     new Palette("Rostige Halde", Blocks.COARSE_DIRT, Blocks.DIRT, Blocks.TUFF, Blocks.GRAVEL),
                     new Palette("Aschehalde", Blocks.GRAVEL, Blocks.TUFF, Blocks.DEEPSLATE, Blocks.GRAVEL),
                     new Palette("Ölschlamm", Blocks.MUD, Blocks.PACKED_MUD, Blocks.STONE, Blocks.MUD),
-                    new Palette("Rostwüste", Blocks.RED_SAND, Blocks.RED_SANDSTONE, Blocks.TERRACOTTA, Blocks.RED_SAND)),
-            UniverseType.KRISTALL, List.of(
+                    new Palette("Rostwüste", Blocks.RED_SAND, Blocks.RED_SANDSTONE, Blocks.TERRACOTTA, Blocks.RED_SAND))),
+            Map.entry(UniverseType.KRISTALL, List.of(
                     new Palette("Kalkglanz", Blocks.CALCITE, Blocks.CALCITE, Blocks.DEEPSLATE, Blocks.CALCITE),
                     new Palette("Tuffglas", Blocks.TUFF, Blocks.TUFF, Blocks.DEEPSLATE, Blocks.GRAVEL),
                     new Palette("Basaltkristall", Blocks.SMOOTH_BASALT, Blocks.BASALT, Blocks.DEEPSLATE, Blocks.SMOOTH_BASALT),
-                    new Palette("Glassand", Blocks.SAND, Blocks.SANDSTONE, Blocks.DEEPSLATE, Blocks.SAND)),
-            UniverseType.TOXISCH, List.of(
+                    new Palette("Glassand", Blocks.SAND, Blocks.SANDSTONE, Blocks.DEEPSLATE, Blocks.SAND))),
+            Map.entry(UniverseType.TOXISCH, List.of(
                     new Palette("Giftsumpf", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.MUD),
                     new Palette("Moderschlamm", Blocks.MUD, Blocks.PACKED_MUD, Blocks.DEEPSLATE, Blocks.CLAY),
                     new Palette("Myzelfäule", Blocks.MYCELIUM, Blocks.DIRT, Blocks.STONE, Blocks.MUD),
-                    new Palette("Moosteppich", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.MUD)),
-            UniverseType.NIEDRIGGRAVITATION, List.of(
+                    new Palette("Moosteppich", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.MUD))),
+            Map.entry(UniverseType.NIEDRIGGRAVITATION, List.of(
                     new Palette("Wolkenweide", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.GRAVEL),
                     new Palette("Kalkschollen", Blocks.CALCITE, Blocks.CALCITE, Blocks.STONE, Blocks.CALCITE),
                     new Palette("Mondgeröll", Blocks.ANDESITE, Blocks.ANDESITE, Blocks.TUFF, Blocks.GRAVEL),
-                    new Palette("Moosinseln", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.CLAY)),
-            UniverseType.ZEITDILATATION, List.of(
+                    new Palette("Moosinseln", Blocks.MOSS_BLOCK, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.CLAY))),
+            Map.entry(UniverseType.ZEITDILATATION, List.of(
                     new Palette("Zeitsandwüste", Blocks.SAND, Blocks.SANDSTONE, Blocks.STONE, Blocks.SAND),
                     new Palette("Uhrwerkwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.GRAVEL),
                     new Palette("Violette Steppe", Blocks.PODZOL, Blocks.DIRT, Blocks.DEEPSLATE, Blocks.MUD),
-                    new Palette("Bernsteinheide", Blocks.ROOTED_DIRT, Blocks.DIRT, Blocks.TUFF, Blocks.SAND)),
-            UniverseType.ORGANISCH, List.of(
+                    new Palette("Bernsteinheide", Blocks.ROOTED_DIRT, Blocks.DIRT, Blocks.TUFF, Blocks.SAND))),
+            Map.entry(UniverseType.ORGANISCH, List.of(
                     new Palette("Fleischsteppe", ModBlocks.BIOMASSE_BLOCK.get(), Blocks.NETHER_WART_BLOCK, Blocks.DRIPSTONE_BLOCK, Blocks.MUD),
                     new Palette("Pilzgewebe", Blocks.MYCELIUM, ModBlocks.BIOMASSE_BLOCK.get(), Blocks.DEEPSLATE, Blocks.MUD),
                     new Palette("Moosfleisch", Blocks.MOSS_BLOCK, ModBlocks.BIOMASSE_BLOCK.get(), Blocks.STONE, Blocks.CLAY),
-                    new Palette("Wurzelgeflecht", Blocks.ROOTED_DIRT, Blocks.NETHER_WART_BLOCK, Blocks.DEEPSLATE, Blocks.MUD)),
-            UniverseType.HOCHGRAVITATION, List.of(
+                    new Palette("Wurzelgeflecht", Blocks.ROOTED_DIRT, Blocks.NETHER_WART_BLOCK, Blocks.DEEPSLATE, Blocks.MUD))),
+            Map.entry(UniverseType.HOCHGRAVITATION, List.of(
                     new Palette("Basaltdecke", Blocks.SMOOTH_BASALT, Blocks.BASALT, Blocks.BLACKSTONE, Blocks.GRAVEL),
                     new Palette("Schieferpanzer", Blocks.DEEPSLATE, Blocks.COBBLED_DEEPSLATE, Blocks.DEEPSLATE, Blocks.TUFF),
                     new Palette("Presstuff", Blocks.TUFF, Blocks.TUFF, Blocks.DEEPSLATE, Blocks.GRAVEL),
-                    new Palette("Schwerer Lehm", Blocks.PACKED_MUD, Blocks.MUD_BRICKS, Blocks.DEEPSLATE, Blocks.CLAY)),
-            UniverseType.SPIEGEL, List.of(
+                    new Palette("Schwerer Lehm", Blocks.PACKED_MUD, Blocks.MUD_BRICKS, Blocks.DEEPSLATE, Blocks.CLAY))),
+            Map.entry(UniverseType.SPIEGEL, List.of(
                     new Palette("Quarzspiegel", Blocks.QUARTZ_BLOCK, Blocks.CALCITE, Blocks.STONE, Blocks.SAND),
                     new Palette("Silberwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.DIORITE, Blocks.GRAVEL),
                     new Palette("Glasschnee", Blocks.SNOW_BLOCK, Blocks.PACKED_ICE, Blocks.STONE, Blocks.ICE),
-                    new Palette("Kalkspiegel", Blocks.CALCITE, Blocks.SMOOTH_STONE, Blocks.DEEPSLATE, Blocks.CALCITE)),
-            UniverseType.LEERE, List.of(
+                    new Palette("Kalkspiegel", Blocks.CALCITE, Blocks.SMOOTH_STONE, Blocks.DEEPSLATE, Blocks.CALCITE))),
+            Map.entry(UniverseType.LEERE, List.of(
                     new Palette("Sternenstaub", ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get(), ModBlocks.LEERSTEIN.get()),
-                    new Palette("Obsidiankern", ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN, ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN)),
-            UniverseType.MAGISCHES_DORF, List.of(
-                    new Palette("Blütenwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.SAND)));
+                    new Palette("Obsidiankern", ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN, ModBlocks.LEERSTEIN.get(), Blocks.OBSIDIAN))),
+            Map.entry(UniverseType.MAGISCHES_DORF, List.of(
+                    new Palette("Blütenwiese", Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.STONE, Blocks.SAND))),
+            // Dichte-Testwelt: die Farben kommen aus den Regionen (TestGelaende), die Palette liefert Gestein und Seegrund
+            Map.entry(UniverseType.TEST_DICHTE, List.of(
+                    new Palette("Prüfgestein", Blocks.WHITE_CONCRETE, Blocks.WHITE_TERRACOTTA, Blocks.STONE, Blocks.SAND))));
 
     // ------------------------------------------------------------------ Cache
 
@@ -192,6 +201,7 @@ public final class UniverseProfile {
             case SPIEGEL -> weighted(r, Terrain.values(), 35, 20, 20, 15, 10, 0, 0);
             case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> Terrain.KERNE;
             case MAGISCHES_DORF -> Terrain.DORFLAND;
+            case TEST_DICHTE -> Terrain.DICHTETEST;
         };
         this.terrain = einzigartig != null ? einzigartig.terrain() : gewuerfelt;
         List<Palette> palettes = PALETTES.get(look);
@@ -208,6 +218,7 @@ public final class UniverseProfile {
             case SPIEGEL -> 0.004f + r.nextFloat() * 0.008f;
             case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> 0.3f + r.nextFloat() * 0.15f;   // Anteil der Raster-Felder mit einem Kern
             case MAGISCHES_DORF -> 0.012f;   // Funkelbäume
+            case TEST_DICHTE -> 0f;
         };
         this.plantDensity = switch (look) {
             case SCHROTT -> 0.01f + r.nextFloat() * 0.03f;
@@ -220,17 +231,20 @@ public final class UniverseProfile {
             case SPIEGEL -> 0.06f + r.nextFloat() * 0.12f;
             case LEERE, GEZUECHTET, TEST_EINZIGARTIG -> 0f;
             case MAGISCHES_DORF -> 0.42f;   // kunterbunt: fast überall Blumen
+            case TEST_DICHTE -> 0.05f;      // Kerzen in den Regionsfarben
         };
 
         double richness = Mth.clamp(0.5 + r.nextGaussian() * 0.25, 0.1, 1.0);
         this.oreRichness = modifiers.contains(UniverseModifier.DOPPELTE_ERZE) ? Math.min(2.0, richness * 2.0) : richness;
         this.danger = 1 + r.nextInt(5);
         this.biomeRoll = r.nextInt(1 << 20);
-        this.caves = r.nextFloat() < 0.75f && look != UniverseType.LEERE && look != UniverseType.MAGISCHES_DORF;
+        this.caves = r.nextFloat() < 0.75f && look != UniverseType.LEERE && look != UniverseType.MAGISCHES_DORF
+                && look != UniverseType.TEST_DICHTE;
 
         // Schwebeinseln haben keine Seen: unter ihnen ist nur das Nichts
         boolean dry = palette.surface() == Blocks.RED_SAND || look == UniverseType.NIEDRIGGRAVITATION || look == UniverseType.LEERE;
         this.fluidLevel = dry ? Integer.MIN_VALUE : terrain == Terrain.DORFLAND ? dev.riftverse.dorf.DorfPlan.WASSER
+                : terrain == Terrain.DICHTETEST ? 58
                 : (terrain == Terrain.ARCHIPELAGO ? 63 : 50 + r.nextInt(18));
 
         switch (terrain) {
@@ -263,6 +277,36 @@ public final class UniverseProfile {
         this.fieldNoise = new SimplexNoise(r);
         this.caveNoise = new ImprovedNoise(r);
         this.oreNoise = new ImprovedNoise(r);
+
+        // Meilenstein 11: Gelände mit 3D-Dichte und Regionskarte (eigene Seeds, damit der Würfelstrom oben gleich bleibt)
+        if (terrain == Terrain.DICHTETEST) {
+            this.regionen = new Regionskarte(seed ^ 0x5245474B41525445L, 256, TestGelaende.ARTEN, 16);
+            this.gelaende = new TestGelaende(seed, id.cellX(), id.cellZ(), regionen);
+        } else {
+            this.regionen = null;
+            this.gelaende = null;
+        }
+    }
+
+    /** Gelände mit 3D-Dichte, oder null für den alten Weg über die Höhenkarte ({@link #column}). */
+    @Nullable
+    public final Gelaende gelaende;
+    /** Regionskarte für Welten mit mehreren Regionen, sonst null. */
+    @Nullable
+    public final Regionskarte regionen;
+    @Nullable
+    private volatile Dichtefeld dichtefeld;
+
+    /** Die 3D-Dichte dieses Universums; nur aufrufen, wenn {@link #gelaende} gesetzt ist. */
+    public Dichtefeld dichtefeld() {
+        Dichtefeld d = dichtefeld;
+        if (d == null) {
+            synchronized (this) {
+                if (dichtefeld == null) dichtefeld = new Dichtefeld(gelaende, type.minY(), type.height());
+                d = dichtefeld;
+            }
+        }
+        return d;
     }
 
     @Nullable
