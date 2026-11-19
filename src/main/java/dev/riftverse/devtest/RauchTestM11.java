@@ -173,7 +173,13 @@ final class RauchTestM11 {
 
         check(g.regionen() == karte, "Testgelände nutzt die Regionskarte des Universums");
 
-        // --- Leistung (M11-06, Fertig-Kriterium): läuft im Hintergrund, Ergebnis am Ende ------------
+    }
+
+    /**
+     * Leistung (M11-06, Fertig-Kriterium): erst gestartet, wenn der Server nach dem Start ruhig ist, sonst misst man bei
+     * Vanilla die Wartezeit im Hintergrund-Executor mit. Läuft im eigenen Thread, Ergebnis am Ende.
+     */
+    static void messenStarten(MinecraftServer server) {
         messung = DichteBefehl.messenImHintergrund(server, 48);
     }
 
