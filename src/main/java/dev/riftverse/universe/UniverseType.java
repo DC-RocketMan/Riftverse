@@ -66,7 +66,18 @@ public enum UniverseType implements StringRepresentable {
      * Bridge's Inn (Meilenstein 10): kunterbunte, magische Dorfwelt mit vielen Gleeb-Dörfern, Leuchtpflanzen und
      * einem Wirtshaus auf der Brücke. Einzigartig, ab Kanone Mk I, Gewicht 4.
      */
-    MAGISCHES_DORF("magisches_dorf", 1, 1.0, 4, true, false);
+    MAGISCHES_DORF("magisches_dorf", 1, 1.0, 4, true, false),
+
+    // --- Nur im Entwicklungsmodus (Meilenstein 11 der neuen Universen) -----------------------------
+    /**
+     * Testwelt für die 3D-Dichte und das Regionssystem: schwebende Testberge, Bögen, Überhänge und farbige Regionen.
+     * 640 Blöcke hoch wie Lumora, Gipfelwelt und Himmelsreich, damit die Leistung unter Höchstlast gemessen wird.
+     * Erreichbar mit {@code /riftverse dichtetest}.
+     */
+    TEST_DICHTE("test_dichte", 99, 1.0, 0, true, true, -64, 640);
+
+    /** Mehr Höhe kostet zu viel Arbeitsspeicher (Entscheidung M11-08). */
+    public static final int MAX_HOEHE = 1024;
 
     public static final Codec<UniverseType> CODEC = StringRepresentable.fromEnum(UniverseType::values);
 
@@ -80,12 +91,24 @@ public enum UniverseType implements StringRepresentable {
     /** Nur im Entwicklungsmodus vorhanden (Testwelten). */
     private final boolean entwicklung;
     private final ResourceKey<Level> dimension;
+    /** Unterste Blockhöhe und Gesamthöhe; müssen zum {@code dimension_type} passen (prüft der Rauchtest). */
+    private final int minY, height;
 
     UniverseType(String id, int gunTier, double gravity, int gewicht) {
         this(id, gunTier, gravity, gewicht, false, false);
     }
 
     UniverseType(String id, int gunTier, double gravity, int gewicht, boolean einzigartig, boolean entwicklung) {
+        this(id, gunTier, gravity, gewicht, einzigartig, entwicklung, -64, 384);
+    }
+
+    UniverseType(String id, int gunTier, double gravity, int gewicht, boolean einzigartig, boolean entwicklung,
+                 int minY, int height) {
+        if (height > 1024 || height % 16 != 0 || minY % 16 != 0) {
+            throw new IllegalArgumentException("Ungültige Weltenhöhe für " + id + ": " + minY + " / " + height);
+        }
+        this.minY = minY;
+        this.height = height;
         this.id = id;
         this.gunTier = gunTier;
         this.gravity = gravity;
@@ -135,6 +158,16 @@ public enum UniverseType implements StringRepresentable {
     /** Gravitation in g; außer der Niedriggravitationswelt haben alle bisherigen Typen normale Schwerkraft. */
     public double gravity() {
         return gravity;
+    }
+
+    /** Unterste Blockhöhe der Dimension. */
+    public int minY() {
+        return minY;
+    }
+
+    /** Höhe der Dimension in Blöcken (höchster Block: {@code minY + height - 1}). */
+    public int height() {
+        return height;
     }
 
     public ResourceKey<Level> dimension() {

@@ -4,6 +4,45 @@ Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
 
+## Meilenstein 11 – 3D-Dichte und Regionssystem
+
+Ein Umbau am Weltengenerator, noch ohne neue Welt für Spieler. Bisher war jede Welt eine 2D-Höhenkarte; jetzt kann ein
+Gelände eine **3D-Dichte** liefern. Damit gehen Überhänge, Bögen, schwebende Berge und riesige Höhlen, die Lumora, die
+Gipfelwelt, das Himmelsreich und alle weiteren neuen Welten brauchen.
+
+| Bereich | Inhalt |
+|---|---|
+| **3D-Dichte** | `universe/dichte/Gelaende`: Wo `dichte(x, y, z) > 0` ist, liegt Fels. Berechnet im Raster 4 × 8 × 4 (pro Gelände einstellbar), trilinear interpoliert; reine Luft-Zellen werden übersprungen |
+| **Oberfläche** | zweiter Durchlauf: Oberflächenblock nur mit Luft darüber, 3 Blöcke Unterschicht, Unterseiten von Überhängen und Inseln aus Gestein |
+| **Wasser und Höhlen** | jeder Hohlraum unter dem Wasserspiegel wird geflutet; Höhlen nur tief im Fels, sie bleiben trocken; keine Aquifere |
+| **Glättung** | einzelne Luftblöcke im Fels und einzelne schwebende Felsblöcke werden beim Füllen entfernt |
+| **Portale und Strukturen** | `getBaseHeight` und `getBaseColumn` lesen dieselben Rasterpunkte über einen Zwischenspeicher pro Thread |
+| **Weltenhöhe pro Typ** | `UniverseType` trägt `minY` und `height` (Standard −64 / 384, höchstens 1024); `tools/daten/pruefen_hoehen.py` und der Rauchtest prüfen sie gegen den `dimension_type` |
+| **Regionskarte** | `universe/dichte/Regionskarte`: Voronoi mit verbogenen Rändern, Größe pro Welt, Übergangssaum von 16 Blöcken mit gestreuter Mischung |
+| **Testwelt** | „Dichteprobe“ (`test_dichte`, nur im Entwicklungsmodus), 640 Blöcke hoch: schwebender Testberg im Osten der Ankunft, Felsbogen im Westen, Überhänge, Seen, jede Region in eigener Betonfarbe mit Kerzen, Schwebstein an den Unterseiten |
+| **Befehle** | `/riftverse dichtetest` öffnet ein Rift in die Dichteprobe, `/riftverse dichtetest messen [anzahl]` vergleicht ms pro Chunk mit der Vanilla-Oberwelt (Stufe 2) |
+| **F3** | in der Dichteprobe zusätzlich Dichte, Region, Nachbarregion, Abstand zur Grenze und Saumgewicht |
+| **Rauchtest** | Lochtest (keine eingeschlossenen Luftblöcke, keine Ein-Block-Fetzen), Testberg mit Luft darunter, Überhänge, Höhenabgleich, geflutete Senken, Regionen und Saum, Leistung gegen Vanilla |
+
+Die bestehenden Universumstypen bauen noch genau wie vorher; sie bekommen die 3D-Dichte erst mit dem Universums-Genom in
+Meilenstein 11b. Ein Handbuch-Eintrag kommt mit den ersten Welten, die sie nutzen.
+
+### Ein neues Gelände mit 3D-Dichte
+
+1. Eine Klasse schreiben, die `Gelaende` umsetzt: `spalte(x, z)` bereitet alles vor, was nur von x und z abhängt, und
+   gibt eine Funktion `y -> dichte` zurück. Positiv heißt Fels; etwa `(boden - y) / 12.0` ergibt einen normalen Boden.
+2. Optional `bloecke(x, z)` für eigene Oberflächen-, Unterschicht- und Unterseiten-Blöcke, `rasterXZ()`/`rasterY()` für
+   feinere Formen.
+3. In `UniverseProfile` für das Gelände setzen; der Generator nimmt dann automatisch den neuen Weg.
+
+### Entscheidungen in Meilenstein 11
+
+- **Erst Technik, dann Welten:** Bestehende Typen bleiben in M11 Block für Block gleich. Schon erkundete Welten dürfen
+  später alle gelöscht werden (gilt für das Zurücksetzen in 11b).
+- **Raster wie Vanilla:** 4 × 8 × 4 ist schnell genug; feine Bögen oder Nadeln können 4 × 4 × 4 oder 2 nehmen.
+- **Keine Aquifere:** einfacher und schneller; Höhlen bleiben trocken, weil sie nie bis an Seen heranreichen.
+- **Testwelt 640 hoch:** gemessen wird gleich unter der Höchstlast der späteren Welten.
+
 ## Meilenstein 10 – Bridge's Inn
 
 Das erste einzigartige Storyuniversum: eine kunterbunte, magische Dorfwelt. Schon mit der Mk I erreichbar (Gewicht 4),
@@ -645,6 +684,7 @@ src/main/java/dev/riftverse/
   tech/         Maschinen, Generatoren, Fluid-Mixer, Speicher, Garagen-Werkbank, T3-Geräte (+ menu/ für die GUIs)
   recipe/       Rezepttypen der Maschinen, des Fluid-Mixers und der Garagen-Werkbank
   universe/     Universumstypen, Modifikatoren, Gelände, Physik und Gefahren, Aufräumen
+                (dichte/: 3D-Dichte, Regionskarte, Dichte-Testwelt und ihre Befehle)
   worldgen/     Meteoritenkrater, Xenit-Zone, Alien-Wracks, per Config abschaltbare und skalierbare Erze
   item/         Portal-Kanone, Fluid-Kartusche, Meteoritenpeiler, Universums-Scanner
   block/        Meteoritenkern, Fluxkristalle, Säure, Rift-Anker

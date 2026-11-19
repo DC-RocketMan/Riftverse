@@ -68,6 +68,8 @@ import java.util.Optional;
 public final class RauchTest {
     private static final int RUN_TICKS = 380;
     private static final int ZWISCHEN_TICK = 40;
+    /** Ab hier ist der Server ruhig genug für die Leistungsmessung der Dichteprobe (Meilenstein 11). */
+    private static final int MESS_TICK = 200;
 
     private static final List<String> failures = new ArrayList<>();
     private static int ticks = -1;
@@ -152,6 +154,7 @@ public final class RauchTest {
         RauchTestEinzigartig.aufbauen(server, level);
         RauchTestStory.aufbauen(server);
         RauchTestBridgesInn.aufbauen(server, level, base.south(360));
+        RauchTestM11.aufbauen(server);
         ticks = 0;
     }
 
@@ -350,6 +353,7 @@ public final class RauchTest {
         if (ticks < 0) return;
         // Frisch erzwungene Chunks laden ihre Entities erst nach ein paar Ticks: Tests mit Mobs laufen in der Mitte
         if (++ticks == ZWISCHEN_TICK) RauchTestM6.zwischen(event.getServer(), event.getServer().overworld());
+        if (ticks == MESS_TICK) RauchTestM11.messenStarten(event.getServer());
         if (ticks < RUN_TICKS) return;
         ticks = -1;
         MinecraftServer server = event.getServer();
@@ -374,6 +378,7 @@ public final class RauchTest {
         RauchTestM7.ergebnis(server, level);
         RauchTestM8.ergebnis(server, level);
         RauchTestEinzigartig.ergebnis(server, level);
+        RauchTestM11.ergebnis();
 
         if (failures.isEmpty()) {
             Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: BESTANDEN");

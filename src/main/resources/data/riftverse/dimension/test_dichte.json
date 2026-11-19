@@ -1,0 +1,19 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "riftverse:entwicklung"
+    }
+  ],
+  "type": "riftverse:test_dichte",
+  "generator": {
+    "type": "riftverse:multiverse",
+    "universe": "test_dichte",
+    "biome_source": {
+      "type": "riftverse:universe",
+      "universe": "test_dichte",
+      "biomes": [
+        "riftverse:zeit_violett"
+      ]
+    }
+  }
+}
