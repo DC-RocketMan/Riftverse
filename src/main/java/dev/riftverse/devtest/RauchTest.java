@@ -375,6 +375,7 @@ public final class RauchTest {
         RauchTestM7.ergebnis(server, level);
         RauchTestM8.ergebnis(server, level);
         RauchTestEinzigartig.ergebnis(server, level);
+        RauchTestM11.ergebnis();
 
         if (failures.isEmpty()) {
             Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: BESTANDEN");

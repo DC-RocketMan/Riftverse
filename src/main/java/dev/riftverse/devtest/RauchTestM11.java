@@ -21,6 +21,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static dev.riftverse.devtest.RauchTest.check;
 
@@ -31,6 +32,8 @@ import static dev.riftverse.devtest.RauchTest.check;
  * Regionskarte mit Saum und die Leistung gegen Vanilla.
  */
 final class RauchTestM11 {
+    private static CompletableFuture<DichteBefehl.Messung> messung;
+
     private RauchTestM11() {
     }
 
@@ -168,16 +171,22 @@ final class RauchTestM11 {
         Regionskarte.Region r1 = karte.bei(c + 123, c - 77), r2 = karte.bei(c + 123, c - 77);
         check(r1.equals(r2), "Regionskarte ist deterministisch");
 
-        // --- Leistung (M11-06, Fertig-Kriterium) ---------------------------------------------------
-        DichteBefehl.Messung m = DichteBefehl.messen(server, 48);
-        if (m != null) {
-            String text = String.format(Locale.ROOT, "Dichteprobe %.2f ms/Chunk, Vanilla-Oberwelt %.2f ms/Chunk", m.dichteMs(), m.vanillaMs());
-            Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: Leistung {}", text);
-            check(m.schneller(), "Leistung: " + text);
-        } else {
-            check(false, "Leistungsmessung lief");
-        }
         check(g.regionen() == karte, "Testgelände nutzt die Regionskarte des Universums");
+
+        // --- Leistung (M11-06, Fertig-Kriterium): läuft im Hintergrund, Ergebnis am Ende ------------
+        messung = DichteBefehl.messenImHintergrund(server, 48);
+    }
+
+    static void ergebnis() {
+        DichteBefehl.Messung m = messung != null && messung.isDone() && !messung.isCompletedExceptionally()
+                ? messung.getNow(null) : null;
+        if (m == null) {
+            check(false, "Leistungsmessung ist fertig geworden");
+            return;
+        }
+        String text = String.format(Locale.ROOT, "Dichteprobe %.2f ms/Chunk, Vanilla-Oberwelt %.2f ms/Chunk", m.dichteMs(), m.vanillaMs());
+        Riftverse.LOGGER.info("RIFTVERSE-RAUCHTEST: Leistung {}", text);
+        check(m.schneller(), "Leistung: " + text);
     }
 
     private static boolean fest(BlockState s) {

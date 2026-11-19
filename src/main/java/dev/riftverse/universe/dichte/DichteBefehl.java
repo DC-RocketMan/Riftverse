@@ -35,6 +35,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * Befehle für die Dichte-Testwelt (Meilenstein 11, Berechtigungsstufe 2, nur im Entwicklungsmodus):
@@ -99,24 +100,48 @@ public final class DichteBefehl {
             ctx.getSource().sendFailure(Component.translatable("message.riftverse.testwelt.aus"));
             return 0;
         }
-        ctx.getSource().sendSuccess(() -> Component.translatable("message.riftverse.dichtetest.messen", anzahl), false);
-        Messung m = messen(server, anzahl);
-        if (m == null) return 0;
-        String dichte = String.format(Locale.GERMAN, "%.2f", m.dichteMs());
-        if (Double.isNaN(m.vanillaMs())) {
-            ctx.getSource().sendSuccess(() -> Component.translatable("message.riftverse.dichtetest.kein_vanilla", dichte), false);
-            return 1;
-        }
-        String vanilla = String.format(Locale.GERMAN, "%.2f", m.vanillaMs());
-        Component urteil = Component.translatable(m.schneller() ? "message.riftverse.dichtetest.schneller" : "message.riftverse.dichtetest.langsamer");
-        ctx.getSource().sendSuccess(() -> Component.translatable("message.riftverse.dichtetest.ergebnis", dichte, vanilla, urteil)
-                .withStyle(m.schneller() ? ChatFormatting.GREEN : ChatFormatting.GOLD), false);
+        CommandSourceStack src = ctx.getSource();
+        src.sendSuccess(() -> Component.translatable("message.riftverse.dichtetest.messen", anzahl), false);
+        messenImHintergrund(server, anzahl).thenAccept(m -> {
+            if (m != null) server.execute(() -> melden(src, m));
+        });
         return 1;
     }
 
-    /** Misst {@code anzahl} Chunks in der Dichteprobe und in der Oberwelt; null ohne Testwelt. */
+    private static void melden(CommandSourceStack src, Messung m) {
+        String dichte = String.format(Locale.GERMAN, "%.2f", m.dichteMs());
+        if (Double.isNaN(m.vanillaMs())) {
+            src.sendSuccess(() -> Component.translatable("message.riftverse.dichtetest.kein_vanilla", dichte), false);
+            return;
+        }
+        String vanilla = String.format(Locale.GERMAN, "%.2f", m.vanillaMs());
+        Component urteil = Component.translatable(m.schneller() ? "message.riftverse.dichtetest.schneller" : "message.riftverse.dichtetest.langsamer");
+        src.sendSuccess(() -> Component.translatable("message.riftverse.dichtetest.ergebnis", dichte, vanilla, urteil)
+                .withStyle(m.schneller() ? ChatFormatting.GREEN : ChatFormatting.GOLD), false);
+    }
+
+    /**
+     * Misst in einem eigenen Thread. Der Server-Thread darf dabei nicht warten: Vanilla füllt Chunks über den
+     * Hintergrund-Executor, und der braucht einen tickenden Server.
+     */
+    public static CompletableFuture<Messung> messenImHintergrund(MinecraftServer server, int anzahl) {
+        CompletableFuture<Messung> f = new CompletableFuture<>();
+        Thread t = new Thread(() -> {
+            try {
+                f.complete(messen(server, anzahl));
+            } catch (Throwable e) {
+                Riftverse.LOGGER.error("Dichtemessung fehlgeschlagen", e);
+                f.completeExceptionally(e);
+            }
+        }, "Riftverse-Dichtemessung");
+        t.setDaemon(true);
+        t.start();
+        return f;
+    }
+
+    /** Misst {@code anzahl} Chunks in der Dichteprobe und in der Oberwelt; null ohne Testwelt. Nie auf dem Server-Thread. */
     @Nullable
-    public static Messung messen(MinecraftServer server, int anzahl) {
+    private static Messung messen(MinecraftServer server, int anzahl) {
         ServerLevel test = testwelt(server);
         if (test == null) return null;
         int c = Multiverse.cellCenter(0) >> 4;
@@ -146,7 +171,7 @@ public final class DichteBefehl {
     private static long fuellen(ServerLevel level, ChunkGenerator gen, RandomState rs, StructureManager sm,
                                 Registry<Biome> biome, ChunkPos pos) {
         ProtoChunk chunk = new ProtoChunk(pos, UpgradeData.EMPTY, level, biome, null);
-        gen.createBiomes(rs, Blender.empty(), sm, chunk).join();
+        chunk.fillBiomesFromNoise(gen.getBiomeSource(), rs.sampler());
         long t0 = System.nanoTime();
         gen.fillFromNoise(Blender.empty(), rs, sm, chunk).join();
         return System.nanoTime() - t0;
