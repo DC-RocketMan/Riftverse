@@ -1,5 +1,7 @@
 # Riftverse
 
+> **Was als Nächstes kommt:** [Fahrplan](docs/fahrplan.md), alle geplanten Meilensteine und neuen Welten auf einen Blick.
+
 Ein Minecraft-Modpack im Stil von Feed The Beast, inspiriert von Rick and Mortys Portalreisen.
 Dieses Repo enthält den Riftverse-Mod für **NeoForge 1.21.1**. Die Anleitung für alles Weitere steht im
 Design-Dokument („Riftverse – Design-Dokument“), gebaut wird Meilenstein für Meilenstein.
