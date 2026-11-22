@@ -28,7 +28,7 @@ Erst kommt die Technik, die alle neuen Welten brauchen. Dann die Story-Welten, w
 
 | Nr. | Name | Was kommt | Status |
 |---|---|---|---|
-| 11 | **Tiefe Fundamente** | Neuer Weltengenerator mit Überhängen, Bögen und schwebenden Bergen | ✅ fertig, kommt gleich ins Spiel |
+| 11 | **Tiefe Fundamente** | Neuer Weltengenerator mit Überhängen, Bögen und schwebenden Bergen | 🔧 fast fertig, letzte Feedback-Runde |
 | 11b | **Das Universums-Genom** | Kein Universum gleicht mehr dem anderen | 🔜 als Nächstes |
 | 12 | **Lichter von Lumora** | Story-Welt mit schwebenden Lichtbergen | ⏳ geplant |
 | 13 | **Was in der Tiefe schläft** | Story-Welt „Verlassene Minen“ mit dem Gräber | ⏳ geplant |
@@ -56,6 +56,8 @@ Die Nummer 23 gibt es nicht: Das Universums-Genom wurde als 11b nach vorne gezog
 Bisher war jede Welt eine einfache Höhenkarte. Ab jetzt kann das Gelände wirklich dreidimensional sein: Überhänge,
 Felsbögen, schwebende Berge und riesige Höhlen. Welten können außerdem in Regionen mit eigenem Charakter aufgeteilt
 werden. Du siehst davon noch keine neue Welt, aber jede kommende Welt baut darauf auf.
+
+Gebaut ist der Umbau schon, gerade läuft noch eine Feedback-Runde im Spiel, bevor er fertig ist.
 
 ### 11b · Das Universums-Genom
 
